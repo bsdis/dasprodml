@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Information about the fluid container used to capture a fluid sample. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<xs:element name="FluidSampleContainer" type="prodml:FluidSampleContainer" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="FluidSampleContainer">
+		<xs:annotation>
+			<xs:documentation>Information about the fluid container used to capture a fluid sample. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Make" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The make of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Model" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The model of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SerialNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The serial number of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BottleID" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reference ID  of a bottle or a chamber.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Capacity" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The volume of a bottle or chamber. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Owner" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The owner of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The kind of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Metallurgy" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The metallurgy of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PressureRating" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pressure rating of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TemperatureRating" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The temperature rating of this fluid sample container.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="LastInspectionDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date when this fluid sample container was last inspected.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TransportCertificateReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reference uid of an attached object which stores the transport certificate. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--														-->
+	</xs:schema>

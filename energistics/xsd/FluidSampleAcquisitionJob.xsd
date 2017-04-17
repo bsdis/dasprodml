@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>The fluid sample acquisition job data object is used to describe the method, equipment, time, place and operating conditions for each fluid sample acquired. The sample acquisition job represents the operation to collect one or more fluid samples. Fluid sample acquisition elements repeat, one per sample acquired, within one job.
+
+Fluid sample acquisitions can be made in five types of locations: surface facilities, separators, wellheads, downhole, or directly from the formation by wireline formation tester. Each type of location is defined with specific characteristics so that the important measurements for each type are captured, such as measured depth for downhole samples and the operating conditions for separator samples.</xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:include schemaLocation="WftRun.xsd"/>
+	<xs:include schemaLocation="SimpleProductVolume.xsd"/>
+	<xs:include schemaLocation="FluidSystem.xsd"/>
+	<xs:include schemaLocation="FluidSampleContainer.xsd"/>
+	<xs:include schemaLocation="FluidSample.xsd"/>
+	<xs:include schemaLocation="ReportingEntityModel.xsd"/>
+	<xs:complexType name="DownholeSampleAcquisition">
+		<xs:annotation>
+			<xs:documentation>Additional information required for a sample acquired down hole.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FluidSampleAcquisition">
+				<xs:sequence>
+					<xs:element name="TopMD" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The top MD for the interval where this downhole sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BaseMD" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The base MD for the interval where this downhole sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ToolKind" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The kind of tool used to acquire the downhole sample.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SamplingRun" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The sampling run number for this downhole sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellboreReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the wellbore (a WITSML data object) where this downhole sample was taken. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellboreCompletionReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the wellbore completion (WITSML data object) where this sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductionWellTest" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FacilitySampleAcquisition">
+		<xs:annotation>
+			<xs:documentation>Additional information required for a sample taken from a facility. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FluidSampleAcquisition">
+				<xs:sequence>
+					<xs:element name="SamplingPoint" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the flow port in the facility where this sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityPressure" type="eml:AbstractPressureValue" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The facility pressure for this facility sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The facility temperature when this sample was taken. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Facility" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FluidSampleAcquisition">
+		<xs:annotation>
+			<xs:documentation>Information common to any fluid sample taken. Additional details can be captured in related data object depending on the where the sample was taken, for example: downhole, separator, wellhead, of the formation using a wireline formation tester (WFT). 
+
+If the tool used to capture samples has multiple containers, each container has a separate instance of fluid sample acquisition.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Date" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date when the sample was taken. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AcquisitionPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The acquisition pressure when this sample was taken.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AcquisitionTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The acquisition temperature when this sample was taken.
+.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AcquisitionVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The acquisition volume when this sample was taken.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AcquisitionGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The acquisition gas-oil ratio for this fluid sample acquisition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FormationPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The formation pressure when this sample was taken.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FormationTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The formation temperature when this sample was taken.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ServiceCompany" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The service company who took the fluid sample. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidSampleContainerReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="FluidSampleReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="FluidSampleAcquisitionJob" type="prodml:FluidSampleAcquisitionJob" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="FluidSampleAcquisitionJob">
+		<xs:annotation>
+			<xs:documentation>Information about the job that results in acquiring a fluid sample. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="EstimatedStartDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date when fluid acquisition started. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Operation" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to an operation described in another data object, which contains the details of the acquisition. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FieldNoteReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The reference uid of an attached object that stores the field note.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidSampleAcquisition" type="prodml:FluidSampleAcquisition" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="FluidSystemReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SeparatorSampleAcquisition">
+		<xs:annotation>
+			<xs:documentation>Additonal information required from a fluid sample taken from a separator. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FluidSampleAcquisition">
+				<xs:sequence>
+					<xs:element name="Separator" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the separator where this sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellCompletionReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to a well completion (WITSML data object) where this sample was taken. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SeparatorPressure" type="eml:AbstractPressureValue" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The separator pressure when this sample was taken. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SeparatorTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The separator temperature when this sample was taken. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SamplingPoint" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the flow port in the facility where this sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CorrectedOilRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The corrected oil rate for this separator sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CorrectedGasRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The corrected gas rate for this separator sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CorrectedWaterRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The corrected water rate for this separator sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MeasuredOilRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The measured oil rate for this separator sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MeasuredGasRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The measured gas rate for this separator sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MeasuredWaterRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The measured water rate for this separator sample acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductionWellTest" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WellheadSampleAcquisition">
+		<xs:annotation>
+			<xs:documentation>Additional information required for a fluid sample taken from a wellhead. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FluidSampleAcquisition">
+				<xs:sequence>
+					<xs:element name="WellReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the well (WITSML data object) where this sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellCompletionReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the well completion (WITSML data object) where this sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellheadPressure" type="eml:AbstractPressureValue" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The wellhead pressure when the sample was taken. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellheadTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The wellhead temperature when the sample was taken. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SamplingPoint" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the flow port in the facility where this sample was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductionWellTest" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WftSampleAcquisitionJob">
+		<xs:annotation>
+			<xs:documentation>Information about the job to take a sample directly from the formation using a wireline formation tester (WFT). </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FluidSampleAcquisition">
+				<xs:sequence>
+					<xs:element name="WftStation" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Reference to the WFT station within the top-level WFT run data object  where this sample was obtained.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WftSampleAcquisition" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Reference to the WFT sample within the WFT station from where this sample was obtained.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WftRun" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
