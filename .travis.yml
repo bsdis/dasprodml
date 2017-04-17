@@ -23,9 +23,8 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy pandas pytest requests h5py
   - source activate test-environment
-  - pip install ordereddict cchardet argparse chardet
+  - pip install generateDS
   - pip install coverage==3.7.1
-  - pip install openpyxl==2.0.3
   - pip install pytest-cov coveralls
   - python setup.py install
 
