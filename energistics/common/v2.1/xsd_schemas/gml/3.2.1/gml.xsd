@@ -1,0 +1,1070 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:gco="http://www.isotc211.org/2005/gco"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:gmd="http://www.isotc211.org/2005/gmd"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gmx="http://www.isotc211.org/2005/gmx"
+        xmlns:gsr="http://www.isotc211.org/2005/gsr"
+        xmlns:gss="http://www.isotc211.org/2005/gss"
+        xmlns:gts="http://www.isotc211.org/2005/gts"
+        targetNamespace="http://www.opengis.net/gml/3.2"
+        elementFormDefault="qualified"
+        version="3.2.1">
+   <annotation>
+      <documentation>GML Subset schema for gml:GeodeticCRS,gml:ProjectedCRS,gml:VerticalCRS, written by gmlSubset.xslt.</documentation>
+      <documentation>In addition to deprecated items, the following have been eliminated: gml:pointProperty,.</documentation>
+      <documentation>The following deprecated items may have been retained because they are actually used by the normative GML schema: gml:StringOrRefType,gml:AbstractOperation,.</documentation>
+   </annotation>
+   <import namespace="http://www.w3.org/1999/xlink"
+           schemaLocation="../../xlink/1.0.0/xlinks.xsd"/>
+   <import namespace="http://www.isotc211.org/2005/gmd"
+           schemaLocation="../../iso/19139/20070417/gmd/gmd.xsd"/>
+<!-- ================================================= -->
+	  <element name="GeodeticCRS" type="gml:GeodeticCRSType"
+            substitutionGroup="gml:AbstractSingleCRS"/>
+<!-- ================================================= -->
+	  <complexType name="GeodeticCRSType">
+		    <annotation>
+			      <documentation>gml:GeodeticCRS is a coordinate reference system based on a geodetic datum.</documentation>
+		    </annotation>
+		    <complexContent>
+			      <extension base="gml:AbstractCRSType">
+				        <sequence>
+					          <choice>
+						            <element ref="gml:ellipsoidalCS"/>
+						            <element ref="gml:cartesianCS"/>
+						            <element ref="gml:sphericalCS"/>
+					          </choice>
+					          <element ref="gml:geodeticDatum"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="AbstractCRSType" abstract="true">
+		    <complexContent>
+			      <extension base="gml:IdentifiedObjectType">
+				        <sequence>
+					          <element ref="gml:domainOfValidity" minOccurs="0" maxOccurs="unbounded"/>
+					          <element ref="gml:scope" maxOccurs="unbounded"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="IdentifiedObjectType" abstract="true">
+		    <annotation>
+			      <documentation>gml:IdentifiedObjectType provides identification properties of a CRS-related object. In gml:DefinitionType, the gml:identifier element shall be the primary name by which this object is identified, encoding the "name" attribute in the UML model.
+Zero or more of the gml:name elements can be an unordered set of "identifiers", encoding the "identifier" attribute in the UML model. Each of these gml:name elements can reference elsewhere the object's defining information or be an identifier by which this object can be referenced.
+Zero or more other gml:name elements can be an unordered set of "alias" alternative names by which this CRS related object is identified, encoding the "alias" attributes in the UML model. An object may have several aliases, typically used in different contexts. The context for an alias is indicated by the value of its (optional) codeSpace attribute.
+Any needed version information shall be included in the codeSpace attribute of a gml:identifier and gml:name elements. In this use, the gml:remarks element in the gml:DefinitionType shall contain comments on or information about this object, including data source information.</documentation>
+		    </annotation>
+		    <complexContent>
+			      <extension base="gml:DefinitionType"/>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="DefinitionType">
+		    <complexContent>
+			      <extension base="gml:DefinitionBaseType">
+				        <sequence>
+					          <element ref="gml:remarks" minOccurs="0"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="DefinitionBaseType">
+		    <complexContent>
+			      <restriction base="gml:AbstractGMLType">
+				        <sequence>
+					
+					          <element ref="gml:description" minOccurs="0"/>
+					          <element ref="gml:descriptionReference" minOccurs="0"/>
+					          <element ref="gml:identifier"/>
+					          <element ref="gml:name" minOccurs="0" maxOccurs="unbounded"/>
+				        </sequence>
+				        <attribute ref="gml:id" use="required"/>
+			      </restriction>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="AbstractGMLType" abstract="true">
+		    <sequence>
+			      <group ref="gml:StandardObjectProperties"/>
+		    </sequence>
+		    <attribute ref="gml:id" use="required"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <group name="StandardObjectProperties">
+		    <sequence>
+			
+			      <element ref="gml:description" minOccurs="0"/>
+			      <element ref="gml:descriptionReference" minOccurs="0"/>
+			      <element ref="gml:identifier" minOccurs="0"/>
+			      <element ref="gml:name" minOccurs="0" maxOccurs="unbounded"/>
+		    </sequence>
+	  </group>
+<!-- ================================================= -->
+	  <attribute name="id" type="ID">
+		    <annotation>
+			      <documentation>The attribute gml:id supports provision of a handle for the XML element representing a GML Object. Its use is mandatory for all GML objects. It is of XML type ID, so is constrained to be unique in the XML document within which it occurs.</documentation>
+		    </annotation>
+	  </attribute>
+<!-- ================================================= -->
+	  <element name="AbstractObject" abstract="true">
+		    <annotation>
+			      <documentation>This element has no type defined, and is therefore implicitly (according to the rules of W3C XML Schema) an XML Schema anyType. It is used as the head of an XML Schema substitution group which unifies complex content and certain simple content elements used for datatypes in GML, including the gml:AbstractGML substitution group.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <attributeGroup name="AssociationAttributeGroup">
+		    <annotation>
+			      <documentation>XLink components are the standard method to support hypertext referencing in XML. An XML Schema attribute group, gml:AssociationAttributeGroup, is provided to support the use of Xlinks as the method for indicating the value of a property by reference in a uniform manner in GML.</documentation>
+		    </annotation>
+		    <attributeGroup ref="xlink:simpleLink"/>
+		    <attribute name="nilReason" type="gml:NilReasonType"/>
+		
+	  </attributeGroup>
+<!-- ================================================= -->
+	  <simpleType name="NilReasonType">
+		    <annotation>
+			      <documentation>gml:NilReasonType defines a content model that allows recording of an explanation for a void value or other exception.
+gml:NilReasonType is a union of the following enumerated values:
+-	inapplicable there is no value
+-	missing the correct value is not readily available to the sender of this data. Furthermore, a correct value may not exist
+-	template the value will be available later
+-	unknown the correct value is not known to, and not computable by, the sender of this data. However, a correct value probably exists
+-	withheld the value is not divulged
+-	other:text other brief explanation, where text is a string of two or more characters with no included spaces
+and
+-	anyURI which should refer to a resource which describes the reason for the exception
+A particular community may choose to assign more detailed semantics to the standard values provided. Alternatively, the URI method enables a specific or more complete explanation for the absence of a value to be provided elsewhere and indicated by-reference in an instance document.
+gml:NilReasonType is used as a member of a union in a number of simple content types where it is necessary to permit a value from the NilReasonType union as an alternative to the primary type.</documentation>
+		    </annotation>
+		    <union memberTypes="gml:NilReasonEnumeration anyURI"/>
+	  </simpleType>
+<!-- ================================================= -->
+	  <simpleType name="NilReasonEnumeration">
+		    <union>
+			      <simpleType>
+				        <restriction base="string">
+					          <enumeration value="inapplicable"/>
+					          <enumeration value="missing"/>
+					          <enumeration value="template"/>
+					          <enumeration value="unknown"/>
+					          <enumeration value="withheld"/>
+				        </restriction>
+			      </simpleType>
+			      <simpleType>
+				        <restriction base="string">
+					          <pattern value="other:\w{2,}"/>
+				        </restriction>
+			      </simpleType>
+		    </union>
+	  </simpleType>
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  <element name="description" type="gml:StringOrRefType">
+		    <annotation>
+			      <documentation>The value of this property is a text description of the object. gml:description uses gml:StringOrRefType as its content model, so it may contain a simple text string content, or carry a reference to an external description. The use of gml:description to reference an external description has been deprecated and replaced by the gml:descriptionReference property.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="StringOrRefType">
+		    <annotation>
+			      <appinfo>deprecated</appinfo>
+		    </annotation>
+		    <simpleContent>
+			      <extension base="string">
+				        <attributeGroup ref="gml:AssociationAttributeGroup"/>
+			      </extension>
+		    </simpleContent>
+	  </complexType>
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  <element name="descriptionReference" type="gml:ReferenceType">
+		    <annotation>
+			      <documentation>The value of this property is a remote text description of the object. The xlink:href attribute of the gml:descriptionReference property references the external description.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="ReferenceType">
+		    <annotation>
+			      <documentation>gml:ReferenceType is intended to be used in application schemas directly, if a property element shall use a "by-reference only" encoding.</documentation>
+		    </annotation>
+		    <sequence/>
+		    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <attributeGroup name="OwnershipAttributeGroup">
+		    <annotation>
+			      <documentation>Encoding a GML property inline vs. by-reference shall not imply anything about the "ownership" of the contained or referenced GML Object, i.e. the encoding style shall not imply any "deep-copy" or "deep-delete" semantics. To express ownership over the contained or referenced GML Object, the gml:OwnershipAttributeGroup attribute group may be added to object-valued property elements. If the attribute group is not part of the content model of such a property element, then the value may not be "owned".
+When the value of the owns attribute is "true", the existence of inline or referenced object(s) depends upon the existence of the parent object.</documentation>
+		    </annotation>
+		    <attribute name="owns" type="boolean" default="false"/>
+	  </attributeGroup>
+<!-- ================================================= -->
+	  <element name="identifier" type="gml:CodeWithAuthorityType">
+		    <annotation>
+			      <documentation>Often, a special identifier is assigned to an object by the maintaining authority with the intention that it is used in references to the object For such cases, the codeSpace shall be provided. That identifier is usually unique either globally or within an application domain. gml:identifier is a pre-defined property for such identifiers.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="CodeWithAuthorityType">
+		    <annotation>
+			      <documentation>gml:CodeWithAuthorityType requires that the codeSpace attribute is provided in an instance.</documentation>
+		    </annotation>
+		    <simpleContent>
+			      <restriction base="gml:CodeType">
+				        <attribute name="codeSpace" type="anyURI" use="required"/>
+			      </restriction>
+		    </simpleContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="CodeType">
+		    <annotation>
+			      <documentation>gml:CodeType is a generalized type to be used for a term, keyword or name.
+It adds a XML attribute codeSpace to a term, where the value of the codeSpace attribute (if present) shall indicate a dictionary, thesaurus, classification scheme, authority, or pattern for the term.</documentation>
+		    </annotation>
+		    <simpleContent>
+			      <extension base="string">
+				        <attribute name="codeSpace" type="anyURI"/>
+			      </extension>
+		    </simpleContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="name" type="gml:CodeType">
+		    <annotation>
+			      <documentation>The gml:name property provides a label or identifier for the object, commonly a descriptive name. An object may have several names, typically assigned by different authorities. gml:name uses the gml:CodeType content model.  The authority for a name is indicated by the value of its (optional) codeSpace attribute.  The name may or may not be unique, as determined by the rules of the organization responsible for the codeSpace.  In common usage there will be one name per authority, so a processing application may select the name from its preferred codeSpace.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="remarks" type="string"/>
+<!-- ================================================= -->
+	  <element name="domainOfValidity">
+		    <annotation>
+			      <documentation>The gml:domainOfValidity property implements an association role to an EX_Extent object as encoded in ISO/TS 19139, either referencing or containing the definition of that extent.</documentation>
+		    </annotation>
+		    <complexType>
+			      <sequence minOccurs="0">
+				        <element ref="gmd:EX_Extent"/>
+			      </sequence>
+			      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+		    </complexType>
+	  </element>
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  <element name="AbstractTimePrimitive" type="gml:AbstractTimePrimitiveType"
+            abstract="true"
+            substitutionGroup="gml:AbstractTimeObject">
+		    <annotation>
+			      <documentation>gml:AbstractTimePrimitive acts as the head of a substitution group for geometric and topological temporal primitives.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="AbstractTimePrimitiveType" abstract="true">
+		    <complexContent>
+			      <extension base="gml:AbstractTimeObjectType">
+				        <sequence>
+					          <element name="relatedTime" type="gml:RelatedTimeType" minOccurs="0"
+                        maxOccurs="unbounded"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="AbstractTimeObjectType" abstract="true">
+		    <complexContent>
+			      <extension base="gml:AbstractGMLType"/>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="RelatedTimeType">
+		    <annotation>
+			      <documentation>gml:RelatedTimeType provides a content model for indicating the relative position of an arbitrary member of the substitution group whose head is gml:AbstractTimePrimitive. It extends the generic gml:TimePrimitivePropertyType with an XML attribute relativePosition, whose value is selected from the set of 13 temporal relationships identified by Allen (1983)</documentation>
+		    </annotation>
+		    <complexContent>
+			      <extension base="gml:TimePrimitivePropertyType">
+				        <attribute name="relativePosition">
+					          <simpleType>
+						            <restriction base="string">
+							              <enumeration value="Before"/>
+							              <enumeration value="After"/>
+							              <enumeration value="Begins"/>
+							              <enumeration value="Ends"/>
+							              <enumeration value="During"/>
+							              <enumeration value="Equals"/>
+							              <enumeration value="Contains"/>
+							              <enumeration value="Overlaps"/>
+							              <enumeration value="Meets"/>
+							              <enumeration value="OverlappedBy"/>
+							              <enumeration value="MetBy"/>
+							              <enumeration value="BegunBy"/>
+							              <enumeration value="EndedBy"/>
+						            </restriction>
+					          </simpleType>
+				        </attribute>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="TimePrimitivePropertyType">
+		    <annotation>
+			      <documentation>gml:TimePrimitivePropertyType provides a standard content model for associations between an arbitrary member of the substitution group whose head is gml:AbstractTimePrimitive and another object.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:AbstractTimePrimitive"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+		    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="AbstractTimeObject" type="gml:AbstractTimeObjectType" abstract="true"
+            substitutionGroup="gml:AbstractGML">
+		    <annotation>
+			      <documentation>gml:AbstractTimeObject acts as the head of a substitution group for all temporal primitives and complexes.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="AbstractGML" type="gml:AbstractGMLType" abstract="true"
+            substitutionGroup="gml:AbstractObject">
+		    <annotation>
+			      <documentation>The abstract element gml:AbstractGML is "any GML object having identity".   It acts as the head of an XML Schema substitution group, which may include any element which is a GML feature, or other object, with identity.  This is used as a variable in content models in GML core and application schemas.  It is effectively an abstract superclass for all GML objects.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  <element name="AbstractCRS" type="gml:AbstractCRSType" abstract="true"
+            substitutionGroup="gml:Definition">
+		    <annotation>
+			      <documentation>gml:AbstractCRS specifies a coordinate reference system which is usually single but may be compound. This abstract complex type shall not be used, extended, or restricted, in a GML Application Schema, to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="Definition" type="gml:DefinitionType" substitutionGroup="gml:AbstractGML">
+		    <annotation>
+			      <documentation>The basic gml:Definition element specifies a definition, which can be included in or referenced by a dictionary. 
+The content model for a generic definition is a derivation from gml:AbstractGMLType.  
+The gml:description property element shall hold the definition if this can be captured in a simple text string, or the gml:descriptionReference property element may carry a link to a description elsewhere.
+The gml:identifier element shall provide one identifier identifying this definition. The identifier shall be unique within the dictionaries using this definition. 
+The gml:name elements shall provide zero or more terms and synonyms for which this is the definition.
+The gml:remarks element shall be used to hold additional textual information that is not conceptually part of the definition but is useful in understanding the definition.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="scope" type="string">
+		    <annotation>
+			      <documentation>The gml:scope property provides a description of the usage, or limitations of usage, for which this CRS-related object is valid. If unknown, enter "not known".</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="ellipsoidalCS" type="gml:EllipsoidalCSPropertyType">
+		    <annotation>
+			      <documentation>gml:ellipsoidalCS is an association role to the ellipsoidal coordinate system used by this CRS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="EllipsoidalCSPropertyType">
+		    <annotation>
+			      <documentation>gml:EllipsoidalCSPropertyType is a property type for association roles to an ellipsoidal coordinate system, either referencing or containing the definition of that coordinate system.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:EllipsoidalCS"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="EllipsoidalCS" type="gml:EllipsoidalCSType"
+            substitutionGroup="gml:AbstractCoordinateSystem">
+		    <annotation>
+			      <documentation>gml:EllipsoidalCS is a two- or three-dimensional coordinate system in which position is specified by geodetic latitude, geodetic longitude, and (in the three-dimensional case) ellipsoidal height. An EllipsoidalCS shall have two or three gml:axis property elements; the number of associations shall equal the dimension of the CS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="EllipsoidalCSType">
+		    <complexContent>
+			      <extension base="gml:AbstractCoordinateSystemType"/>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="AbstractCoordinateSystemType" abstract="true">
+		    <complexContent>
+			      <extension base="gml:IdentifiedObjectType">
+				        <sequence>
+					          <element ref="gml:axis" maxOccurs="unbounded"/>
+				        </sequence>
+				        <attributeGroup ref="gml:AggregationAttributeGroup"/>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="axis" type="gml:CoordinateSystemAxisPropertyType">
+		    <annotation>
+			      <documentation>The gml:axis property is an association role (ordered sequence) to the coordinate system axes included in this coordinate system. The coordinate values in a coordinate tuple shall be recorded in the order in which the coordinate system axes associations are recorded, whenever those coordinates use a coordinate reference system that uses this coordinate system. The gml:AggregationAttributeGroup should be used to specify that the axis objects are ordered.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="CoordinateSystemAxisPropertyType">
+		    <annotation>
+			      <documentation>gml:CoordinateSystemAxisPropertyType is a property type for association roles to a coordinate system axis, either referencing or containing the definition of that axis.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:CoordinateSystemAxis"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="CoordinateSystemAxis" type="gml:CoordinateSystemAxisType"
+            substitutionGroup="gml:Definition">
+		    <annotation>
+			      <documentation>gml:CoordinateSystemAxis is a definition of a coordinate system axis.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="CoordinateSystemAxisType">
+		    <complexContent>
+			      <extension base="gml:IdentifiedObjectType">
+				        <sequence>
+					          <element ref="gml:axisAbbrev"/>
+					          <element ref="gml:axisDirection"/>
+					          <element ref="gml:minimumValue" minOccurs="0"/>
+					          <element ref="gml:maximumValue" minOccurs="0"/>
+					          <element ref="gml:rangeMeaning" minOccurs="0"/>
+				        </sequence>
+				
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="axisAbbrev" type="gml:CodeType">
+		    <annotation>
+			      <documentation>gml:axisAbbrev is the abbreviation used for this coordinate system axis; this abbreviation is also used to identify the coordinates in the coordinate tuple. The codeSpace attribute may reference a source of more information on a set of standardized abbreviations, or on this abbreviation.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="axisDirection" type="gml:CodeWithAuthorityType">
+		    <annotation>
+			      <documentation>gml:axisDirection is the direction of this coordinate system axis (or in the case of Cartesian projected coordinates, the direction of this coordinate system axis at the origin).
+Within any set of coordinate system axes, only one of each pair of terms may be used. For earth-fixed CRSs, this direction is often approximate and intended to provide a human interpretable meaning to the axis. When a geodetic datum is used, the precise directions of the axes may therefore vary slightly from this approximate direction.
+The codeSpace attribute shall reference a source of information specifying the values and meanings of all the allowed string values for this property.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="minimumValue" type="double">
+		    <annotation>
+			      <documentation>The gml:minimumValue and gml:maximumValue properties allow the specification of minimum and maximum value normally allowed for this axis, in the unit of measure for the axis. For a continuous angular axis such as longitude, the values wrap-around at this value. Also, values beyond this minimum/maximum can be used for specified purposes, such as in a bounding box. A value of minus infinity shall be allowed for the gml:minimumValue element, a value of plus infiniy for the gml:maximumValue element. If these elements are omitted, the value is unspecified.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="maximumValue" type="double">
+		    <annotation>
+			      <documentation>The gml:minimumValue and gml:maximumValue properties allow the specification of minimum and maximum value normally allowed for this axis, in the unit of measure for the axis. For a continuous angular axis such as longitude, the values wrap-around at this value. Also, values beyond this minimum/maximum can be used for specified purposes, such as in a bounding box. A value of minus infinity shall be allowed for the gml:minimumValue element, a value of plus infiniy for the gml:maximumValue element. If these elements are omitted, the value is unspecified.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="rangeMeaning" type="gml:CodeWithAuthorityType">
+		    <annotation>
+			      <documentation>gml:rangeMeaning describes the meaning of axis value range specified by gml:minimumValue and gml:maximumValue. This element shall be omitted when both gml:minimumValue and gml:maximumValue are omitted. This element should be included when gml:minimumValue and/or gml:maximumValue are included. If this element is omitted when the gml:minimumValue and/or gml:maximumValue are included, the meaning is unspecified. The codeSpace attribute shall reference a source of information specifying the values and meanings of all the allowed string values for this property.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <simpleType name="UomIdentifier">
+		    <annotation>
+			      <documentation>The simple type gml:UomIdentifer defines the syntax and value space of the unit of measure identifier.</documentation>
+		    </annotation>
+		    <union memberTypes="gml:UomSymbol gml:UomURI"/>
+	  </simpleType>
+<!-- ================================================= -->
+	  <simpleType name="UomSymbol">
+		    <annotation>
+			      <documentation>This type specifies a character string of length at least one, and restricted such that it must not contain any of the following characters: ":" (colon), " " (space), (newline), (carriage return), (tab). This allows values corresponding to familiar abbreviations, such as "kg", "m/s", etc. 
+It is recommended that the symbol be an identifier for a unit of measure as specified in the "Unified Code of Units of Measure" (UCUM) (http://aurora.regenstrief.org/UCUM). This provides a set of symbols and a grammar for constructing identifiers for units of measure that are unique, and may be easily entered with a keyboard supporting the limited character set known as 7-bit ASCII. ISO 2955 formerly provided a specification with this scope, but was withdrawn in 2001. UCUM largely follows ISO 2955 with modifications to remove ambiguities and other problems.</documentation>
+		    </annotation>
+		    <restriction base="string">
+			      <pattern value="[^: \n\r\t]+"/>
+		    </restriction>
+	  </simpleType>
+<!-- ================================================= -->
+	  <simpleType name="UomURI">
+		    <annotation>
+			      <documentation>This type specifies a URI, restricted such that it must start with one of the following sequences: "#", "./", "../", or a string of characters followed by a ":". These patterns ensure that the most common URI forms are supported, including absolute and relative URIs and URIs that are simple fragment identifiers, but prohibits certain forms of relative URI that could be mistaken for unit of measure symbol . 
+NOTE	It is possible to re-write such a relative URI to conform to the restriction (e.g. "./m/s").
+In an instance document, on elements of type gml:MeasureType the mandatory uom attribute shall carry a value corresponding to either 
+-	a conventional unit of measure symbol,
+-	a link to a definition of a unit of measure that does not have a conventional symbol, or when it is desired to indicate a precise or variant definition.</documentation>
+		    </annotation>
+		    <restriction base="anyURI">
+			      <pattern value="([a-zA-Z][a-zA-Z0-9\-\+\.]*:|\.\./|\./|#).*"/>
+		    </restriction>
+	  </simpleType>
+<!-- ================================================= -->
+	  <attributeGroup name="AggregationAttributeGroup">
+		    <annotation>
+			      <documentation>A GML Object Collection is any GML Object with a property element in its content model whose content model is derived by extension from gml:AbstractMemberType.
+In addition, the complex type describing the content model of the GML Object Collection may also include a reference to the attribute group gml:AggregationAttributeGroup to provide additional information about the semantics of the object collection.  This information may be used by applications to group GML objects, and optionally to order and index them.
+The allowed values for the aggregationType attribute are defined by gml:AggregationType. See 8.4 of ISO/IEC 11404:1996 for the meaning of the values in the enumeration.</documentation>
+		    </annotation>
+		    <attribute name="aggregationType" type="gml:AggregationType"/>
+	  </attributeGroup>
+<!-- ================================================= -->
+	  <simpleType name="AggregationType" final="#all">
+		    <restriction base="string">
+			      <enumeration value="set"/>
+			      <enumeration value="bag"/>
+			      <enumeration value="sequence"/>
+			      <enumeration value="array"/>
+			      <enumeration value="record"/>
+			      <enumeration value="table"/>
+		    </restriction>
+	  </simpleType>
+<!-- ================================================= -->
+	  <element name="AbstractCoordinateSystem" type="gml:AbstractCoordinateSystemType"
+            abstract="true"
+            substitutionGroup="gml:Definition">
+		    <annotation>
+			      <documentation>gml:AbstractCoordinateSystem is a coordinate system (CS) is the non-repeating sequence of coordinate system axes that spans a given coordinate space. A CS is derived from a set of mathematical rules for specifying how coordinates in a given space are to be assigned to points. The coordinate values in a coordinate tuple shall be recorded in the order in which the coordinate system axes associations are recorded. This abstract complex type shall not be used, extended, or restricted, in an Application Schema, to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="cartesianCS" type="gml:CartesianCSPropertyType">
+		    <annotation>
+			      <documentation>gml:cartesianCS is an association role to the Cartesian coordinate system used by this CRS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="CartesianCSPropertyType">
+		    <annotation>
+			      <documentation>gml:CartesianCSPropertyType is a property type for association roles to a Cartesian coordinate system, either referencing or containing the definition of that coordinate system.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:CartesianCS"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="CartesianCS" type="gml:CartesianCSType"
+            substitutionGroup="gml:AbstractCoordinateSystem">
+		    <annotation>
+			      <documentation>gml:CartesianCS is a 1-, 2-, or 3-dimensional coordinate system. In the 1-dimensional case, it contains a single straight coordinate axis. In the 2- and 3-dimensional cases gives the position of points relative to orthogonal straight axes. In the multi-dimensional case, all axes shall have the same length unit of measure. A CartesianCS shall have one, two, or three gml:axis property elements.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="CartesianCSType">
+		    <complexContent>
+			      <extension base="gml:AbstractCoordinateSystemType"/>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="sphericalCS" type="gml:SphericalCSPropertyType">
+		    <annotation>
+			      <documentation>gml:sphericalCS is an association role to the spherical coordinate system used by this CRS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="SphericalCSPropertyType">
+		    <annotation>
+			      <documentation>gml:SphericalCSPropertyType is property type for association roles to a spherical coordinate system, either referencing or containing the definition of that coordinate system.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:SphericalCS"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="SphericalCS" type="gml:SphericalCSType"
+            substitutionGroup="gml:AbstractCoordinateSystem">
+		    <annotation>
+			      <documentation>gml:SphericalCS is a three-dimensional coordinate system with one distance measured from the origin and two angular coordinates. A SphericalCS shall have three gml:axis property elements.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="SphericalCSType">
+		    <complexContent>
+			      <extension base="gml:AbstractCoordinateSystemType"/>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="geodeticDatum" type="gml:GeodeticDatumPropertyType">
+		    <annotation>
+			      <documentation>gml:geodeticDatum is an association role to the geodetic datum used by this CRS.
+</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="GeodeticDatumPropertyType">
+		    <annotation>
+			      <documentation>gml:GeodeticDatumPropertyType is a property type for association roles to a geodetic datum, either referencing or containing the definition of that datum.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:GeodeticDatum"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="GeodeticDatum" type="gml:GeodeticDatumType"
+            substitutionGroup="gml:AbstractDatum">
+		    <annotation>
+			      <documentation>gml:GeodeticDatum is a geodetic datum defines the precise location and orientation in 3-dimensional space of a defined ellipsoid (or sphere), or of a Cartesian coordinate system centered in this ellipsoid (or sphere).</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="GeodeticDatumType">
+		    <complexContent>
+			      <extension base="gml:AbstractDatumType">
+				        <sequence>
+					          <element ref="gml:primeMeridian"/>
+					          <element ref="gml:ellipsoid"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="AbstractDatumType" abstract="true">
+		    <complexContent>
+			      <extension base="gml:IdentifiedObjectType">
+				        <sequence>
+					          <element ref="gml:domainOfValidity" minOccurs="0"/>
+					          <element ref="gml:scope" maxOccurs="unbounded"/>
+					          <element ref="gml:anchorDefinition" minOccurs="0"/>
+					          <element ref="gml:realizationEpoch" minOccurs="0"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="anchorDefinition" type="gml:CodeType">
+		    <annotation>
+			      <documentation>gml:anchorDefinition is a description, possibly including coordinates, of the definition used to anchor the datum to the Earth. Also known as the "origin", especially for engineering and image datums. The codeSpace attribute may be used to reference a source of more detailed on this point or surface, or on a set of such descriptions.
+-	For a geodetic datum, this point is also known as the fundamental point, which is traditionally the point where the relationship between geoid and ellipsoid is defined. In some cases, the "fundamental point" may consist of a number of points. In those cases, the parameters defining the geoid/ellipsoid relationship have been averaged for these points, and the averages adopted as the datum definition.
+-	For an engineering datum, the anchor definition may be a physical point, or it may be a point with defined coordinates in another CRS.may
+-	For an image datum, the anchor definition is usually either the centre of the image or the corner of the image.
+-	For a temporal datum, this attribute is not defined. Instead of the anchor definition, a temporal datum carries a separate time origin of type DateTime.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="realizationEpoch" type="date">
+		    <annotation>
+			      <documentation>gml:realizationEpoch is the time after which this datum definition is valid. See ISO 19111 Table 32 for details.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="primeMeridian" type="gml:PrimeMeridianPropertyType">
+		    <annotation>
+			      <documentation>gml:primeMeridian is an association role to the prime meridian used by this geodetic datum.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="PrimeMeridianPropertyType">
+		    <annotation>
+			      <documentation>gml:PrimeMeridianPropertyType is a property type for association roles to a prime meridian, either referencing or containing the definition of that meridian.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:PrimeMeridian"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="PrimeMeridian" type="gml:PrimeMeridianType"
+            substitutionGroup="gml:Definition">
+		    <annotation>
+			      <documentation>A gml:PrimeMeridian defines the origin from which longitude values are determined. The default value for the prime meridian gml:identifier value is "Greenwich".</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="PrimeMeridianType">
+		    <complexContent>
+			      <extension base="gml:IdentifiedObjectType">
+				        <sequence>
+					          <element ref="gml:greenwichLongitude"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="greenwichLongitude" type="gml:AngleType">
+		    <annotation>
+			      <documentation>gml:greenwichLongitude is the longitude of the prime meridian measured from the Greenwich meridian, positive eastward. If the value of the prime meridian "name" is "Greenwich" then the value of greenwichLongitude shall be 0 degrees.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="AngleType">
+		    <simpleContent>
+			      <extension base="gml:MeasureType"/>
+		    </simpleContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="MeasureType">
+		    <annotation>
+			      <documentation>gml:MeasureType supports recording an amount encoded as a value of XML Schema double, together with a units of measure indicated by an attribute uom, short for "units Of measure". The value of the uom attribute identifies a reference system for the amount, usually a ratio or interval scale.</documentation>
+		    </annotation>
+		    <simpleContent>
+			      <extension base="double">
+				
+			</extension>
+		    </simpleContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="ellipsoid" type="gml:EllipsoidPropertyType">
+		    <annotation>
+			      <documentation>gml:ellipsoid is an association role to the ellipsoid used by this geodetic datum.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="EllipsoidPropertyType">
+		    <annotation>
+			      <documentation>gml:EllipsoidPropertyType is a property type for association roles to an ellipsoid, either referencing or containing the definition of that ellipsoid.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:Ellipsoid"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="Ellipsoid" type="gml:EllipsoidType" substitutionGroup="gml:Definition">
+		    <annotation>
+			      <documentation>A gml:Ellipsoid is a geometric figure that may be used to describe the approximate shape of the earth. In mathematical terms, it is a surface formed by the rotation of an ellipse about its minor axis.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="EllipsoidType">
+		    <complexContent>
+			      <extension base="gml:IdentifiedObjectType">
+				        <sequence>
+					          <element ref="gml:semiMajorAxis"/>
+					          <element ref="gml:secondDefiningParameter"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="semiMajorAxis" type="gml:MeasureType">
+		    <annotation>
+			      <documentation>gml:semiMajorAxis specifies the length of the semi-major axis of the ellipsoid, with its units. Uses the MeasureType with the restriction that the unit of measure referenced by uom must be suitable for a length, such as metres or feet.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="secondDefiningParameter">
+		    <annotation>
+			      <documentation>gml:secondDefiningParameter is a property containing the definition of the second parameter that defines the shape of an ellipsoid. An ellipsoid requires two defining parameters: semi-major axis and inverse flattening or semi-major axis and semi-minor axis. When the reference body is a sphere rather than an ellipsoid, only a single defining parameter is required, namely the radius of the sphere; in that case, the semi-major axis "degenerates" into the radius of the sphere.
+The inverseFlattening element contains the inverse flattening value of the ellipsoid. This value is a scale factor (or ratio). It uses gml:LengthType with the restriction that the unit of measure referenced by the uom attribute must be suitable for a scale factor, such as percent, permil, or parts-per-million.
+The semiMinorAxis element contains the length of the semi-minor axis of the ellipsoid. When the isSphere element is included, the ellipsoid is degenerate and is actually a sphere. The sphere is completely defined by the semi-major axis, which is the radius of the sphere.</documentation>
+		    </annotation>
+		    <complexType>
+			      <sequence>
+				        <element ref="gml:SecondDefiningParameter"/>
+			      </sequence>
+		    </complexType>
+	  </element>
+<!-- ================================================= -->
+	  <element name="SecondDefiningParameter">
+		    <complexType>
+			      <choice>
+				        <element name="inverseFlattening" type="gml:MeasureType"/>
+				        <element name="semiMinorAxis" type="gml:LengthType"/>
+				        <element name="isSphere" type="boolean" default="true"/>
+			      </choice>
+		    </complexType>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="LengthType">
+		    <annotation>
+			      <documentation>This is a prototypical definition for a specific measure type defined as a vacuous extension (i.e. aliases) of gml:MeasureType. In this case, the content model supports the description of a length (or distance) quantity, with its units. The unit of measure referenced by uom shall be suitable for a length, such as metres or feet.</documentation>
+		    </annotation>
+		    <simpleContent>
+			      <extension base="gml:MeasureType"/>
+		    </simpleContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="AbstractDatum" type="gml:AbstractDatumType" abstract="true"
+            substitutionGroup="gml:Definition">
+		    <annotation>
+			      <documentation>A gml:AbstractDatum specifies the relationship of a coordinate system to the earth, thus creating a coordinate reference system. A datum uses a parameter or set of parameters that determine the location of the origin of the coordinate reference system. Each datum subtype may be associated with only specific types of coordinate systems. This abstract complex type shall not be used, extended, or restricted, in a GML Application Schema, to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="AbstractSingleCRS" type="gml:AbstractCRSType" abstract="true"
+            substitutionGroup="gml:AbstractCRS">
+		    <annotation>
+			      <documentation>gml:AbstractSingleCRS implements a coordinate reference system consisting of one coordinate system and one datum (as opposed to a Compound CRS).</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="ProjectedCRS" type="gml:ProjectedCRSType"
+            substitutionGroup="gml:AbstractGeneralDerivedCRS">
+		    <annotation>
+			      <documentation>gml:ProjectedCRS is a 2D coordinate reference system used to approximate the shape of the earth on a planar surface, but in such a way that the distortion that is inherent to the approximation is carefully controlled and known. Distortion correction is commonly applied to calculated bearings and distances to produce values that are a close match to actual field values.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="ProjectedCRSType">
+		    <complexContent>
+			      <extension base="gml:AbstractGeneralDerivedCRSType">
+				        <sequence>
+					          <choice>
+						            <element ref="gml:baseGeodeticCRS"/>
+						
+					          </choice>
+					          <element ref="gml:cartesianCS"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="AbstractGeneralDerivedCRSType" abstract="true">
+		    <complexContent>
+			      <extension base="gml:AbstractCRSType">
+				        <sequence>
+					          <element ref="gml:conversion"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="conversion" type="gml:GeneralConversionPropertyType">
+		    <annotation>
+			      <documentation>gml:conversion is an association role to the coordinate conversion used to define the derived CRS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="GeneralConversionPropertyType">
+		    <annotation>
+			      <documentation>gml:GeneralConversionPropertyType is a property type for association roles to a general conversion, either referencing or containing the definition of that conversion.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:AbstractGeneralConversion"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="AbstractGeneralConversion" type="gml:AbstractGeneralConversionType"
+            abstract="true"
+            substitutionGroup="gml:AbstractOperation">
+		    <annotation>
+			      <documentation>gm:AbstractGeneralConversion is an abstract operation on coordinates that does not include any change of datum. The best-known example of a coordinate conversion is a map projection. The parameters describing coordinate conversions are defined rather than empirically derived. Note that some conversions have no parameters. The operationVersion, sourceCRS, and targetCRS elements are omitted in a coordinate conversion.
+This abstract complex type is expected to be extended for well-known operation methods with many Conversion instances, in GML Application Schemas that define operation-method-specialized element names and contents. This conversion uses an operation method, usually with associated parameter values. However, operation methods and parameter values are directly associated with concrete subtypes, not with this abstract type. All concrete types derived from this type shall extend this type to include a "usesMethod" element that references the "OperationMethod" element. Similarly, all concrete types derived from this type shall extend this type to include zero or more elements each named "uses...Value" that each use the type of an element substitutable for the "AbstractGeneralParameterValue" element.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="AbstractGeneralConversionType" abstract="true">
+		    <complexContent>
+			      <restriction base="gml:AbstractCoordinateOperationType">
+				        <sequence>
+					
+					          <element ref="gml:description" minOccurs="0"/>
+					          <element ref="gml:descriptionReference" minOccurs="0"/>
+					          <element ref="gml:identifier"/>
+					          <element ref="gml:name" minOccurs="0" maxOccurs="unbounded"/>
+					          <element ref="gml:remarks" minOccurs="0"/>
+					          <element ref="gml:domainOfValidity" minOccurs="0"/>
+					          <element ref="gml:scope" maxOccurs="unbounded"/>
+					          <element ref="gml:coordinateOperationAccuracy" minOccurs="0" maxOccurs="unbounded"/>
+				        </sequence>
+				        <attribute ref="gml:id" use="required"/>
+			      </restriction>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <complexType name="AbstractCoordinateOperationType" abstract="true">
+		    <complexContent>
+			      <extension base="gml:IdentifiedObjectType">
+				        <sequence>
+					          <element ref="gml:domainOfValidity" minOccurs="0"/>
+					          <element ref="gml:scope" maxOccurs="unbounded"/>
+					          <element ref="gml:operationVersion" minOccurs="0"/>
+					          <element ref="gml:coordinateOperationAccuracy" minOccurs="0" maxOccurs="unbounded"/>
+					          <element ref="gml:sourceCRS" minOccurs="0"/>
+					          <element ref="gml:targetCRS" minOccurs="0"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="operationVersion" type="string">
+		    <annotation>
+			      <documentation>gml:operationVersion is the version of the coordinate transformation (i.e., instantiation due to the stochastic nature of the parameters). Mandatory when describing a transformation, and should not be supplied for a conversion.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="coordinateOperationAccuracy">
+		    <annotation>
+			      <documentation>gml:coordinateOperationAccuracy is an association role to a DQ_PositionalAccuracy object as encoded in ISO/TS 19139, either referencing or containing the definition of that positional accuracy. That object contains an estimate of the impact of this coordinate operation on point accuracy. That is, it gives position error estimates for the target coordinates of this coordinate operation, assuming no errors in the source coordinates.</documentation>
+		    </annotation>
+		    <complexType>
+			      <sequence minOccurs="0">
+				        <element ref="gmd:AbstractDQ_PositionalAccuracy"/>
+			      </sequence>
+			      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+		    </complexType>
+	  </element>
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  <element name="sourceCRS" type="gml:CRSPropertyType">
+		    <annotation>
+			      <documentation>gml:sourceCRS is an association role to the source CRS (coordinate reference system) of this coordinate operation.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="CRSPropertyType">
+		    <annotation>
+			      <documentation>gml:CRSPropertyType is a property type for association roles to a CRS abstract coordinate reference system, either referencing or containing the definition of that CRS.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:AbstractCRS"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="targetCRS" type="gml:CRSPropertyType">
+		    <annotation>
+			      <documentation>gml:targetCRS is an association role to the target CRS (coordinate reference system) of this coordinate operation.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="AbstractOperation" type="gml:AbstractCoordinateOperationType"
+            abstract="true"
+            substitutionGroup="gml:AbstractSingleOperation">
+		    <annotation>
+			      <appinfo>deprecated</appinfo>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="AbstractSingleOperation" type="gml:AbstractCoordinateOperationType"
+            abstract="true"
+            substitutionGroup="gml:AbstractCoordinateOperation">
+		    <annotation>
+			      <documentation>gml:AbstractSingleOperation is a single (not concatenated) coordinate operation.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="AbstractCoordinateOperation" type="gml:AbstractCoordinateOperationType"
+            abstract="true"
+            substitutionGroup="gml:Definition">
+		    <annotation>
+			      <documentation>gml:AbstractCoordinateOperation is a mathematical operation on coordinates that transforms or converts coordinates to another coordinate reference system. Many but not all coordinate operations (from CRS A to CRS B) also uniquely define the inverse operation (from CRS B to CRS A). In some cases, the operation method algorithm for the inverse operation is the same as for the forward algorithm, but the signs of some operation parameter values shall be reversed. In other cases, different algorithms are required for the forward and inverse operations, but the same operation parameter values are used. If (some) entirely different parameter values are needed, a different coordinate operation shall be defined.
+The optional coordinateOperationAccuracy property elements provide estimates of the impact of this coordinate operation on point position accuracy.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="baseGeodeticCRS" type="gml:GeodeticCRSPropertyType">
+		    <annotation>
+			      <documentation>gml:baseGeodeticCRS is an association role to the geodetic coordinate reference system used by this projected CRS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="GeodeticCRSPropertyType">
+		    <annotation>
+			      <documentation>gml:GeodeticCRSPropertyType is a property type for association roles to a geodetic coordinate reference system, either referencing or containing the definition of that reference system.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:GeodeticCRS"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="AbstractGeneralDerivedCRS" type="gml:AbstractGeneralDerivedCRSType"
+            abstract="true"
+            substitutionGroup="gml:AbstractSingleCRS">
+		    <annotation>
+			      <documentation>gml:AbstractGeneralDerivedCRS is a coordinate reference system that is defined by its coordinate conversion from another coordinate reference system. This abstract complex type shall not be used, extended, or restricted, in a GML Application Schema, to define a concrete subtype with a meaning equivalent to a concrete subtype specified in this document.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <element name="VerticalCRS" type="gml:VerticalCRSType"
+            substitutionGroup="gml:AbstractSingleCRS">
+		    <annotation>
+			      <documentation>gml:VerticalCRS is a 1D coordinate reference system used for recording heights or depths. Vertical CRSs make use of the direction of gravity to define the concept of height or depth, but the relationship with gravity may not be straightforward. By implication, ellipsoidal heights (h) cannot be captured in a vertical coordinate reference system. Ellipsoidal heights cannot exist independently, but only as an inseparable part of a 3D coordinate tuple defined in a geographic 3D coordinate reference system.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="VerticalCRSType">
+		    <complexContent>
+			      <extension base="gml:AbstractCRSType">
+				        <sequence>
+					          <element ref="gml:verticalCS"/>
+					          <element ref="gml:verticalDatum"/>
+				        </sequence>
+			      </extension>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="verticalCS" type="gml:VerticalCSPropertyType">
+		    <annotation>
+			      <documentation>gml:verticalCS is an association role to the vertical coordinate system used by this CRS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="VerticalCSPropertyType">
+		    <annotation>
+			      <documentation>gml:VerticalCSPropertyType is a property type for association roles to a vertical coordinate system, either referencing or containing the definition of that coordinate system.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:VerticalCS"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="VerticalCS" type="gml:VerticalCSType"
+            substitutionGroup="gml:AbstractCoordinateSystem">
+		    <annotation>
+			      <documentation>gml:VerticalCS is a one-dimensional coordinate system used to record the heights or depths of points. Such a coordinate system is usually dependent on the Earth's gravity field, perhaps loosely as when atmospheric pressure is the basis for the vertical coordinate system axis. A VerticalCS shall have one gml:axis property element.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="VerticalCSType">
+		    <complexContent>
+			      <extension base="gml:AbstractCoordinateSystemType"/>
+		    </complexContent>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="verticalDatum" type="gml:VerticalDatumPropertyType">
+		    <annotation>
+			      <documentation>gml:verticalDatum is an association role to the vertical datum used by this CRS.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="VerticalDatumPropertyType">
+		    <annotation>
+			      <documentation>gml:VerticalDatumPropertyType is property type for association roles to a vertical datum, either referencing or containing the definition of that datum.</documentation>
+		    </annotation>
+		    <sequence minOccurs="0">
+			      <element ref="gml:VerticalDatum"/>
+		    </sequence>
+		    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+	  </complexType>
+<!-- ================================================= -->
+	  <element name="VerticalDatum" type="gml:VerticalDatumType"
+            substitutionGroup="gml:AbstractDatum">
+		    <annotation>
+			      <documentation>gml:VerticalDatum is a textual description and/or a set of parameters identifying a particular reference level surface used as a zero-height surface, including its position with respect to the Earth for any of the height types recognized by this International Standard.</documentation>
+		    </annotation>
+	  </element>
+<!-- ================================================= -->
+	  <complexType name="VerticalDatumType">
+		    <complexContent>
+			      <extension base="gml:AbstractDatumType"/>
+		    </complexContent>
+	  </complexType>
+</schema>

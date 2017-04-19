@@ -1,0 +1,844 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Simple Product Volume Schema. 
+For more information, see the PRODML Technical Usage Guide. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ReportingEntityModel.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="DispositionKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the set of categories used to account for how crude oil and petroleum products are transferred, distributed, or removed from the supply stream (e.g.,stock change, crude oil losses, exports, sales, etc.).</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="flared">
+				<xs:annotation>
+					<xs:documentation>Burned in a flare.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sold">
+				<xs:annotation>
+					<xs:documentation>Sold and transported to a buyer by pipeline.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="used on-site">
+				<xs:annotation>
+					<xs:documentation>Used for entity operations.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fuel">
+				<xs:annotation>
+					<xs:documentation>Consumed by processing equipment.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="vented">
+				<xs:annotation>
+					<xs:documentation>Released into the atmosphere.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="disposal">
+				<xs:annotation>
+					<xs:documentation>Disposed of. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas lift">
+				<xs:annotation>
+					<xs:documentation>Injected into a producing well for artificial lift.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lost or stolen">
+				<xs:annotation>
+					<xs:documentation>Lost or stolen. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other">
+				<xs:annotation>
+					<xs:documentation>Physically removed from the entity location.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DispositionKindExt">
+		<xs:union memberTypes="prodml:DispositionKind eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="EstimationMethod">
+		<xs:annotation>
+			<xs:documentation>Specifies the methods for estimating deferred production. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="analytics model">
+				<xs:annotation>
+					<xs:documentation>analytics model</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="decline curve">
+				<xs:annotation>
+					<xs:documentation>decline curve</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="expert recommendation">
+				<xs:annotation>
+					<xs:documentation>recommendation text</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flowing material balance">
+				<xs:annotation>
+					<xs:documentation>flowing material balance</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="from last allocated volume">
+				<xs:annotation>
+					<xs:documentation>from last allocated volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="numerical reservoir simulation">
+				<xs:annotation>
+					<xs:documentation>numerical reservoir simulation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production profile">
+				<xs:annotation>
+					<xs:documentation>production profile</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rate transient analysis">
+				<xs:annotation>
+					<xs:documentation>rate transient analysis</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ratio analysis">
+				<xs:annotation>
+					<xs:documentation>ration analysis</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reservoir model">
+				<xs:annotation>
+					<xs:documentation>reservoir model</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well model">
+				<xs:annotation>
+					<xs:documentation>well model</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EstimationMethodExt">
+		<xs:union memberTypes="prodml:EstimationMethod eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="ProductFluidKindExt">
+		<xs:annotation>
+			<xs:documentation>Use to add user-defined enumerations for ProductFluidKind.</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:ProductFluidKind eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="QuantityMethod">
+		<xs:annotation>
+			<xs:documentation>Specifies the available methods for deriving a quantity or volume. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="allocated">
+				<xs:annotation>
+					<xs:documentation>allocated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="allowed">
+				<xs:annotation>
+					<xs:documentation>allowed</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="estimated">
+				<xs:annotation>
+					<xs:documentation>estimated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="target">
+				<xs:annotation>
+					<xs:documentation>target</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="measured">
+				<xs:annotation>
+					<xs:documentation>measured</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="budget">
+				<xs:annotation>
+					<xs:documentation>budget</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="constraint">
+				<xs:annotation>
+					<xs:documentation>constraint</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="forecast">
+				<xs:annotation>
+					<xs:documentation>forecast</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="QuantityMethodExt">
+		<xs:union memberTypes="prodml:QuantityMethod eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="ServiceFluidKindExt">
+		<xs:annotation>
+			<xs:documentation>Use to add user-defined extensions to service fluid kind.</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:ServiceFluidKind eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="TransferKind">
+		<xs:annotation>
+			<xs:documentation>Specifies if the transfer is input or output. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="input">
+				<xs:annotation>
+					<xs:documentation>Transfer into an asset. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="output">
+				<xs:annotation>
+					<xs:documentation>Transfer out of an asset. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AbstractDisposition" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The Abstract base type of disposition.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="QuantityMethod" type="prodml:QuantityMethodExt" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Quantity method.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductDispositionCode" type="eml:AuthorityQualifiedName" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A unique disposition code associated within a given naming system. This may be a code specified by a regulatory agency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark relating to this disposition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DispositionQuantity" type="prodml:AbstractProductQuantity" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The amount of product to which this disposition applies.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="AbstractProductQuantity" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The Abstract base type of product quantity</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Volume" type="eml:VolumeValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of product as a volume measure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mass" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of product as a mass measure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Moles" type="eml:AmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Moles. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="AbstractSimpleProductVolume" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The parent abstract class for any object that will be included in a regulatory report. Those objects must inherit from this abstract object.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="StandardConditions" type="eml:AbstractTemperaturePressure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The condition-dependant measurements (e.g.,  volumes) in this transfer are taken to be measured at standard conditions. 
+The element is mandatory in all the SPVR objects.  A choice is available – either to supply the temperature and pressure for all the volumes that follow, or to choose from a list of standards organizations’ reference conditions. Note that the enum list of standard conditions is extensible, allowing for local measurement condition standards to be used</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ApprovalDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date on which the report was approved.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GeographicContext" type="prodml:GeographicContext" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Geographic context for reporting entities. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidComponentCatalog" type="prodml:FluidComponentCatalog" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Operator" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="AssetProductionVolumes" type="prodml:AssetProductionVolumes" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="AssetProductionVolumes">
+		<xs:annotation>
+			<xs:documentation>Contains all volume data for all reporting entities (e.g., area, field, wells, etc.). Although named “volumes” in line with industry usage, different quantities may be reported, such as volume, mass, and energy content.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractSimpleProductVolume">
+				<xs:sequence>
+					<xs:element name="StartDate" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The start date of the reporting period. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EndDate" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The end date of report period. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NominalPeriod" type="prodml:ReportingDurationKindExt" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Nominal period.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReportingEntityVolumes" type="prodml:ReportingEntityVolumes" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DeferredProduction">
+		<xs:annotation>
+			<xs:documentation>The production volume deferred for the reporting period.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="EstimationMethod" type="prodml:EstimationMethodExt" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The method used to estimate deferred production. See enum EstimationMethod.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeferredProductQuantity" type="prodml:AbstractProductQuantity" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeferredProductionEvent">
+		<xs:annotation>
+			<xs:documentation>Information about the event or incident that caused production to be deferred. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The start date of the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The end date of the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Duration" type="eml:TimeMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The duration of the event. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DowntimeReasonCode" type="prodml:DowntimeReasonCode" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reason code for the downtime event. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DeferredProduction" type="prodml:DeferredProduction" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DowntimeReasonCode">
+		<xs:annotation>
+			<xs:documentation>Codes to categorize the reason for downtime. These codes are company specific so they are not part of PRODML. Company's can use this schema to specify their downtime codes. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name or explanation of the code specified in the code attribute. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parent" type="prodml:DowntimeReasonCode" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="authority" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The authority (usually a company) that defines the codes. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="code" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The code value. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Injection">
+		<xs:annotation>
+			<xs:documentation>Volume injected per reporting entity. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="QuantityMethod" type="prodml:QuantityMethodExt" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The method in which the quantity/volume was determined. See enum QuantityMethod.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark relating to any significant events.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjectionQuantity" type="prodml:AbstractProductQuantity" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductDisposition">
+		<xs:annotation>
+			<xs:documentation>Volumes that "left" the reporting entity by one of the disposition methods defined in Kind (e.g., flaring, sold, used on site, etc.) </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDisposition">
+				<xs:sequence>
+					<xs:element name="Kind" type="prodml:DispositionKindExt" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The method of disposition. See enum DispositionKind. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductFluid">
+		<xs:annotation>
+			<xs:documentation>Contains the physical properties of the product fluid. Every volume has a product fluid reference. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractProductQuantity">
+				<xs:sequence>
+					<xs:element name="ProductFluidKind" type="prodml:ProductFluidKindExt" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A simple enumeration to provide information about the product that the production quantity represents. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GrossEnergyContent" type="eml:EnergyMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of the reported amount of this product. This value takes into account the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is practical.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NetEnergyContent" type="eml:EnergyMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of the reported amount of this product. This value ignores the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is not possible and is ignored.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="productFluidReference" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>String UID that points to the productFluid in the fluidComponentSet. </xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Production">
+		<xs:annotation>
+			<xs:documentation>Product volume that is produce from a reporting entity.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="QuantityMethod" type="prodml:QuantityMethodExt" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The method in which the quantity/volume was determined. See enum QuantityMethod.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductionQuantity" type="prodml:AbstractProductQuantity" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductionWellPeriod">
+		<xs:annotation>
+			<xs:documentation>Period during which the well choke did not vary.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartTime" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The start time at a given choke setting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Duration" type="eml:TimeMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The duration at the given choke setting.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellStatus" type="eml:WellStatus" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The status of the well.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark relating to any significant events during this period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellFlowingCondition" type="prodml:WellFlowingCondition" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ProductRate" type="prodml:ProductRate" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ProductionWellTest" type="prodml:ProductionWellTest" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="ProductionWellTest">
+		<xs:annotation>
+			<xs:documentation>Production well test data is designed to be transferred upon an event happening (the well test being conducted)  or on demand, rather than periodically as for asset production volumes. For this reason, it is standalone object. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractSimpleProductVolume">
+				<xs:sequence>
+					<xs:element name="WellTestMethod" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Description or name of the method used to conduct the well test. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Validate" type="xs:boolean" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Validate.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestCondition" type="prodml:TestCondition" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="ReportingEntity" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductRate">
+		<xs:annotation>
+			<xs:documentation>The production rate of the product.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProductFluidReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>String UID pointer to the productFluid in the fluidComponentSet. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassFlowRate" type="eml:MassPerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Mass flow rate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VolumeFlowRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Volume flow rate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductFluidKind" type="prodml:ProductFluidKindExt" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Information about the product that the product quantity represents. See enum ProductFluidKind (in the ProdmlCommon package). </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ReportingEntityVolumes">
+		<xs:annotation>
+			<xs:documentation>Contains all the volumes for a single reporting entity. It contains a reference back to the reporting entity using its UUID for reference. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The starting date of the month.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Duration" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>the duration of volume produced at facility</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Injection" type="prodml:Injection" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Disposition" type="prodml:AbstractDisposition" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ClosingInventory" type="prodml:AbstractProductQuantity" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Production" type="prodml:Production" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="DeferredProductionEvent" type="prodml:DeferredProductionEvent" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ReportingEntityReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="OpeningInventory" type="prodml:AbstractProductQuantity" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ServiceFluid">
+		<xs:annotation>
+			<xs:documentation>Service fluid (e.g., biocides, lubricants, etc.) being reported on. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractProductQuantity">
+				<xs:sequence>
+					<xs:element name="ServiceFluidKind" type="prodml:ServiceFluidKindExt" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Indicates the kind of service fluid. See enum ServiceFluidKind (in ProdmlCommon). </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="serviceFluidReference" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>String ID that points to a service fluid in the FluidComponentSet. </xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="TerminalLifting" type="prodml:TerminalLifting" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="TerminalLifting">
+		<xs:annotation>
+			<xs:documentation>Summarizes product import to or export from an asset by ship. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractSimpleProductVolume">
+				<xs:sequence>
+					<xs:element name="CertificateNumber" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The certificate number for the document that defines the lifting onto the tanker.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date and time when the lifting began.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EndTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date and time when the lifting ended.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductQuantity" type="prodml:ProductFluid" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The amount of product lifted.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="LoadingTerminalReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="TankerReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="DestinationTerminalReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TerminalLiftingDisposition">
+		<xs:annotation>
+			<xs:documentation>Use to report  terminal lifting as dispositions within the periodic asset production volumes reporting. 
+The components of petroleum disposition are stock change, crude oil losses, refinery inputs, exports, and products supplied for domestic consumption (https://www.eia.gov/dnav/pet/TblDefs/pet_sum_crdsnd_tbldef2.asp)</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDisposition">
+				<xs:sequence>
+					<xs:element name="TerminalLifting" type="prodml:TerminalLifting" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TestCondition">
+		<xs:annotation>
+			<xs:documentation>Test conditions for a production well test. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartTime" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time when the test  began.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestDuration" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The duration of the test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductRate" type="prodml:ProductRate" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ServiceFluid" type="prodml:ServiceFluid" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Parameters" type="prodml:WellFlowingCondition" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Transfer" type="prodml:Transfer" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="Transfer">
+		<xs:annotation>
+			<xs:documentation>Information about products transferred across asset group boundaries or leaving the jurisdiction of an operator. This may include pipeline exports, output to refineries, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractSimpleProductVolume">
+				<xs:sequence>
+					<xs:element name="TransferKind" type="prodml:TransferKind" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Specifies the kind of transfer. See enum TransferKind.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date and time when the transfer began.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EndTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Date and time when the transfer ended. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductTransferQuantity" type="prodml:ProductFluid" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The amount of product transferred.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DestinationFacilityReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="SourceFacilityReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TransferDisposition">
+		<xs:annotation>
+			<xs:documentation>Use to report  a transfer as dispositions within the periodic asset production volumes reporting.  
+The components of petroleum disposition are stock change, crude oil losses, refinery inputs, exports, and products supplied for domestic consumption (https://www.eia.gov/dnav/pet/TblDefs/pet_sum_crdsnd_tbldef2.asp)</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDisposition">
+				<xs:sequence>
+					<xs:element name="Transfer" type="prodml:Transfer" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WellFlowingCondition">
+		<xs:annotation>
+			<xs:documentation>Describes key conditions of the flowing well during a production well test. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ChokeOrificeSize" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The choke diameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlowingPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The flowing pressure. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomHoleGaugeDepthMD" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The measure depth of the bottomhole gauge. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomHoleFlowingPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure at the bottom of the hole.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomHoleStaticPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The static pressure of the bottom of the hole.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomHoleFlowingTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature at the bottom of the hole when the well is flowing.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomHoleShutInPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The shut-in pressure of at the bottom of the hole. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CasingHeadPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure at the casing head.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TubingHeadFlowingPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure at the tubing head.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TubingHeadFlowingTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature at the tubing head when the well is flowing. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TubingHeadShutInPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure at the tubing head when the well is shut in.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="WellProductionParameters" type="prodml:WellProductionParameters" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="WellProductionParameters">
+		<xs:annotation>
+			<xs:documentation>Captures well production parameters associated with a well reporting entity. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractSimpleProductVolume">
+				<xs:sequence>
+					<xs:element name="StartDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The starting date of the reporting period. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EndDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The ending date of the reporting period. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NominalPeriod" type="prodml:ReportingDurationKindExt" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Name or identifier for the reporting period to which the well production parameters apply. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductionPeriod" type="prodml:ProductionWellPeriod" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Details of production at a specific choke setting.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReportingEntityReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

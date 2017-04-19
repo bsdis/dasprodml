@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Schema for the distributed temperature survey (DTS) installed system. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="DtsInstrumentBox.xsd"/>
+	<xs:include schemaLocation="FiberOpticalPath.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:complexType name="DtsCalibration">
+		<xs:annotation>
+			<xs:documentation>Calibration parameters vary from vendor to vendor, depending on the calibration method being used. This is a general type that allows a calibration date, business associate, and many name/value pairs.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DTimCalibration" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date of the calibration.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibratedBy" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The business associate that performed the calibration.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationProtocol" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This may be a standard protocol or a software application.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parameter" type="prodml:CalibrationParameter" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Attribute name is the name of the parameter. Optional attribute uom is the unit of measure of the parameter. The value of the element is the value of the parameter. Note that a string value may appear as a parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Any remarks that may be useful regarding the calibration information.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExtensionNameValue" type="eml:ExtensionNameValue" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A  unique identifier (UID) of an instance of DtsCalibration.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="DtsInstalledSystem" type="prodml:DtsInstalledSystem" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="DtsInstalledSystem">
+		<xs:annotation>
+			<xs:documentation>The group of elements corresponding to a DTS installed system.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="DateMin" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum date index contained within the object. The minimum and maximum indexes are server query parameters and are populated with valid values in a "get" result. That is, all measurements for a well in the specified period defined by the min/max. 
+For a description of the behavior related to this parameter in WITSML v1.4.1, see the WITSML API Specification appendix on "Special Handling" of growing objects. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DateMax" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum date index contained within the object. The minimum and maximum indexes are server query parameters and are populated with valid values in a "get" result. 
+For a description of the behavior related to this parameter in WITSML v1.4.1, see the WITSML API Specification appendix on "Special Handling" of growing objects. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OpticalPathLength" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The length of the fiber installed in the wellbore.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OpticalBudget" type="xs:double" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Total light budget available for the installation. This is generally measured in decibels, and indicates the total power loss for two-way travel of the light in the installed fiber.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OpticalPathReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the optical path data object that is used in this installed system.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InstrumentBoxReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the instrument box data object used in this installed system. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Comment about this installed system.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityIdentifier" type="prodml:FacilityIdentifier" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="DtsCalibration" type="prodml:DtsCalibration" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Calibration parameters vary from vendor to vendor, depending 
+					on the calibration method being used. This is a general type that allows a calibration 
+					date, business associate, and many  name/value pairs.
+					</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

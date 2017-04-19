@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:gco="http://www.isotc211.org/2005/gco"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:gmd="http://www.isotc211.org/2005/gmd"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gmx="http://www.isotc211.org/2005/gmx"
+        xmlns:gsr="http://www.isotc211.org/2005/gsr"
+        xmlns:gss="http://www.isotc211.org/2005/gss"
+        xmlns:gts="http://www.isotc211.org/2005/gts"
+        targetNamespace="http://www.w3.org/1999/xlink"
+        elementFormDefault="qualified"
+        version="3.2.1">
+   <annotation>
+      <documentation>GML Subset schema for gml:GeodeticCRS,gml:ProjectedCRS,gml:VerticalCRS, written by gmlSubset.xslt.</documentation>
+      <documentation>In addition to deprecated items, the following have been eliminated: gml:pointProperty,.</documentation>
+      <documentation>The following deprecated items may have been retained because they are actually used by the normative GML schema: gml:StringOrRefType,gml:AbstractOperation,.</documentation>
+   </annotation>
+<!-- ================================================= -->
+	  <attributeGroup name="simpleLink">
+		    <attribute name="type" type="string" fixed="simple" form="qualified"/>
+		    <attribute ref="xlink:href" use="optional"/>
+		    <attribute ref="xlink:role" use="optional"/>
+		    <attribute ref="xlink:arcrole" use="optional"/>
+		    <attribute ref="xlink:title" use="optional"/>
+		    <attribute ref="xlink:show" use="optional"/>
+		    <attribute ref="xlink:actuate" use="optional"/>
+	  </attributeGroup>
+<!-- ================================================= -->
+	  <attribute name="href" type="anyURI"/>
+<!-- ================================================= -->
+	  <attribute name="role" type="anyURI"/>
+<!-- ================================================= -->
+	  <attribute name="arcrole" type="anyURI"/>
+<!-- ================================================= -->
+	  <attribute name="title" type="string"/>
+<!-- ================================================= -->
+	  <attribute name="show">
+		    <annotation>
+			      <documentation>
+        The 'show' attribute is used to communicate the desired presentation 
+        of the ending resource on traversal from the starting resource; it's 
+        value should be treated as follows: 
+        new - load ending resource in a new window, frame, pane, or other 
+              presentation context
+        replace - load the resource in the same window, frame, pane, or 
+                  other presentation context
+        embed - load ending resource in place of the presentation of the 
+                starting resource
+        other - behavior is unconstrained; examine other markup in the 
+                link for hints 
+        none - behavior is unconstrained 
+      </documentation>
+		    </annotation>
+		    <simpleType>
+			      <restriction base="string">
+				        <enumeration value="new"/>
+				        <enumeration value="replace"/>
+				        <enumeration value="embed"/>
+				        <enumeration value="other"/>
+				        <enumeration value="none"/>
+			      </restriction>
+		    </simpleType>
+	  </attribute>
+<!-- ================================================= -->
+	  <attribute name="actuate">
+		    <annotation>
+			      <documentation>
+        The 'actuate' attribute is used to communicate the desired timing 
+        of traversal from the starting resource to the ending resource; 
+        it's value should be treated as follows:
+        onLoad - traverse to the ending resource immediately on loading 
+                 the starting resource 
+        onRequest - traverse from the starting resource to the ending 
+                    resource only on a post-loading event triggered for 
+                    this purpose 
+        other - behavior is unconstrained; examine other markup in link 
+                for hints 
+        none - behavior is unconstrained
+      </documentation>
+		    </annotation>
+		    <simpleType>
+			      <restriction base="string">
+				        <enumeration value="onLoad"/>
+				        <enumeration value="onRequest"/>
+				        <enumeration value="other"/>
+				        <enumeration value="none"/>
+			      </restriction>
+		    </simpleType>
+	  </attribute>
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  
+<!-- ================================================= -->
+	  </schema>

@@ -1,0 +1,1082 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>The Production Operation data object is a further companion to the product volume object. It enables the exchange of production operation data along the lines of a "morning report” for production operations. The volumes would be expected to be transferred using product volume.
+Production operation has an offshore operation orientation, reflecting its origins in the Norwegian Continental Shelf reporting requirements.
+For more information, see the PRODML Technical Usage Guide. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="BeaufortScaleIntegerCode">
+		<xs:annotation>
+			<xs:documentation>An estimate wind strength based on the Beaufort Wind Scale. Values range from 0 (calm) to 12 (hurricane).</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:short">
+			<xs:maxExclusive value="12"/>
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CrewType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of production operations personnel grouping. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="catering crew">
+				<xs:annotation>
+					<xs:documentation>A count that is the number of persons from the catering contractor spending the night at the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="contractor crew">
+				<xs:annotation>
+					<xs:documentation>A count that is the number of persons from other than operator spending the night at the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="day visitors">
+				<xs:annotation>
+					<xs:documentation>A count that is the number of persons visiting the installation but not  spending the night at the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="drilling contract crew">
+				<xs:annotation>
+					<xs:documentation>A count that is the number of persons from the drilling contractor spending the night at the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other crew">
+				<xs:annotation>
+					<xs:documentation>A count that is the number of persons from an unknown source, normally not working on the installation but spending the night there.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="own crew">
+				<xs:annotation>
+					<xs:documentation>A count that is the number of persons from the operator, normally working on the installation and spending the night there.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="own other crew">
+				<xs:annotation>
+					<xs:documentation>A count that is the number of persons from the operator, normally not working on the installation but spending the night there.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="personnel on board">
+				<xs:annotation>
+					<xs:documentation>A count of the total personnel on board.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OperationKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of production operations for which general comments can be defined. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="air traffic">
+				<xs:annotation>
+					<xs:documentation>air traffic</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="construction">
+				<xs:annotation>
+					<xs:documentation>construction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="deviations">
+				<xs:annotation>
+					<xs:documentation>deviations</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="maintenance">
+				<xs:annotation>
+					<xs:documentation>maintenance</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other">
+				<xs:annotation>
+					<xs:documentation>other</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="power station failure">
+				<xs:annotation>
+					<xs:documentation>power station failure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production">
+				<xs:annotation>
+					<xs:documentation>production</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well">
+				<xs:annotation>
+					<xs:documentation>well</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReasonLost">
+		<xs:annotation>
+			<xs:documentation>Specifies the reasons for lost production. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="3rd party processing">
+				<xs:annotation>
+					<xs:documentation>3rd party processing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="daily total loss of prod">
+				<xs:annotation>
+					<xs:documentation>daily total loss of prod</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="extended maint turnaround">
+				<xs:annotation>
+					<xs:documentation>extended maint turnaround</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="extended maint turnaround export">
+				<xs:annotation>
+					<xs:documentation>extended maint turnaround export</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hse">
+				<xs:annotation>
+					<xs:documentation>hse</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="marked gas">
+				<xs:annotation>
+					<xs:documentation>marked gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="marked oil">
+				<xs:annotation>
+					<xs:documentation>marked oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="modification project">
+				<xs:annotation>
+					<xs:documentation>modification project</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="operation mistakes">
+				<xs:annotation>
+					<xs:documentation>operation mistakes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other">
+				<xs:annotation>
+					<xs:documentation>other</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="planned maint turnaround">
+				<xs:annotation>
+					<xs:documentation>planned maint turnaround</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="preventive maint topside">
+				<xs:annotation>
+					<xs:documentation>preventive maint topside</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="process and operation problem">
+				<xs:annotation>
+					<xs:documentation>process and operation problem</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production">
+				<xs:annotation>
+					<xs:documentation>production</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="regulatory reference">
+				<xs:annotation>
+					<xs:documentation>regulatory reference</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reservoir">
+				<xs:annotation>
+					<xs:documentation>reservoir</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="strike/lock-out">
+				<xs:annotation>
+					<xs:documentation>strike/lock-out</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="testing and logging">
+				<xs:annotation>
+					<xs:documentation>testing and logging</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="topside equipment failure-maint">
+				<xs:annotation>
+					<xs:documentation>topside equipment failure-maint</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unavailable tanker storage">
+				<xs:annotation>
+					<xs:documentation>unavailable tanker storage</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="weather problem">
+				<xs:annotation>
+					<xs:documentation>weather problem</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well equipment failure-maint">
+				<xs:annotation>
+					<xs:documentation>well equipment failure-maint</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well planned operations">
+				<xs:annotation>
+					<xs:documentation>well planned operations</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well preventive maint">
+				<xs:annotation>
+					<xs:documentation>well preventive maint</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well problems">
+				<xs:annotation>
+					<xs:documentation>well problems</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="CrewCount">
+		<xs:annotation>
+			<xs:documentation>A one-based count of personnel on a type of crew.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:NonNegativeLong">
+				<xs:attribute name="type" use="optional" type="prodml:CrewType">
+					<xs:annotation>
+						<xs:documentation>The type of crew for which a count is being defined.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="uid" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="LostVolumeAndReason">
+		<xs:annotation>
+			<xs:documentation>A volume corrected to standard temperature and pressure.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:VolumeMeasure">
+				<xs:sequence/>
+				<xs:attribute name="reasonLost" use="required" type="prodml:ReasonLost">
+					<xs:annotation>
+						<xs:documentation>Defines why the volume was lost.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ProductionOperation" type="prodml:ProductionOperation" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="ProductionOperation">
+		<xs:annotation>
+			<xs:documentation>The non-contextual content of a Production Operation object.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of the facility which is represented by this report. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The name and type of a facility whose context is relevant to the represented installation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PeriodKind" type="prodml:ReportingDurationKind" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of period that is being reported. This value must be consistent with the reporting start and end values.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="IssueDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date that the report was issued.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Title" type="prodml:NameStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The title of the report, if different from the name of the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ApprovalDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date that the report was approved.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InstallationReport" type="prodml:ProductionOperationInstallationReport" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A report for each installation</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="IssuedBy" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Approver" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Operator" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="GeographicContext" type="prodml:GeographicContext" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The geographic context of the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DateTime" type="prodml:AbstractDateTimeClass" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationActivity">
+		<xs:annotation>
+			<xs:documentation>Production Activity Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="WaterCleaningQuality" type="prodml:ProductionOperationWaterCleaningQuality" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Information about the contaminants in water, and the general water quality.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MarineOperation" type="prodml:ProductionOperationMarineOperation" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Information about a marine operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CargoShipOperation" type="prodml:ProductionOperationCargoShipOperation" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Information about a cargo operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Shutdown" type="prodml:ProductionOperationShutdown" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Infomation about a shutdown event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperationalComment" type="prodml:ProductionOperationOperationalComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A comment about a kind of operation.
+					The time of the operation can be specified.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Alarm" type="prodml:ProductionOperationAlarm" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Infomation about an alarm.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LostProduction" type="prodml:ProductionOperationLostProduction" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Infomation about a lost production.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LostInjection" type="prodml:ProductionOperationLostProduction" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Infomation about a lost injection.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationAlarm">
+		<xs:annotation>
+			<xs:documentation>A structure to record information about a single alarm.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DTim" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time when the alarms sounded.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Area" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The area where the alarm sounded.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of alarm that sounded.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reason" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reason the alarm sounded.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A general comment about the alarm.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationCargoShipOperation">
+		<xs:annotation>
+			<xs:documentation>Information about an operation involving a cargo ship. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VesselName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the cargo vessel.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time that the vessel arrived.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time that the vessel left.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Captain" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the captain of the vessel.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CargoNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cargo identifier.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CargoBatchNumber" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cargo batch number. Used if the vessel needs to temporarily disconnect for some reason (e.g., weather).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Cargo" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Description of cargo on the vessel.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilGrossStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Gross oil loaded to the ship during the report period. Gross oil includes BS and W. This volume has been corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilGrossTotalStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Gross oil loaded to the ship in total during the operation. Gross oil includes BS and W. This volume has been corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilNetStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Net oil loaded to the ship during the report period. Net oil excludes BS and W, fuel, spills, and leaks. This volume has been corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilNetMonthToDateStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Net oil loaded to the ship from the beginning of the month to the end of the reporting period. Net oil excludes BS and W, fuel, spills, and leaks. This volume has been corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DensityStdTempPres" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Density of the liquid loaded to the tanker. This density has been corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Density" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Density of the liquid loaded to the tanker.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rvp" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reid vapor pressure of the liquid.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Bsw" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Basic sediment and water is measured from a liquid sample the production stream. It includes free water, sediment and emulsion and is measured as a volume percentage of the liquid.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Salt" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Salt content. The product formed by neutralization of an acid and a base. The term is more specifically applied to sodium chloride.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A commnet about the operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationHSE">
+		<xs:annotation>
+			<xs:documentation>Operational Health, Safety and Environment Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IncidentCount" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of incidents or accidents and injuries that were reported.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SinceLostTime" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of time since the most recent lost-time accident.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SincePreventionExercise" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of time since the most recent accident-prevention exercise.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SinceDefinedSituation" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of time since the most recent defined hazard and accident situation (Norwegian DFU).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MedicalTreatmentCount" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of medical treatments that have occurred.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlarmCount" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of system alarms that have occurred.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SafetyIntroCount" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of personnel safety introductions that have occurred.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SafetyDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A textual description of safety considerations.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Weather" type="prodml:ProductionOperationWeather" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Information about the weather at a point in time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Safety" type="prodml:ProductionOperationSafety" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Safety information at a specific installatino.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationInstallationReport">
+		<xs:annotation>
+			<xs:documentation>Installation Report Schema. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The installation represented by this report.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BedsAvailable" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Total count of beds available on the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Work" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total cumulative amount of time worked during the reporting period. Commonly specified in units of hours. Note that a day unit translates to 24 hours worked.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WorkMonthToDate" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total cumulative amount of time worked from the beginning of the month to the end of reporting period. Commonly specified in units of hours. Note that a day unit translates to 24 hours worked.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WorkYearToDate" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total cumulative amount of time worked from the beginning of the year to the end of reporting period. Commonly specified in units of hours. Note that a day unit translates to 24 hours worked.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CrewCount" type="prodml:CrewCount" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ProductionActivity" type="prodml:ProductionOperationActivity" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Production activities.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperationalHSE" type="prodml:ProductionOperationHSE" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Health, Safety and Environmenal information.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationLostProduction">
+		<xs:annotation>
+			<xs:documentation>Lost Production Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ThirdPartyProcessing" type="prodml:ProductionOperationThirdPartyProcessing" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VolumeAndReason" type="prodml:LostVolumeAndReason" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationMarineOperation">
+		<xs:annotation>
+			<xs:documentation>Information about a marine operation.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The beginning date and time that the comment represents.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ending date and time that the comment represents.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GeneralComment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A general comment on marine activity in the area.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SupplyShip" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the supply vessel for the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StandbyVessel" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the standby vessel for the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SupplyShipComment" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Comment regarding the supply ship.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StandbyVesselComment" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Comment regarding the standby vessel.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Activity" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A comment on a special event in the marine area.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BasketMovement" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Report of any basket movement to and from the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationOperationalComment">
+		<xs:annotation>
+			<xs:documentation>Operational Comments Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Type" type="prodml:OperationKind" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The beginning date and time that the comment represents.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ending date and time that the comment represents.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A comment about the operation and/or the activities within the operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationSafety">
+		<xs:annotation>
+			<xs:documentation>Safety Information Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MeantimeIncident" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mean time between safety incidents.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SafetyCount" type="prodml:SafetyCount" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Comment" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Safety related comment. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationShutdown">
+		<xs:annotation>
+			<xs:documentation>Information about a shutdown event.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the installation which was shut down. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A general description of the shutdown with reason and other relevant information.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The time the shutdown started.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The time the shutdown ended.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VolumetricDownTime" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Downtime when the installation is unable to produce 100% of its capability.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LossOilStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Estimated loss of oil deliveries because of the shutdown. This volume has been corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LossGasStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Estimated loss of gas deliveries because of the shutdown. This volume has been corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Activity" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A description of main activities from time to time during the shutdown period. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationThirdPartyProcessing">
+		<xs:annotation>
+			<xs:documentation>Production losses due to third-party processing.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the installation which performed the processing. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The estimated amount of oil lost. This volume has been corrected to standard conditions of temperature and pressure</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The estimated amount of gas lost. This volume has been corrected to standard conditions of temperature and pressure</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationWaterCleaningQuality">
+		<xs:annotation>
+			<xs:documentation>Information about the contaminants in water, and the general water quality. The values are measured from a sample, which is described below. Values measured from other samples should be given in different instances of the type.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SamplePoint" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An identifier of the point from which the sample was taken. This is an uncontrolled string value, which should be as descriptive as possible.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilInWaterProduced" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Total measured oil in the water after the water cleaning process, but before it is discharged from the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AmountOfOil" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Total measured oil in the water after the water cleaning process, but before it is discharged from the installation</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Ammonium" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of ammonium found in the water sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalOrganicCarbon" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of total organic carbon found in the water. The water is under high temperature and the carbon left is measured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Phenol" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of phenol found in the water sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Glycol" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of glycol found in the water sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhValue" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pH value of the treated water. The pH value is best given as a value, with no unit of measure, since there are no variations from the pH.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of the water before it is discharged.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResidualChloride" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Total measured residual chlorides in the water after the water cleaning process, but before it is discharged from the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Oxygen" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Total measured oxygen in the water after the water cleaning process, but before it is discharged from the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Turbidity" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A measure of the cloudiness of water caused by suspended particles.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CoulterCounter" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A measure of the number of particles in water as measured by a coulter counter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Any comment that may be useful in describing the water quality. 
+					There can be multiple comments.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductionOperationWeather">
+		<xs:annotation>
+			<xs:documentation>Operations Weather Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DTim" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date and time the information is related to.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Agency" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of company that supplied the data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BarometricPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Atmospheric pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BeaufortScaleNumber" type="prodml:BeaufortScaleIntegerCode" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The Beaufort wind scale is a system used to estimate and report wind speeds when no measuring apparatus is available. It was invented in the early 19th Century by Admiral Sir Francis Beaufort of the British Navy as a way to interpret winds from conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TempSurface" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Average temperature above ground for the period. Temperature of the atmosphere.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TempSurfaceMn" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Minimum temperature above ground. Temperature of the atmosphere.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TempSurfaceMx" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Maximum temperature above ground.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TempWindChill" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A measure of the combined chilling effect of wind and low temperature on living things, also named chill factor, e.g., according to US Weather Service table, an air temperature of 30 degF with a 10 mph wind corresponds to a wind chill of 22 degF.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Tempsea" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Sea temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Visibility" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Horizontal visibility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AziWave" type="eml:PlaneAngleMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The direction from which the waves are coming, measured from true north.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HtWave" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Average height of the waves.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SignificantWave" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An average of the higher 1/3 of the wave heights passing during a sample period (typically 20 to 30 minutes).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaxWave" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The maximum wave height.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PeriodWave" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The elapsed time between the passing of two wave tops.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AziWind" type="eml:PlaneAngleMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The direction from which the wind is blowing, measured from true north.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VelWind" type="eml:AngularVelocityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Wind speed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TypePrecip" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Type of precipitation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AmtPrecip" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Amount of precipitation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CoverCloud" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Description of cloud cover.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CeilingCloud" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Height of cloud cover.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurrentSea" type="eml:AngularVelocityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Current speed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AziCurrentSea" type="eml:PlaneAngleMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Azimuth of current.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comments" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Comments and remarks.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SafetyCount">
+		<xs:annotation>
+			<xs:documentation>A zero-based count of a type of safety item.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:PositiveLong">
+				<xs:attribute name="type" use="optional" type="prodml:SafetyType">
+					<xs:annotation>
+						<xs:documentation>The type of safety issue for which a count is being defined.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="period" use="optional" type="prodml:ReportingDurationKind">
+					<xs:annotation>
+						<xs:documentation>The type of period being reported by this count.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Schema for the measurements taken during a DTS. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="DtsInstalledSystem.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="InterpretationProcessingType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of mnemonics.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="averaged">
+				<xs:annotation>
+					<xs:documentation>averaged</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="denormalized">
+				<xs:annotation>
+					<xs:documentation>denormalized</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="depth-corrected">
+				<xs:annotation>
+					<xs:documentation>depth-corrected</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="manufacturer-generated">
+				<xs:annotation>
+					<xs:documentation>manufacturer-generated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="temperature-shifted">
+				<xs:annotation>
+					<xs:documentation>temperature-shifted</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="user-custom">
+				<xs:annotation>
+					<xs:documentation>user-custom</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OpticalPathConfiguration">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of configuration of an optical path.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="accurate single-ended/dual laser">
+				<xs:annotation>
+					<xs:documentation>accurate single-ended/dual laser</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="differential loss calibrated">
+				<xs:annotation>
+					<xs:documentation>differential loss calibrated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="double-ended">
+				<xs:annotation>
+					<xs:documentation>double-ended</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="single-ended">
+				<xs:annotation>
+					<xs:documentation>single-ended</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TraceProcessingType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of facility that can be mapped to for a given length of fiber measurement.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="as acquired">
+				<xs:annotation>
+					<xs:documentation>as acquired</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="recalibrated">
+				<xs:annotation>
+					<xs:documentation>recalibrated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="DtsInterpretationData">
+		<xs:annotation>
+			<xs:documentation>Header data for a particular collection of interpretation data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="FacilityMapping" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to the facilityMapping to which this InterpretationData relates. The facility mapping relates a length of fiber to a corresponding length of a facility (probably a wellbore or pipeline). The facilityMapping also contains the datum from which the InterpretedData is indexed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SamplingInterval" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The difference in fiber distance between consecutive temperature sample points in a single temperature trace.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BadFlag" type="xs:boolean" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indicates whether or not the interpretation log contains bad data. This flag allows you to keep bad data  (so at least you know that something was generated/acquired) and filter it out when doing relevant data operations.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CreationStartTime" type="xs:date" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Time when the interpretation log data was generated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterpretationProcessingType" type="prodml:InterpretationProcessingType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indicates what type of post-processing technique was used to generate this interpretation log. Enum list. The meaning is that this process was applied to the InterpretedData referenced by the parentInterpretationID.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IndexMnemonic" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mnemonic of the channel in the InterpretedData that represents the index to the data (expected to be a length along the facility (e.g., wellbore, pipeline) being measured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PointCount" type="xs:nonNegativeInteger" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of rows in this interpreted data object. Each row or "point" represents a measurement along the fiber.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChannelSetReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Pointer to a ChannelSet containing the comma-delimited list of mnemonics and units, and channel data representing the interpretation data.
+
+BUSINESS RULE: The mnemonics and the units must follow a strict order.  
+The mnemonic list must be in this order: facilityDistance, adjustedTemperature
+
+The unit list must be one of the following:
+	- m,degC
+	- ft,degF</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the interpretation log.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="measurementReference" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Mandatory element indicating that the referenced MeasuredTraceSet object is the raw trace data from which this InterpretedData is derived. This is needed so that any InterpretedData can be related to the raw measurement from which it is derived.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="parentInterpretationReference" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Optional element indicating that the referenced InterpretedData object is the parent from which this InterpretedData is derived. Example, this instance may be derived from a parent by the data having been temperature-shifted to match an external data source. The element InterpretationProcessingType is provided to record which type of operation was performed on the parent data to obtain this instance of data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DtsInterpretationLogSet">
+		<xs:annotation>
+			<xs:documentation>Container of interpreted data which also specifies by reference the measured data on which the interpretation is based.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PreferredInterpretationReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>For a set of dtsInterpretedData logs that are generated from the same measurement (each log having gone through a different post-processing type, for example), if there is one log that is ‘preferred’ for additional business decisions (while the other ones were merely what-if scenarios), then this preferred log in the collection of child dtsInterpretedData can be flagged by referencing its UID with this element.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterpretationData" type="prodml:DtsInterpretationData" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="DtsMeasurement" type="prodml:DtsMeasurement" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="DtsMeasurement">
+		<xs:annotation>
+			<xs:documentation>The group of elements corresponding to a DTS measurement.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="BadSetFlag" type="xs:boolean" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Set to 'true' when a measurement is included but is known to be bad (i.e., all the values are null). Use this flag in situations when you want to keep track of the fact that a measurement was generated/received, however the measurement was bad.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EmptySetFlag" type="xs:boolean" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Set to 'true' when the measurement set is empty (only the header is provided). Use this flag for situations when the instrument box attempts to get a reading, but nothing is generated (fiber is disconnected, for example).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TimeStart" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Time when the installed system began taking the measurement.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TimeEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Time when the installed system finished taking the measurement.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TimeSinceInstrumentStartup" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Length of time that the instrument box has been up and running since its last power up.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MeasurementTags" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>This supports user-defined "tags" (in the form of text strings) to be attached to the measurement. Example: to indicate other operations under way at the time (e.g., start of injection).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InstalledSystemReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Reference to the installed system used to take the measurement (combination of instrument box and optical path).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MeasurementConfiguration" type="prodml:OpticalPathConfiguration" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum. The configuration of the optical path. This may be varied from measurement to measurement, independent of the fiber path network.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityIdentifier" type="prodml:FacilityIdentifier" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="MeasurementTrace" type="prodml:DtsMeasurementTrace" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Header data for raw (measured) traces collections</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DiagnosticParameters" type="eml:ExtensionNameValue" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Diagnostic information generated by the instrument box at the time the measurement was taken.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InterpretationLog" type="prodml:DtsInterpretationLogSet" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DtsMeasurementTrace">
+		<xs:annotation>
+			<xs:documentation>Header data for raw (measured) traces collections.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="TraceProcessingType" type="prodml:TraceProcessingType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Denotes whether the trace was stored as acquired by the measurement device or recalibrated in any way.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SamplingInterval" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The difference in fiber distance between consecutive temperature sample points in a single temperature trace.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IndexMnemonic" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mnemonic of the channel in the MeasuredTraceSet that represents the index to the data (expected to be a length along the facility (e.g., wellbore, pipeline) being measured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PointCount" type="xs:nonNegativeInteger" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of rows in this interpreted data object. Each row or "point" represents a measurement along the fiber.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FrequencyRayleigh1" type="eml:FrequencyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Frequency reference for Rayleigh 1 measurement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FrequencyRayleigh2" type="eml:FrequencyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Frequency reference for Rayleigh 2 measurement.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChannelSetReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Pointer to a ChannelSet containing the comma-delimited list of mnemonics and units, and channel data representing the measurement trace.
+
+BUSINESS RULE: The mnemonics and the units must follow a strict order.  
+The mnemonic list must be in this order: fiberDistance, antistokes, stokes, reverseAntiStokes, reverseStokes, rayleigh1, rayleigh2, brillouinfrequency, loss, lossRatio, cumulativeExcessLoss, frequencyQualityMeasure, measurementUncertainty, brillouinAmplitude, opticalPathTemperature, uncalibratedTemperature1, uncalibratedTemperature2
+
+The unit list must be one of the following:
+	- m, mW, mW, mW, mW, mW, mW, GHz, dB/Km, dB/Km, dB, dimensionless, degC, mW, degC, DegC, degC 
+	- ft, mW, mW, mW, mW,mW, mW, GHz, dB/Km, dB/Km,dB, dimensionless, degF, mW, degF, degF, degF</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the measured trace set.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="parentMeasurementReference" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Where this dtsMeasuredTraceSet was derived from a parent dtsMeasuredTraceSet (having been recalibrated for example), the parent dtsMeasuredTraceSet can be indicated by referencing its UID with this element.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

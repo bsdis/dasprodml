@@ -1,0 +1,4370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Common data objects and elements shared across PRODML. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProductVolume.xsd"/>
+	<xs:include schemaLocation="ProductFlowModel.xsd"/>
+	<xs:simpleType name="AddressKindEnum">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of company addresses. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="both"/>
+			<xs:enumeration value="mailing"/>
+			<xs:enumeration value="physical">
+				<xs:annotation>
+					<xs:documentation>physical</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AddressQualifier">
+		<xs:annotation>
+			<xs:documentation>Specifies qualifiers that can be used for addresses or phone numbers. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="permanent">
+				<xs:annotation>
+					<xs:documentation>permanent</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="personal">
+				<xs:annotation>
+					<xs:documentation>personal</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="work"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BusinessUnitKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of business units. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="businessarea"/>
+			<xs:enumeration value="company"/>
+			<xs:enumeration value="field"/>
+			<xs:enumeration value="license"/>
+			<xs:enumeration value="platform"/>
+			<xs:enumeration value="terminal"/>
+			<xs:enumeration value="unknown"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CalendarMonth">
+		<xs:annotation>
+			<xs:documentation>A month of a year (CCYY-MM). A time zone is not allowed. This type is meant to capture original invariant values. It is not intended to be used in "time math" where knowledge of the time zone is needed.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([1-9][0-9][0-9][0-9])-(([0][0-9])|([1][0-2]))"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CalendarYear">
+		<xs:annotation>
+			<xs:documentation>A calendar year (CCYY) in the gregorian calendar. This type is meant to capture original invariant values. It is not intended to be used in "time math" where knowledge of the time zone is needed.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:maxInclusive value="9999"/>
+			<xs:minInclusive value="1000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EndpointQualifier">
+		<xs:annotation>
+			<xs:documentation>Specifies values for the endpoint for min/max query parameters on "growing objects". </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="exclusive">
+				<xs:annotation>
+					<xs:documentation>The value is excluded.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="extensive">
+				<xs:annotation>
+					<xs:documentation>The endpoint of the range may be extended to the first encountered value if an exact value match is not found.That is, if a node index value does not match the specified range value then the next smaller value (on minimum end) or larger value (on maximum end) in the index series should be used as the endpoint. Basically, this concept is designed to support interpolation across an undefined point.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="inclusive">
+				<xs:annotation>
+					<xs:documentation>The value is included.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="overlap extensive">
+				<xs:annotation>
+					<xs:documentation>The endpoint of the range may be extended to the first encountered value if the interval is overlapped with the index interval. That is, if a node index value does not match the specified range value then the next smaller value (on minimum end) or larger value (on maximum end) in the index series should be used as the endpoint.
+This concept is designed to select ALL nodes whose index interval overlap with the query range.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EndpointQualifierInterval">
+		<xs:annotation>
+			<xs:documentation>Specifies the meaning of the endpoint for a simple interval.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="exclusive">
+				<xs:annotation>
+					<xs:documentation>The value is excluded.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="inclusive">
+				<xs:annotation>
+					<xs:documentation>The value is included.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>The value is unknown. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FacilityParameter">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of facility parameters.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="absorbed dose class">
+				<xs:annotation>
+					<xs:documentation>The amount of energy absorbed per mass.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="acceleration linear class">
+				<xs:annotation>
+					<xs:documentation>Acceleration linear class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="activity (of radioactivity) class">
+				<xs:annotation>
+					<xs:documentation>A measure of the radiation being emitted.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="alarm absolute pressure">
+				<xs:annotation>
+					<xs:documentation>Absolute minimum pressure of the flow stream before the system gives an alarm. Equivalent to element absoluteMinPres in the ProductVolume data schema.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="amount of substance class">
+				<xs:annotation>
+					<xs:documentation>Molar amount of a substance.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="angle per length">
+				<xs:annotation>
+					<xs:documentation>Angle per length.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="angle per time">
+				<xs:annotation>
+					<xs:documentation>The angular velocity. The rate of change of an angle.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="angle per volume">
+				<xs:annotation>
+					<xs:documentation>Angle per volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="angular acceleration class">
+				<xs:annotation>
+					<xs:documentation>Angular acceleration class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="annulus inner diameter">
+				<xs:annotation>
+					<xs:documentation>Annulus inner diameter.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="annulus outer diameter">
+				<xs:annotation>
+					<xs:documentation>Annulus outer diameter.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="area class">
+				<xs:annotation>
+					<xs:documentation>Area class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="area per area">
+				<xs:annotation>
+					<xs:documentation>A dimensionless quantity where the basis of the ratio is area.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="area per volume">
+				<xs:annotation>
+					<xs:documentation>Area per volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="atmospheric pressure">
+				<xs:annotation>
+					<xs:documentation>The average atmospheric pressure during the reporting period. Equivalent to element atmosphere in the ProductVolume data schema.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="attenuation class">
+				<xs:annotation>
+					<xs:documentation>A logarithmic, fractional change of some measure, generally power or amplitude, over a standard range. This is generally used for frequency attenuation over an octave.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="attenuation per length">
+				<xs:annotation>
+					<xs:documentation>Attenuation per length.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="available">
+				<xs:annotation>
+					<xs:documentation>Indicates the availability of the facility. This should be implemented as a string value. A value of "true" indicates that it is available for use. That is, it may be currently shut-down but it can be restarted. A value of "false" indicates that the facility is not available to be used. That is, it cannot be restarted at this time.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="available room">
+				<xs:annotation>
+					<xs:documentation>Defines the unoccupied volume of a tank. Zero indicates that the tank is full.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="block valve status">
+				<xs:annotation>
+					<xs:documentation>Indicates the status of a block valve. This should be implemented as a string value.
+A value of "open" indicates that it is open. A value of "closed" indicates that it is closed.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="capacitance class">
+				<xs:annotation>
+					<xs:documentation>Capacitance class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="categorical">
+				<xs:annotation>
+					<xs:documentation>The abstract supertype of all enumerated string properties.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cathodic protection output current">
+				<xs:annotation>
+					<xs:documentation>Rectifier DC output current.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cathodic protection output voltage">
+				<xs:annotation>
+					<xs:documentation>Rectifier DC output voltage.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="charge density class">
+				<xs:annotation>
+					<xs:documentation>Charge density class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="chemical potential class">
+				<xs:annotation>
+					<xs:documentation>Chemical potential class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="choke position">
+				<xs:annotation>
+					<xs:documentation>A coded value describing the position of the choke (open, close, traveling).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="choke setting">
+				<xs:annotation>
+					<xs:documentation>A fraction value (percentage) of the choke opening.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="code">
+				<xs:annotation>
+					<xs:documentation>A property whose values are constrained to specific string values</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="compressibility class">
+				<xs:annotation>
+					<xs:documentation>Compressibility class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="concentration of B class">
+				<xs:annotation>
+					<xs:documentation>Concentration of B class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="conductivity class">
+				<xs:annotation>
+					<xs:documentation>Conductivity class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="continuous">
+				<xs:annotation>
+					<xs:documentation>Continuous.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cross section absorption class">
+				<xs:annotation>
+					<xs:documentation>Cross section absorption class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="current density class">
+				<xs:annotation>
+					<xs:documentation>Current density class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="darcy flow coefficient class">
+				<xs:annotation>
+					<xs:documentation>Darcy flow coefficient class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="data transmission speed class">
+				<xs:annotation>
+					<xs:documentation>Data transmission speed class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="delta temperature class">
+				<xs:annotation>
+					<xs:documentation>Delta temperature class. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="density">
+				<xs:annotation>
+					<xs:documentation>Density.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="density class">
+				<xs:annotation>
+					<xs:documentation>Density class.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="density flow rate">
+				<xs:annotation>
+					<xs:documentation>Density flow rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="density standard">
+				<xs:annotation>
+					<xs:documentation>Density standard.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dewpoint temperature">
+				<xs:annotation>
+					<xs:documentation>Dewpoint temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="differential pressure">
+				<xs:annotation>
+					<xs:documentation>Differential pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="differential temperature">
+				<xs:annotation>
+					<xs:documentation>differential temperature</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="diffusion coefficient class">
+				<xs:annotation>
+					<xs:documentation>diffusion coefficient class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="digital storage class">
+				<xs:annotation>
+					<xs:documentation>digital storage class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dimensionless class">
+				<xs:annotation>
+					<xs:documentation>dimensionless class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="discrete">
+				<xs:annotation>
+					<xs:documentation>discrete</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dose equivalent class">
+				<xs:annotation>
+					<xs:documentation>dose equivalent class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dose equivalent rate class">
+				<xs:annotation>
+					<xs:documentation>dose equivalent rate class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dynamic viscosity class">
+				<xs:annotation>
+					<xs:documentation>dynamic viscosity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric charge class">
+				<xs:annotation>
+					<xs:documentation>electric charge class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric conductance class">
+				<xs:annotation>
+					<xs:documentation>electric conductance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric current class">
+				<xs:annotation>
+					<xs:documentation>electric current class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric dipole moment class">
+				<xs:annotation>
+					<xs:documentation>electric dipole moment class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric field strength class">
+				<xs:annotation>
+					<xs:documentation>electric field strength class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric polarization class">
+				<xs:annotation>
+					<xs:documentation>electric polarization class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric potential class">
+				<xs:annotation>
+					<xs:documentation>electric potential class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electrical resistivity class">
+				<xs:annotation>
+					<xs:documentation>electrical resistivity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electrochemical equivalent class">
+				<xs:annotation>
+					<xs:documentation>electrochemical equivalent class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electromagnetic moment class">
+				<xs:annotation>
+					<xs:documentation>electromagnetic moment class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="energy length per area">
+				<xs:annotation>
+					<xs:documentation>energy length per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="energy length per time area temperature">
+				<xs:annotation>
+					<xs:documentation>energy length per time area temperature</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="energy per area">
+				<xs:annotation>
+					<xs:documentation>energy per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="energy per length">
+				<xs:annotation>
+					<xs:documentation>energy per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="equivalent per mass">
+				<xs:annotation>
+					<xs:documentation>equivalent per mass</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="equivalent per volume">
+				<xs:annotation>
+					<xs:documentation>equivalent per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="exposure (radioactivity) class">
+				<xs:annotation>
+					<xs:documentation>exposure (radioactivity) class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="facility uptime">
+				<xs:annotation>
+					<xs:documentation>facility uptime</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flow rate">
+				<xs:annotation>
+					<xs:documentation>flow rate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flow rate standard">
+				<xs:annotation>
+					<xs:documentation>flow rate standard</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="force area class">
+				<xs:annotation>
+					<xs:documentation>force area class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="force class">
+				<xs:annotation>
+					<xs:documentation>force class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="force length per length">
+				<xs:annotation>
+					<xs:documentation>force length per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="force per force">
+				<xs:annotation>
+					<xs:documentation>force per force</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="force per length">
+				<xs:annotation>
+					<xs:documentation>force per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="force per volume">
+				<xs:annotation>
+					<xs:documentation>force per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="frequency class">
+				<xs:annotation>
+					<xs:documentation>frequency class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="frequency interval class">
+				<xs:annotation>
+					<xs:documentation>frequency interval class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gamma ray API unit class">
+				<xs:annotation>
+					<xs:documentation>gamma ray API unit class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas liquid ratio">
+				<xs:annotation>
+					<xs:documentation>gas liquid ratio</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas oil ratio">
+				<xs:annotation>
+					<xs:documentation>gas oil ratio</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gross calorific value standard">
+				<xs:annotation>
+					<xs:documentation>gross calorific value standard</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="heat capacity class">
+				<xs:annotation>
+					<xs:documentation>heat capacity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="heat flow rate class">
+				<xs:annotation>
+					<xs:documentation>heat flow rate class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="heat transfer coefficient class">
+				<xs:annotation>
+					<xs:documentation>heat transfer coefficient class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="illuminance class">
+				<xs:annotation>
+					<xs:documentation>illuminance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="internal control valve status">
+				<xs:annotation>
+					<xs:documentation>internal control valve status</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="irradiance class">
+				<xs:annotation>
+					<xs:documentation>irradiance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="isothermal compressibility class">
+				<xs:annotation>
+					<xs:documentation>isothermal compressibility class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="kinematic viscosity class">
+				<xs:annotation>
+					<xs:documentation>kinematic viscosity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="length class">
+				<xs:annotation>
+					<xs:documentation>length class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="length per length">
+				<xs:annotation>
+					<xs:documentation>length per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="length per temperature">
+				<xs:annotation>
+					<xs:documentation>length per temperature</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="length per volume">
+				<xs:annotation>
+					<xs:documentation>length per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="level of power intensity class">
+				<xs:annotation>
+					<xs:documentation>level of power intensity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="light exposure class">
+				<xs:annotation>
+					<xs:documentation>light exposure class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="linear thermal expansion class">
+				<xs:annotation>
+					<xs:documentation>linear thermal expansion class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="luminance class">
+				<xs:annotation>
+					<xs:documentation>luminance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="luminous efficacy class">
+				<xs:annotation>
+					<xs:documentation>luminous efficacy class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="luminous flux class">
+				<xs:annotation>
+					<xs:documentation>luminous flux class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="luminous intensity class">
+				<xs:annotation>
+					<xs:documentation>luminous intensity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="magnetic dipole moment class">
+				<xs:annotation>
+					<xs:documentation>magnetic dipole moment class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="magnetic field strength class">
+				<xs:annotation>
+					<xs:documentation>magnetic field strength class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="magnetic flux class">
+				<xs:annotation>
+					<xs:documentation>magnetic flux class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="magnetic induction class">
+				<xs:annotation>
+					<xs:documentation>magnetic induction class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="magnetic permeability class">
+				<xs:annotation>
+					<xs:documentation>magnetic permeability class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="magnetic vector potential class">
+				<xs:annotation>
+					<xs:documentation>magnetic vector potential class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass">
+				<xs:annotation>
+					<xs:documentation>mass</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass attenuation coefficient class">
+				<xs:annotation>
+					<xs:documentation>mass attenuation coefficient class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass class">
+				<xs:annotation>
+					<xs:documentation>mass class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass concentration">
+				<xs:annotation>
+					<xs:documentation>mass concentration</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass concentration class">
+				<xs:annotation>
+					<xs:documentation>mass concentration class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass flow rate class">
+				<xs:annotation>
+					<xs:documentation>mass flow rate class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass length class">
+				<xs:annotation>
+					<xs:documentation>mass length class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass per energy">
+				<xs:annotation>
+					<xs:documentation>mass per energy</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass per length">
+				<xs:annotation>
+					<xs:documentation>mass per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass per time per area">
+				<xs:annotation>
+					<xs:documentation>mass per time per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass per time per length">
+				<xs:annotation>
+					<xs:documentation>mass per time per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mass per volume per length">
+				<xs:annotation>
+					<xs:documentation>mass per volume per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="measured depth">
+				<xs:annotation>
+					<xs:documentation>measured depth</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mobility class">
+				<xs:annotation>
+					<xs:documentation>mobility class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="modulus of compression class">
+				<xs:annotation>
+					<xs:documentation>modulus of compression class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="molar concentration">
+				<xs:annotation>
+					<xs:documentation>molar concentration</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="molar fraction">
+				<xs:annotation>
+					<xs:documentation>molar fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="molar heat capacity class">
+				<xs:annotation>
+					<xs:documentation>molar heat capacity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="molar volume class">
+				<xs:annotation>
+					<xs:documentation>molar volume class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mole per area">
+				<xs:annotation>
+					<xs:documentation>mole per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mole per time">
+				<xs:annotation>
+					<xs:documentation>mole per time</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mole per time per area">
+				<xs:annotation>
+					<xs:documentation>mole per time per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="molecular weight">
+				<xs:annotation>
+					<xs:documentation>molecular weight</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="moment of force class">
+				<xs:annotation>
+					<xs:documentation>moment of force class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="moment of inertia class">
+				<xs:annotation>
+					<xs:documentation>moment of inertia class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="moment of section class">
+				<xs:annotation>
+					<xs:documentation>moment of section class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="momentum class">
+				<xs:annotation>
+					<xs:documentation>momentum class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="motor current">
+				<xs:annotation>
+					<xs:documentation>motor current</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="motor current leakage">
+				<xs:annotation>
+					<xs:documentation>motor current leakage</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="motor speed">
+				<xs:annotation>
+					<xs:documentation>motor speed</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="motor temperature">
+				<xs:annotation>
+					<xs:documentation>motor temperature</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="motor vibration">
+				<xs:annotation>
+					<xs:documentation>motor vibration</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="motor voltage">
+				<xs:annotation>
+					<xs:documentation>motor voltage</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="neutron API unit class">
+				<xs:annotation>
+					<xs:documentation>neutron API unit class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="nonDarcy flow coefficient class">
+				<xs:annotation>
+					<xs:documentation>nonDarcy flow coefficient class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="opening size">
+				<xs:annotation>
+					<xs:documentation>opening size</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="operations per time">
+				<xs:annotation>
+					<xs:documentation>operations per time</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="parachor class">
+				<xs:annotation>
+					<xs:documentation>parachor class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="per area">
+				<xs:annotation>
+					<xs:documentation>per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="per electric potential">
+				<xs:annotation>
+					<xs:documentation>per electric potential</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="per force">
+				<xs:annotation>
+					<xs:documentation>per force</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="per length">
+				<xs:annotation>
+					<xs:documentation>per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="per mass">
+				<xs:annotation>
+					<xs:documentation>per mass</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="per volume">
+				<xs:annotation>
+					<xs:documentation>per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="permeability length class">
+				<xs:annotation>
+					<xs:documentation>permeability length class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="permeability rock class">
+				<xs:annotation>
+					<xs:documentation>permeability rock class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="permeance class">
+				<xs:annotation>
+					<xs:documentation>permeance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="permittivity class">
+				<xs:annotation>
+					<xs:documentation>permittivity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pH class">
+				<xs:annotation>
+					<xs:documentation>pH class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="plane angle class">
+				<xs:annotation>
+					<xs:documentation>plane angle class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="potential difference per power drop">
+				<xs:annotation>
+					<xs:documentation>potential difference per power drop</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="power class">
+				<xs:annotation>
+					<xs:documentation>power class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="power per volume">
+				<xs:annotation>
+					<xs:documentation>power per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure">
+				<xs:annotation>
+					<xs:documentation>pressure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure class">
+				<xs:annotation>
+					<xs:documentation>pressure class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure per time">
+				<xs:annotation>
+					<xs:documentation>pressure per time</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure squared class">
+				<xs:annotation>
+					<xs:documentation>pressure squared class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure squared per force time per area">
+				<xs:annotation>
+					<xs:documentation>pressure squared per force time per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure time per volume">
+				<xs:annotation>
+					<xs:documentation>pressure time per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="productivity index class">
+				<xs:annotation>
+					<xs:documentation>productivity index class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pump count online">
+				<xs:annotation>
+					<xs:documentation>pump count online</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pump status">
+				<xs:annotation>
+					<xs:documentation>pump status</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="quantity">
+				<xs:annotation>
+					<xs:documentation>quantity</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="quantity of light class">
+				<xs:annotation>
+					<xs:documentation>quantity of light class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="radiance class">
+				<xs:annotation>
+					<xs:documentation>radiance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="radiant intensity class">
+				<xs:annotation>
+					<xs:documentation>radiant intensity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reciprocating speed">
+				<xs:annotation>
+					<xs:documentation>reciprocating speed</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rectifier structure potential">
+				<xs:annotation>
+					<xs:documentation>rectifier structure potential</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reid vapor pressure">
+				<xs:annotation>
+					<xs:documentation>reid vapor pressure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="relative opening size">
+				<xs:annotation>
+					<xs:documentation>relative opening size</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="relative power class">
+				<xs:annotation>
+					<xs:documentation>relative power class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="relative tank level">
+				<xs:annotation>
+					<xs:documentation>relative tank level</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="relative time class">
+				<xs:annotation>
+					<xs:documentation>relative time class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="relative valve opening">
+				<xs:annotation>
+					<xs:documentation>relative valve opening</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reluctance class">
+				<xs:annotation>
+					<xs:documentation>reluctance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="resistance class">
+				<xs:annotation>
+					<xs:documentation>resistance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="resistivity per length">
+				<xs:annotation>
+					<xs:documentation>resistivity per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="root property">
+				<xs:annotation>
+					<xs:documentation>root property</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="scheduled downtime">
+				<xs:annotation>
+					<xs:documentation>scheduled downtime</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="second moment of area class">
+				<xs:annotation>
+					<xs:documentation>second moment of area class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="shutdown order">
+				<xs:annotation>
+					<xs:documentation>shutdown order</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="shutin pressure">
+				<xs:annotation>
+					<xs:documentation>shutin pressure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="shutin temperature">
+				<xs:annotation>
+					<xs:documentation>shutin temperature</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="solid angle class">
+				<xs:annotation>
+					<xs:documentation>solid angle class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="specific activity (of radioactivity)">
+				<xs:annotation>
+					<xs:documentation>specific activity (of radioactivity)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="specific energy class">
+				<xs:annotation>
+					<xs:documentation>specific energy class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="specific gravity">
+				<xs:annotation>
+					<xs:documentation>specific gravity</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="specific heat capacity class">
+				<xs:annotation>
+					<xs:documentation>specific heat capacity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="specific productivity index class">
+				<xs:annotation>
+					<xs:documentation>specific productivity index class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="specific volume class">
+				<xs:annotation>
+					<xs:documentation>specific volume class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sub surface safety valve status">
+				<xs:annotation>
+					<xs:documentation>sub surface safety valve status</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="surface density class">
+				<xs:annotation>
+					<xs:documentation>surface density class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="surface safety valve status">
+				<xs:annotation>
+					<xs:documentation>surface safety valve status</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tank fluid level">
+				<xs:annotation>
+					<xs:documentation>tank fluid level</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tank product standard volume">
+				<xs:annotation>
+					<xs:documentation>tank product standard volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tank product volume">
+				<xs:annotation>
+					<xs:documentation>tank product volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="temperature">
+				<xs:annotation>
+					<xs:documentation>temperature</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="temperature per length">
+				<xs:annotation>
+					<xs:documentation>temperature per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="temperature per time">
+				<xs:annotation>
+					<xs:documentation>temperature per time</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="thermal conductance class">
+				<xs:annotation>
+					<xs:documentation>thermal conductance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="thermal conductivity class">
+				<xs:annotation>
+					<xs:documentation>thermal conductivity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="thermal diffusivity class">
+				<xs:annotation>
+					<xs:documentation>thermal diffusivity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="thermal insulance class">
+				<xs:annotation>
+					<xs:documentation>thermal insulance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="thermal resistance class">
+				<xs:annotation>
+					<xs:documentation>thermal resistance class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="thermodynamic temperature class">
+				<xs:annotation>
+					<xs:documentation>thermodynamic temperature class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="time class">
+				<xs:annotation>
+					<xs:documentation>time class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="time per length">
+				<xs:annotation>
+					<xs:documentation>time per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="time per volume">
+				<xs:annotation>
+					<xs:documentation>time per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="true vapor pressure">
+				<xs:annotation>
+					<xs:documentation>true vapor pressure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unit productivity index class">
+				<xs:annotation>
+					<xs:documentation>unit productivity index class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unitless">
+				<xs:annotation>
+					<xs:documentation>unitless</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="valve opening">
+				<xs:annotation>
+					<xs:documentation>valve opening</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="valve status">
+				<xs:annotation>
+					<xs:documentation>valve status</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="velocity class">
+				<xs:annotation>
+					<xs:documentation>velocity class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume">
+				<xs:annotation>
+					<xs:documentation>volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume class">
+				<xs:annotation>
+					<xs:documentation>volume class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume concentration">
+				<xs:annotation>
+					<xs:documentation>volume concentration</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume flow rate class">
+				<xs:annotation>
+					<xs:documentation>volume flow rate class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume length per time">
+				<xs:annotation>
+					<xs:documentation>volume length per time</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume per area">
+				<xs:annotation>
+					<xs:documentation>volume per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume per length">
+				<xs:annotation>
+					<xs:documentation>volume per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume per time per area">
+				<xs:annotation>
+					<xs:documentation>volume per time per area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume per time per length">
+				<xs:annotation>
+					<xs:documentation>volume per time per length</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume per time per time">
+				<xs:annotation>
+					<xs:documentation>volume per time per time</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume per time per volume">
+				<xs:annotation>
+					<xs:documentation>volume per time per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume per volume">
+				<xs:annotation>
+					<xs:documentation>volume per volume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volume standard">
+				<xs:annotation>
+					<xs:documentation>volume standard</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volumetric efficiency">
+				<xs:annotation>
+					<xs:documentation>volumetric efficiency</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volumetric heat transfer coefficient">
+				<xs:annotation>
+					<xs:documentation>volumetric heat transfer coefficient</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volumetric thermal expansion class">
+				<xs:annotation>
+					<xs:documentation>volumetric thermal expansion class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well operating status">
+				<xs:annotation>
+					<xs:documentation>well operating status</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well operation type">
+				<xs:annotation>
+					<xs:documentation>well operation type</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wobbe index">
+				<xs:annotation>
+					<xs:documentation>wobbe index</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="work">
+				<xs:annotation>
+					<xs:documentation>work</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="work class">
+				<xs:annotation>
+					<xs:documentation>work class</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FiberMode">
+		<xs:annotation>
+			<xs:documentation>Specifies the modes of a distributed temperature survey (DTS) fiber. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="multimode"/>
+			<xs:enumeration value="other"/>
+			<xs:enumeration value="singlemode"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FlowQualifier">
+		<xs:annotation>
+			<xs:documentation>Specifies qualifiers for the type of flow. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="allocated"/>
+			<xs:enumeration value="budget"/>
+			<xs:enumeration value="constraint"/>
+			<xs:enumeration value="derived"/>
+			<xs:enumeration value="difference"/>
+			<xs:enumeration value="estimate"/>
+			<xs:enumeration value="forecast"/>
+			<xs:enumeration value="mass adjusted"/>
+			<xs:enumeration value="measured"/>
+			<xs:enumeration value="metered"/>
+			<xs:enumeration value="metered - fiscal"/>
+			<xs:enumeration value="nominated"/>
+			<xs:enumeration value="potential"/>
+			<xs:enumeration value="processed"/>
+			<xs:enumeration value="quota"/>
+			<xs:enumeration value="recommended"/>
+			<xs:enumeration value="simulated"/>
+			<xs:enumeration value="target"/>
+			<xs:enumeration value="tariff basis"/>
+			<xs:enumeration value="value adjusted"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FlowSubQualifier">
+		<xs:annotation>
+			<xs:documentation>Specifies specializations of a flow qualifier.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="decline curve"/>
+			<xs:enumeration value="difference"/>
+			<xs:enumeration value="fiscal"/>
+			<xs:enumeration value="fixed"/>
+			<xs:enumeration value="maximum"/>
+			<xs:enumeration value="minimum"/>
+			<xs:enumeration value="raw"/>
+			<xs:enumeration value="recalibrated"/>
+			<xs:enumeration value="standard"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="GeologyType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of geology: water and reservoir.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="aquifer">
+				<xs:annotation>
+					<xs:documentation>aquifer</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reservoir">
+				<xs:annotation>
+					<xs:documentation>reservoir</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NonNegativeFraction">
+		<xs:annotation>
+			<xs:documentation>A floating point value between zero (inclusive) and one (inclusive).</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:float">
+			<xs:maxInclusive value="1"/>
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PhoneType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types phone number (e.g., fax, mobile, etc.)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="fax"/>
+			<xs:enumeration value="mobile"/>
+			<xs:enumeration value="pager"/>
+			<xs:enumeration value="unknown"/>
+			<xs:enumeration value="voice"/>
+			<xs:enumeration value="voice/fax"/>
+			<xs:enumeration value="voicemail"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PlusComponentEnum">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of plus components. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="c10+"/>
+			<xs:enumeration value="c11+"/>
+			<xs:enumeration value="c12+"/>
+			<xs:enumeration value="c20+"/>
+			<xs:enumeration value="c25+"/>
+			<xs:enumeration value="c30+"/>
+			<xs:enumeration value="c36+"/>
+			<xs:enumeration value="c5+"/>
+			<xs:enumeration value="c6+"/>
+			<xs:enumeration value="c7+"/>
+			<xs:enumeration value="c8+"/>
+			<xs:enumeration value="c9+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PlusComponentEnumExt">
+		<xs:annotation>
+			<xs:documentation>Plus component enumeration extension. </xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:PlusComponentEnum eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="ProdmlRelativeIdentifier">
+		<xs:annotation>
+			<xs:documentation>A relative identifier (or URI, Uniform Resource Identifier), It follows the general pattern of type(id)/type(id) where (id) is optional, as defined in the Energistics Identifier Specification, which is available in the zip file when download PRODML. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:anyURI"/>
+	</xs:simpleType>
+	<xs:simpleType name="ProductFlowPortType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of product flow ports.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="inlet"/>
+			<xs:enumeration value="outlet"/>
+			<xs:enumeration value="unknown"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ProductFluidKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of product in a fluid system.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="condensate"/>
+			<xs:enumeration value="condensate - gross"/>
+			<xs:enumeration value="condensate - net"/>
+			<xs:enumeration value="crude - stabilized"/>
+			<xs:enumeration value="gas - component in oil"/>
+			<xs:enumeration value="gas - dry"/>
+			<xs:enumeration value="gas - rich"/>
+			<xs:enumeration value="gas - wet"/>
+			<xs:enumeration value="liquefied natural gas"/>
+			<xs:enumeration value="liquefied petroleum gas"/>
+			<xs:enumeration value="liquid"/>
+			<xs:enumeration value="naphtha"/>
+			<xs:enumeration value="natural gas liquid"/>
+			<xs:enumeration value="NGL - component in gas"/>
+			<xs:enumeration value="oil - component in water"/>
+			<xs:enumeration value="oil - gross"/>
+			<xs:enumeration value="oil - net"/>
+			<xs:enumeration value="oil and gas"/>
+			<xs:enumeration value="petroleum gas liquid"/>
+			<xs:enumeration value="vapor"/>
+			<xs:enumeration value="sand"/>
+			<xs:enumeration value="water - discharge"/>
+			<xs:enumeration value="water - processed"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PseudoComponentEnum">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of pseudo-components. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="c10">
+				<xs:annotation>
+					<xs:documentation>c10</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c11"/>
+			<xs:enumeration value="c12"/>
+			<xs:enumeration value="c13"/>
+			<xs:enumeration value="c14"/>
+			<xs:enumeration value="c15"/>
+			<xs:enumeration value="c16"/>
+			<xs:enumeration value="c17"/>
+			<xs:enumeration value="c18"/>
+			<xs:enumeration value="c19"/>
+			<xs:enumeration value="c20"/>
+			<xs:enumeration value="c21"/>
+			<xs:enumeration value="c22"/>
+			<xs:enumeration value="c23"/>
+			<xs:enumeration value="c24"/>
+			<xs:enumeration value="c25"/>
+			<xs:enumeration value="c26"/>
+			<xs:enumeration value="c27"/>
+			<xs:enumeration value="c28"/>
+			<xs:enumeration value="c29"/>
+			<xs:enumeration value="c2-c4+n2"/>
+			<xs:enumeration value="c30"/>
+			<xs:enumeration value="c31"/>
+			<xs:enumeration value="c32"/>
+			<xs:enumeration value="c33"/>
+			<xs:enumeration value="c34"/>
+			<xs:enumeration value="c35"/>
+			<xs:enumeration value="c4"/>
+			<xs:enumeration value="c5"/>
+			<xs:enumeration value="c6"/>
+			<xs:enumeration value="c7"/>
+			<xs:enumeration value="c8"/>
+			<xs:enumeration value="c9"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PseudoComponentEnumExt">
+		<xs:annotation>
+			<xs:documentation>Use to create user-defined pseudo-component enumerations. </xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:PseudoComponentEnum eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="PureComponentEnum">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of pure components. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="1-2-4-trimethylbenzene"/>
+			<xs:enumeration value="2-dimethylbutane"/>
+			<xs:enumeration value="3-dimethylbutane"/>
+			<xs:enumeration value="ar"/>
+			<xs:enumeration value="c1"/>
+			<xs:enumeration value="c2"/>
+			<xs:enumeration value="c3"/>
+			<xs:enumeration value="co2"/>
+			<xs:enumeration value="h2"/>
+			<xs:enumeration value="h2o"/>
+			<xs:enumeration value="h2s"/>
+			<xs:enumeration value="he"/>
+			<xs:enumeration value="hg"/>
+			<xs:enumeration value="i-c4"/>
+			<xs:enumeration value="i-c5"/>
+			<xs:enumeration value="n2"/>
+			<xs:enumeration value="n-c10"/>
+			<xs:enumeration value="n-c4"/>
+			<xs:enumeration value="n-c5"/>
+			<xs:enumeration value="n-c6"/>
+			<xs:enumeration value="n-c7"/>
+			<xs:enumeration value="n-c8"/>
+			<xs:enumeration value="n-c9"/>
+			<xs:enumeration value="neo-c5"/>
+			<xs:enumeration value="benzene">
+				<xs:annotation>
+					<xs:documentation>benzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-methylpentane"/>
+			<xs:enumeration value="3-methylpentane"/>
+			<xs:enumeration value="2-methylhexane"/>
+			<xs:enumeration value="3-methylhexane"/>
+			<xs:enumeration value="2-methylheptane"/>
+			<xs:enumeration value="3-methylheptane"/>
+			<xs:enumeration value="cyclohexane"/>
+			<xs:enumeration value="ethylbenzene"/>
+			<xs:enumeration value="ethylcyclohexane"/>
+			<xs:enumeration value="methylcyclohexane"/>
+			<xs:enumeration value="methylcyclopentane"/>
+			<xs:enumeration value="toluene"/>
+			<xs:enumeration value="m-xylene"/>
+			<xs:enumeration value="o-xylene"/>
+			<xs:enumeration value="p-xylene"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PureComponentEnumExt">
+		<xs:annotation>
+			<xs:documentation>Use to create user-defined pure component enumerations. </xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:PureComponentEnum eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="ReportingDurationKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the time periods for a report. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="day"/>
+			<xs:enumeration value="life to date"/>
+			<xs:enumeration value="month"/>
+			<xs:enumeration value="month to date"/>
+			<xs:enumeration value="total cumulative"/>
+			<xs:enumeration value="week"/>
+			<xs:enumeration value="year"/>
+			<xs:enumeration value="year to date"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReportingDurationKindExt">
+		<xs:union memberTypes="prodml:ReportingDurationKind eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="ReportingEntityKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of entities (usage of equipment or material) that can be reported on.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="business unit">
+				<xs:annotation>
+					<xs:documentation>business unit</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fpso">
+				<xs:annotation>
+					<xs:documentation>fpso</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well completion">
+				<xs:annotation>
+					<xs:documentation>well completion</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wellbore completion">
+				<xs:annotation>
+					<xs:documentation>wellbore completion</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="commercial entity">
+				<xs:annotation>
+					<xs:documentation>commercial entity</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="company">
+				<xs:annotation>
+					<xs:documentation>company</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="contact interval">
+				<xs:annotation>
+					<xs:documentation>contact interval</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="country">
+				<xs:annotation>
+					<xs:documentation>country</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="county">
+				<xs:annotation>
+					<xs:documentation>county</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="facility">
+				<xs:annotation>
+					<xs:documentation>facility</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="field">
+				<xs:annotation>
+					<xs:documentation>field</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="field - part">
+				<xs:annotation>
+					<xs:documentation>field - part</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flow meter">
+				<xs:annotation>
+					<xs:documentation>flow meter</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="formation">
+				<xs:annotation>
+					<xs:documentation>formation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas plant">
+				<xs:annotation>
+					<xs:documentation>gas plant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lease">
+				<xs:annotation>
+					<xs:documentation>lease</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="license">
+				<xs:annotation>
+					<xs:documentation>license</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pipeline">
+				<xs:annotation>
+					<xs:documentation>pipeline</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="platform">
+				<xs:annotation>
+					<xs:documentation>platform</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production processing facility">
+				<xs:annotation>
+					<xs:documentation>production processing facility</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reservoir">
+				<xs:annotation>
+					<xs:documentation>reservoir</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rock-fluid unit feature">
+				<xs:annotation>
+					<xs:documentation>rock-fluid unit feature</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="state">
+				<xs:annotation>
+					<xs:documentation>state</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tank">
+				<xs:annotation>
+					<xs:documentation>tank</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="terminal">
+				<xs:annotation>
+					<xs:documentation>terminal</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well">
+				<xs:annotation>
+					<xs:documentation>well</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well group">
+				<xs:annotation>
+					<xs:documentation>well group</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wellbore">
+				<xs:annotation>
+					<xs:documentation>wellbore</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil tanker">
+				<xs:annotation>
+					<xs:documentation>oil tanker - ship</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tanker truck">
+				<xs:annotation>
+					<xs:documentation>truck</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReportingFacility">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of facilities (usage of equipment or material) that can be reported on. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="block valve">
+				<xs:annotation>
+					<xs:documentation>block valve</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="bottomhole">
+				<xs:annotation>
+					<xs:documentation>bottomhole</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="casing">
+				<xs:annotation>
+					<xs:documentation>casing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="choke">
+				<xs:annotation>
+					<xs:documentation>choke</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cluster">
+				<xs:annotation>
+					<xs:documentation>cluster</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="commercial entity">
+				<xs:annotation>
+					<xs:documentation>commercial entity</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="company">
+				<xs:annotation>
+					<xs:documentation>company</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="completion">
+				<xs:annotation>
+					<xs:documentation>completion</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="compressor">
+				<xs:annotation>
+					<xs:documentation>compressor</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="controller">
+				<xs:annotation>
+					<xs:documentation>controller</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="controller -- lift">
+				<xs:annotation>
+					<xs:documentation>controller -- lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="country">
+				<xs:annotation>
+					<xs:documentation>country</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="county">
+				<xs:annotation>
+					<xs:documentation>county</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="downhole monitoring system">
+				<xs:annotation>
+					<xs:documentation>downhole monitoring system</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric submersible pump">
+				<xs:annotation>
+					<xs:documentation>electric submersible pump</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="field">
+				<xs:annotation>
+					<xs:documentation>field</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="field - area">
+				<xs:annotation>
+					<xs:documentation>field - area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="field - group">
+				<xs:annotation>
+					<xs:documentation>field - group</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="field - part">
+				<xs:annotation>
+					<xs:documentation>field - part</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flow meter">
+				<xs:annotation>
+					<xs:documentation>flow meter</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flowline">
+				<xs:annotation>
+					<xs:documentation>flowline</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="formation">
+				<xs:annotation>
+					<xs:documentation>formation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas lift valve mandrel">
+				<xs:annotation>
+					<xs:documentation>gas lift valve mandrel</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="generator">
+				<xs:annotation>
+					<xs:documentation>generator</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="installation">
+				<xs:annotation>
+					<xs:documentation>installation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lease">
+				<xs:annotation>
+					<xs:documentation>lease</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="license">
+				<xs:annotation>
+					<xs:documentation>license</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="manifold">
+				<xs:annotation>
+					<xs:documentation>manifold</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="organizational unit">
+				<xs:annotation>
+					<xs:documentation>organizational unit</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="packer">
+				<xs:annotation>
+					<xs:documentation>packer</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="perforated interval">
+				<xs:annotation>
+					<xs:documentation>perforated interval</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pipeline">
+				<xs:annotation>
+					<xs:documentation>pipeline</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="plant - processing">
+				<xs:annotation>
+					<xs:documentation>plant - processing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="platform">
+				<xs:annotation>
+					<xs:documentation>platform</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure meter">
+				<xs:annotation>
+					<xs:documentation>pressure meter</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="processing facility">
+				<xs:annotation>
+					<xs:documentation>processing facility</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production tubing">
+				<xs:annotation>
+					<xs:documentation>production tubing</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pump">
+				<xs:annotation>
+					<xs:documentation>pump</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="rectifier">
+				<xs:annotation>
+					<xs:documentation>rectifier</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="regulating valve">
+				<xs:annotation>
+					<xs:documentation>regulating valve</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="remote terminal unit">
+				<xs:annotation>
+					<xs:documentation>remote terminal unit</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="reservoir">
+				<xs:annotation>
+					<xs:documentation>reservoir</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator">
+				<xs:annotation>
+					<xs:documentation>separator</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sleeve valve">
+				<xs:annotation>
+					<xs:documentation>sleeve valve</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="state">
+				<xs:annotation>
+					<xs:documentation>state</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="storage">
+				<xs:annotation>
+					<xs:documentation>storage</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tank">
+				<xs:annotation>
+					<xs:documentation>tank</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="temperature meter">
+				<xs:annotation>
+					<xs:documentation>temperature meter</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="template">
+				<xs:annotation>
+					<xs:documentation>template</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="terminal">
+				<xs:annotation>
+					<xs:documentation>terminal</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="trap">
+				<xs:annotation>
+					<xs:documentation>trap</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="trunkline">
+				<xs:annotation>
+					<xs:documentation>trunkline</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tubing head">
+				<xs:annotation>
+					<xs:documentation>tubing head</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="turbine">
+				<xs:annotation>
+					<xs:documentation>turbine</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well">
+				<xs:annotation>
+					<xs:documentation>well</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well group">
+				<xs:annotation>
+					<xs:documentation>well group</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wellbore">
+				<xs:annotation>
+					<xs:documentation>wellbore</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wellhead">
+				<xs:annotation>
+					<xs:documentation>wellhead</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="zone">
+				<xs:annotation>
+					<xs:documentation>zone</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReportingFlow">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of flow for volume reports. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="consume">
+				<xs:annotation>
+					<xs:documentation>consume</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - black start">
+				<xs:annotation>
+					<xs:documentation>consume - black start</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - compressor">
+				<xs:annotation>
+					<xs:documentation>consume - compressor</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - emitted">
+				<xs:annotation>
+					<xs:documentation>consume - emitted</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - flare">
+				<xs:annotation>
+					<xs:documentation>consume - flare</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - fuel">
+				<xs:annotation>
+					<xs:documentation>consume - fuel</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - HP flare">
+				<xs:annotation>
+					<xs:documentation>consume - HP flare</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - LP flare">
+				<xs:annotation>
+					<xs:documentation>consume - LP flare</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - non compressor">
+				<xs:annotation>
+					<xs:documentation>consume - non compressor</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="consume - venting">
+				<xs:annotation>
+					<xs:documentation>consume - venting</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="disposal">
+				<xs:annotation>
+					<xs:documentation>disposal</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="export">
+				<xs:annotation>
+					<xs:documentation>export</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="export - nominated">
+				<xs:annotation>
+					<xs:documentation>export - nominated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="export - requested">
+				<xs:annotation>
+					<xs:documentation>export - requested</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="export - shortfall">
+				<xs:annotation>
+					<xs:documentation>export - shortfall</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas lift">
+				<xs:annotation>
+					<xs:documentation>gas lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydrocarbon accounting">
+				<xs:annotation>
+					<xs:documentation>hydrocarbon accounting</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="import">
+				<xs:annotation>
+					<xs:documentation>import</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="injection">
+				<xs:annotation>
+					<xs:documentation>injection</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="inventory">
+				<xs:annotation>
+					<xs:documentation>inventory</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="overboard">
+				<xs:annotation>
+					<xs:documentation>overboard</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production">
+				<xs:annotation>
+					<xs:documentation>production</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sale">
+				<xs:annotation>
+					<xs:documentation>sale</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="storage">
+				<xs:annotation>
+					<xs:documentation>storage</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReportingProduct">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of product in a fluid system. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="aqueous">
+				<xs:annotation>
+					<xs:documentation>aqueous</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c10">
+				<xs:annotation>
+					<xs:documentation>c10</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c10-">
+				<xs:annotation>
+					<xs:documentation>c10-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c10+">
+				<xs:annotation>
+					<xs:documentation>c10+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c2-">
+				<xs:annotation>
+					<xs:documentation>c2-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c2+">
+				<xs:annotation>
+					<xs:documentation>c2+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c3-">
+				<xs:annotation>
+					<xs:documentation>c3-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c3+">
+				<xs:annotation>
+					<xs:documentation>c3+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c4-">
+				<xs:annotation>
+					<xs:documentation>c4-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c4+">
+				<xs:annotation>
+					<xs:documentation>c4+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c5-">
+				<xs:annotation>
+					<xs:documentation>c5-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c5+">
+				<xs:annotation>
+					<xs:documentation>c5+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c6-">
+				<xs:annotation>
+					<xs:documentation>c6-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c6+">
+				<xs:annotation>
+					<xs:documentation>c6+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c7">
+				<xs:annotation>
+					<xs:documentation>c7</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c7-">
+				<xs:annotation>
+					<xs:documentation>c7-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c7+">
+				<xs:annotation>
+					<xs:documentation>c7+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c8">
+				<xs:annotation>
+					<xs:documentation>c8</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c8-">
+				<xs:annotation>
+					<xs:documentation>c8-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c8+">
+				<xs:annotation>
+					<xs:documentation>c8+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c9">
+				<xs:annotation>
+					<xs:documentation>c9</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c9-">
+				<xs:annotation>
+					<xs:documentation>c9-</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c9+">
+				<xs:annotation>
+					<xs:documentation>c9+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="carbon dioxide gas">
+				<xs:annotation>
+					<xs:documentation>carbon dioxide gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="carbon monoxide gas">
+				<xs:annotation>
+					<xs:documentation>carbon monoxide gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="chemical">
+				<xs:annotation>
+					<xs:documentation>chemical</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="condensate">
+				<xs:annotation>
+					<xs:documentation>condensate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="condensate - gross">
+				<xs:annotation>
+					<xs:documentation>condensate - gross</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="condensate - net">
+				<xs:annotation>
+					<xs:documentation>condensate - net</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="crude - stabilized">
+				<xs:annotation>
+					<xs:documentation>crude - stabilized</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cuttings">
+				<xs:annotation>
+					<xs:documentation>cuttings</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="diesel">
+				<xs:annotation>
+					<xs:documentation>diesel</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="diethylene glycol">
+				<xs:annotation>
+					<xs:documentation>diethylene glycol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dioxygen">
+				<xs:annotation>
+					<xs:documentation>dioxygen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric power">
+				<xs:annotation>
+					<xs:documentation>electric power</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ethane">
+				<xs:annotation>
+					<xs:documentation>ethane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ethane - component">
+				<xs:annotation>
+					<xs:documentation>ethane - component</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas">
+				<xs:annotation>
+					<xs:documentation>gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas - component in oil">
+				<xs:annotation>
+					<xs:documentation>gas - component in oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas - dry">
+				<xs:annotation>
+					<xs:documentation>gas - dry</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas - rich">
+				<xs:annotation>
+					<xs:documentation>gas - rich</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas - wet">
+				<xs:annotation>
+					<xs:documentation>gas - wet</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="helium gas">
+				<xs:annotation>
+					<xs:documentation>helium gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="heptane">
+				<xs:annotation>
+					<xs:documentation>heptane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydraulic control fluid">
+				<xs:annotation>
+					<xs:documentation>hydraulic control fluid</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydrogen gas">
+				<xs:annotation>
+					<xs:documentation>hydrogen gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydrogen sulfide">
+				<xs:annotation>
+					<xs:documentation>hydrogen sulfide</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="i-butane - component">
+				<xs:annotation>
+					<xs:documentation>i-butane - component</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="isobutane">
+				<xs:annotation>
+					<xs:documentation>isobutane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="isopentane">
+				<xs:annotation>
+					<xs:documentation>isopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="liquefied natural gas">
+				<xs:annotation>
+					<xs:documentation>liquefied natural gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="liquefied petroleum gas">
+				<xs:annotation>
+					<xs:documentation>liquefied petroleum gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="liquid">
+				<xs:annotation>
+					<xs:documentation>liquid</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methane">
+				<xs:annotation>
+					<xs:documentation>methane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methane - component">
+				<xs:annotation>
+					<xs:documentation>methane - component</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methanol">
+				<xs:annotation>
+					<xs:documentation>methanol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="mixed butane">
+				<xs:annotation>
+					<xs:documentation>mixed butane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="monoethylene glycol">
+				<xs:annotation>
+					<xs:documentation>monoethylene glycol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="naphtha">
+				<xs:annotation>
+					<xs:documentation>naphta</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="natural gas liquid">
+				<xs:annotation>
+					<xs:documentation>natural gas liquid</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="n-butane - component">
+				<xs:annotation>
+					<xs:documentation>n-butane - component</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="neopentane">
+				<xs:annotation>
+					<xs:documentation>neopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="NGL - component in gas">
+				<xs:annotation>
+					<xs:documentation>NGL - component in gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="nitrogen gas">
+				<xs:annotation>
+					<xs:documentation>nitrogen gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="nitrogen oxide gas">
+				<xs:annotation>
+					<xs:documentation>nitrogen oxide gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="normal butane">
+				<xs:annotation>
+					<xs:documentation>normal butane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="normal pentane">
+				<xs:annotation>
+					<xs:documentation>normal pentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil">
+				<xs:annotation>
+					<xs:documentation>oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil - component in water">
+				<xs:annotation>
+					<xs:documentation>oil - component in water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil - gross">
+				<xs:annotation>
+					<xs:documentation>oil - gross</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil - net">
+				<xs:annotation>
+					<xs:documentation>oil - net</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil and gas">
+				<xs:annotation>
+					<xs:documentation>oil and gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oleic">
+				<xs:annotation>
+					<xs:documentation>oleic</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pentane - component">
+				<xs:annotation>
+					<xs:documentation>pentane - component</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="petroleum gas liquid">
+				<xs:annotation>
+					<xs:documentation>petroleum gas liquid</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="propane">
+				<xs:annotation>
+					<xs:documentation>propane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="propane - component">
+				<xs:annotation>
+					<xs:documentation>propane - component</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="salt">
+				<xs:annotation>
+					<xs:documentation>salt</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sand - component">
+				<xs:annotation>
+					<xs:documentation>sand - component</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="triethylene glycol">
+				<xs:annotation>
+					<xs:documentation>triethylene glycol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="vapor">
+				<xs:annotation>
+					<xs:documentation>vapor</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water">
+				<xs:annotation>
+					<xs:documentation>water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water - discharge">
+				<xs:annotation>
+					<xs:documentation>water - discharge</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water - processed">
+				<xs:annotation>
+					<xs:documentation>water - processed</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReservoirFluidKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of reservoir hydrocarbon fluid, in broad terms, by their phase behavior. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="black oil">
+				<xs:annotation>
+					<xs:documentation>black oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="critical or near critical">
+				<xs:annotation>
+					<xs:documentation>critical or near critical</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dry gas">
+				<xs:annotation>
+					<xs:documentation>dry gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="heavy oil">
+				<xs:annotation>
+					<xs:documentation>heavy oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wet gas or condensate">
+				<xs:annotation>
+					<xs:documentation>wet gas or condensate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="volatile oil">
+				<xs:annotation>
+					<xs:documentation>volatile oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SafetyType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of safety issues for which a count can be defined. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="drill or exercise">
+				<xs:annotation>
+					<xs:documentation>drill or exercise</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fire">
+				<xs:annotation>
+					<xs:documentation>fire</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="first aid">
+				<xs:annotation>
+					<xs:documentation>first aid</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hazard report card">
+				<xs:annotation>
+					<xs:documentation>hazard report card</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="job observation">
+				<xs:annotation>
+					<xs:documentation>job observation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lost time accident">
+				<xs:annotation>
+					<xs:documentation>lost time accident</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lost time incident">
+				<xs:annotation>
+					<xs:documentation>lost time incident</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="miscellaneous">
+				<xs:annotation>
+					<xs:documentation>miscellaneous</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="near miss">
+				<xs:annotation>
+					<xs:documentation>near miss</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="permit with SJA">
+				<xs:annotation>
+					<xs:documentation>permit with SJA</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="released to air">
+				<xs:annotation>
+					<xs:documentation>released to air</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="released to water">
+				<xs:annotation>
+					<xs:documentation>released to water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="restricted work">
+				<xs:annotation>
+					<xs:documentation>restricted work</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="safety meeting">
+				<xs:annotation>
+					<xs:documentation>safety meeting</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sent ashore">
+				<xs:annotation>
+					<xs:documentation>sent ashore</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="severe accident">
+				<xs:annotation>
+					<xs:documentation>severe accident</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sick on board">
+				<xs:annotation>
+					<xs:documentation>sick on board</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="spill or leak">
+				<xs:annotation>
+					<xs:documentation>spill or leak</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="total permits">
+				<xs:annotation>
+					<xs:documentation>total permits</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="traffic accident">
+				<xs:annotation>
+					<xs:documentation>traffic accident</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="year-to-date incidents">
+				<xs:annotation>
+					<xs:documentation>year-to-date incidents</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SaturationPointKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of saturation points. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="bubble point">
+				<xs:annotation>
+					<xs:documentation>bubble point</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dew point">
+				<xs:annotation>
+					<xs:documentation>dew point</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="retrograde dew point">
+				<xs:annotation>
+					<xs:documentation>retrograde dew point</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="critical point">
+				<xs:annotation>
+					<xs:documentation>critical point</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ServiceFluidKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of product in a fluid system. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="alkaline solutions">
+				<xs:annotation>
+					<xs:documentation>alkaline solutions</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="biocide">
+				<xs:annotation>
+					<xs:documentation>biocide</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="carbon dioxide">
+				<xs:annotation>
+					<xs:documentation>carbon dioxide</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="carbon monoxide">
+				<xs:annotation>
+					<xs:documentation>carbon monoxide</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="corrosion inhibitor">
+				<xs:annotation>
+					<xs:documentation>corrosion inhibitor</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="demulsifier">
+				<xs:annotation>
+					<xs:documentation>demulsifier</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="diesel">
+				<xs:annotation>
+					<xs:documentation>diesel</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="diethylene glycol">
+				<xs:annotation>
+					<xs:documentation>diethylene glycol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dispersant">
+				<xs:annotation>
+					<xs:documentation>dispersant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="drag reducing agent">
+				<xs:annotation>
+					<xs:documentation>drag reducing agent</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="emulsifier">
+				<xs:annotation>
+					<xs:documentation>emulsifier</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flocculant">
+				<xs:annotation>
+					<xs:documentation>flocculant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydraulic control fluid">
+				<xs:annotation>
+					<xs:documentation>hydraulic control fluid</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="isopropanol">
+				<xs:annotation>
+					<xs:documentation>isopropanol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lubricant">
+				<xs:annotation>
+					<xs:documentation>lubricant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methanol">
+				<xs:annotation>
+					<xs:documentation>methanol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="monoethylene glycol">
+				<xs:annotation>
+					<xs:documentation>monoethylene glycol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil">
+				<xs:annotation>
+					<xs:documentation>oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other chemical">
+				<xs:annotation>
+					<xs:documentation>other chemical</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other hydrate inhibitor">
+				<xs:annotation>
+					<xs:documentation>other hydrate inhibitor</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="polymer">
+				<xs:annotation>
+					<xs:documentation>polymer</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="scale inhibitor">
+				<xs:annotation>
+					<xs:documentation>scale inhibitor</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="solvent">
+				<xs:annotation>
+					<xs:documentation>solvent</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="stabilizing agent">
+				<xs:annotation>
+					<xs:documentation>stabilizing agent</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="surfactant">
+				<xs:annotation>
+					<xs:documentation>surfactant</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="thinner">
+				<xs:annotation>
+					<xs:documentation>thinner</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="triethylene glycol">
+				<xs:annotation>
+					<xs:documentation>triethylene glycol</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimeSeriesKeyword">
+		<xs:annotation>
+			<xs:documentation>Specifies the keywords used for defining keyword-value pairs in a time series. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="asset identifier">
+				<xs:annotation>
+					<xs:documentation>asset identifier</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flow">
+				<xs:annotation>
+					<xs:documentation>flow</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="product">
+				<xs:annotation>
+					<xs:documentation>product</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="qualifier">
+				<xs:annotation>
+					<xs:documentation>qualifier</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="subqualifier">
+				<xs:annotation>
+					<xs:documentation>subqualifier</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ValueStatus">
+		<xs:annotation>
+			<xs:documentation>Specifies the indicators of the quality of a value. This is designed for a SCADA or OPC style of value status. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="access denied">
+				<xs:annotation>
+					<xs:documentation>access denied</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="bad">
+				<xs:annotation>
+					<xs:documentation>bad</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="bad calibration">
+				<xs:annotation>
+					<xs:documentation>bad calibration</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="calculation failure">
+				<xs:annotation>
+					<xs:documentation>calculation failure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="comm failure">
+				<xs:annotation>
+					<xs:documentation>comm failure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="device failure">
+				<xs:annotation>
+					<xs:documentation>device failure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="frozen">
+				<xs:annotation>
+					<xs:documentation>frozen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="not available">
+				<xs:annotation>
+					<xs:documentation>not available</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="overflow">
+				<xs:annotation>
+					<xs:documentation>overflow</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="questionable">
+				<xs:annotation>
+					<xs:documentation>questionable</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="range limit">
+				<xs:annotation>
+					<xs:documentation>range limit</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sensor failure">
+				<xs:annotation>
+					<xs:documentation>sensor failure</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="substituted">
+				<xs:annotation>
+					<xs:documentation>substituted</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="timeout">
+				<xs:annotation>
+					<xs:documentation>timeout</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WellDirection">
+		<xs:annotation>
+			<xs:documentation>Specifies the directions of flow of the fluids in a well facility (generally, injected or produced, or some combination).</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="huff-n-puff">
+				<xs:annotation>
+					<xs:documentation>The well facility alternately injects (usually a steam or hot fluid) and produces.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="injector">
+				<xs:annotation>
+					<xs:documentation>The well facility is injecting fluids into the subsurface.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="producer">
+				<xs:annotation>
+					<xs:documentation>The well facility is producing fluids from the subsurface.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="uncertain">
+				<xs:annotation>
+					<xs:documentation>The flow direction of the fluids is variable, but not on a regular basis as is the case with the huff-n-puff flow.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WellFluid">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of fluid being produced from or injected into a well facility.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="air">
+				<xs:annotation>
+					<xs:documentation>This is generally an injected fluid.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="condensate">
+				<xs:annotation>
+					<xs:documentation>Liquid hydrocarbons produced with natural gas that are separated from the gas by cooling and various other means. Condensate generally has an API gravity of 50 degrees to 120 degrees and is water white, straw, or bluish in color. It is the liquid recovery from a well classified as a gas well. It is generally dissolved in the gaseous state under reservoir conditions but separates as a liquid either in passing up the hole or at the surface. These hydrocarbons, from associated and non-associated gas well gas, normally are recovered from lease separators or field facilities by mechanical separation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dry">
+				<xs:annotation>
+					<xs:documentation>The well facility is classified as a dry well. It has not been nor will it be used to produce or inject any fluids.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas">
+				<xs:annotation>
+					<xs:documentation>The well is classified as a gas well, producing or injecting a hydrocarbon gas. The gas is generally methane, but may have a mixture of other gases also.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas-water">
+				<xs:annotation>
+					<xs:documentation>The well facility is classified as producing both gas and water. This classification is to be used when the produced stream flow is a mixture of gas and water. When a facility produces gas and water in separate streams, it should be classified twice as gas and as water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="non HC gas">
+				<xs:annotation>
+					<xs:documentation>The well produces or injects non-hydrocarbon gases. Typical other gases would be helium and carbon dioxide.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="non HC gas -- CO2">
+				<xs:annotation>
+					<xs:documentation>Carbon dioxide gas.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil">
+				<xs:annotation>
+					<xs:documentation>The liquid hydrocarbon, generally referred to as crude oil.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil-gas">
+				<xs:annotation>
+					<xs:documentation>The well facility is classified as producing both gas and oil. This classification is to be used when the produced stream flow is a mixture of oil and gas. When a facility produces oil and gas in separate streams, it should be classified twice as oil and as gas.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil-water">
+				<xs:annotation>
+					<xs:documentation>The well facility is classified as producing both oil and water. This classification is to be used when the produced stream flow is a mixture of oil and water. When a facility produces oil and water in separate streams, it should be classified twice as oil and as water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="steam">
+				<xs:annotation>
+					<xs:documentation>The gaseous state of water. This is generally an injected fluid, but it is possible that some hydrothermal wells produce steam.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water">
+				<xs:annotation>
+					<xs:documentation>The well is classified as a water well without distinguishing between brine or fresh water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water -- brine">
+				<xs:annotation>
+					<xs:documentation>The well facility is classified as producing or injecting salt water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water -- fresh water">
+				<xs:annotation>
+					<xs:documentation>The well facility is classified as producing fresh water that is capable of use for drinking or crop irrigation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AbstractDateTimeClass" abstract="true">
+		<xs:annotation>
+			<xs:documentation>A reporting period that is different from the overall report period. For example, a particular day within a monthly report. This period must conform to the kind of interval. If one value from a pair are given, then both values must be given.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="DTime" type="eml:TimeStamp" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>DTime.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Month" type="prodml:CalendarMonth" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Month. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AbstractFluidComponent" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The Abstract base type of FluidComponent.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MassFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid mass fraction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MoleFraction" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid mole fraction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="BusinessAssociate">
+		<xs:annotation>
+			<xs:documentation>Describes any company, person, group, consultant, etc., which is associated within a context (e.g., a well). The information contained in this module is: (1) contact information, such as address, phone numbers, email, (2) alternate name, or aliases, and (3) associations, such as the business associate that this one is associated with, or a contact who is associated with this business associate.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the business associate. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Role" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The role of the business associate within the context. For example, "driller" or "operator", "lead agency - CEQA compliance" "regulatory contact", "safety contact". A business associate generally has one role but the role may be called different things in different naming systems.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Alias" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An alternate name of a business associate. It is generally associated with a naming system. An alias is not necessarily unique within the naming system.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Address" type="prodml:GeneralAddress" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The business address.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhoneNumber" type="prodml:PhoneNumberStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Various types of phone numbers may be given. They may be office or home, they may be a number for a cell phone, or for a fax, etc. Attributes of PhoneNumber declare the type of phone number that is being given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Email" type="prodml:EmailQualifierStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The email address may be home, office, or permanent. More than one may be given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AssociatedWith" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to another business associate that this business associate is associated with. The most common situation is that of an employee being associated with a company. But it may also be, for example, a work group associated with a university.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Contact" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A pointer to a business associate (generally a person) who serves as a contact for this business associate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PersonnelCount" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The count of personnel in a group.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PersonName" type="prodml:PersonName" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CalibrationParameter">
+		<xs:annotation>
+			<xs:documentation>Parameters are given by name/ value pairs, with optional UOM. The parameter name and UOM are attributes, and the value is the value of the element.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="uom" use="optional" type="eml:UomEnum">
+			<xs:annotation>
+				<xs:documentation>The unit of measure of the parameter value.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The name of the parameter.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DatedComment">
+		<xs:annotation>
+			<xs:documentation>A general time-stamped comment structure.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Who" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the person providing the comment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Role" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The role of the person providing the comment. This is the role of the person within the context of comment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StartTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time where the comment begins to be valid.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time where the comment is no longer valid.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="EmailQualifierStruct">
+		<xs:annotation>
+			<xs:documentation>An email address with an attribute, used to "qualify" an email as personal, work, or permanent.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="qualifier" use="optional" type="prodml:AddressQualifier"/>
+	</xs:complexType>
+	<xs:complexType name="EndpointQualifiedDate">
+		<xs:annotation>
+			<xs:documentation>A date value used for min/max query parameters related to "growing objects". The meaning of the endpoint of an interval can be modified by the endpoint attribute.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="endpoint" use="optional" type="prodml:EndpointQualifier">
+			<xs:annotation>
+				<xs:documentation>The default is "inclusive".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="EndpointQualifiedDateTime">
+		<xs:annotation>
+			<xs:documentation>A timestamp value used for min/max query parameters related to "growing objects". The meaning of the endpoint of an interval can be modified by the endpoint attribute.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="endpoint" use="optional" type="prodml:EndpointQualifier">
+			<xs:annotation>
+				<xs:documentation>The default is "inclusive".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FacilityIdentifier" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Contains details about the facility being surveyed, such as name, geographical data, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="prodml:NameStruct" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the facility that is represented by this facility mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Type of facility where the fiber is deployed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name and type of a facility whose context is relevant to the represented installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessUnit" type="prodml:ProductVolumeBusinessUnit" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Identifier of the business unit responsible for the facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Operator" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Contact for the company/person operating the facility</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GeographicContext" type="prodml:GeographicContext" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The geographical information about the facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FacilityIdentifierStruct" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Identifies a facility.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="kind" use="optional" type="prodml:ReportingFacility">
+			<xs:annotation>
+				<xs:documentation>The kind of facility.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="siteKind" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A custom sub-categorization of facility kind. This attribute is free-form text and allows implementers to provide a more specific or specialized description of the facility kind.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="namingSystem" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The naming system within which the name is unique. For example, API or NPD.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uidRef" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The referencing uid.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidComponent">
+		<xs:annotation>
+			<xs:documentation>Fluid component.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MassFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass fraction for the fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MoleFraction" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mole fraction for the fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="KValue" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>K value.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="fluidComponentReference" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Fluid component reference. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidComponentCatalog">
+		<xs:annotation>
+			<xs:documentation>Fluid component catalog.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StockTankOil" type="prodml:StockTankOil" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Stock tank oil. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NaturalGas" type="prodml:NaturalGas" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Natural gas.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FormationWater" type="prodml:FormationWater" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Formation water.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PureFluidComponent" type="prodml:PureFluidComponent" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Pure fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PseudoFluidComponent" type="prodml:PseudoFluidComponent" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Pseudo-fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlusFluidComponent" type="prodml:PlusFluidComponent" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Plus-fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FormationWater">
+		<xs:annotation>
+			<xs:documentation>The water in the formation.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFluidComponent">
+				<xs:sequence>
+					<xs:element name="SpecificGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Specific gravity.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Salinity" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Salinity level.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GeneralAddress">
+		<xs:annotation>
+			<xs:documentation>An general address structure. This form is appropriate for most countries.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name line of an address. If missing, use the name of the business associate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Street" type="eml:String64" minOccurs="1" maxOccurs="4">
+				<xs:annotation>
+					<xs:documentation>A generic term for the middle lines of an address. They may be a street address, PO box, suite number, or any lines that come between the "name" and "city" lines. This may be repeated for up to four, ordered lines.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="City" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The city for the business associate's address.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Country" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The country may be included. Although this is optional, it is probably required for most uses.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="County" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The county, if applicable or necessary. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PostalCode" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A postal code, if appropriate for the country. In the USA, this would be the five or nine digit zip code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="State" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>State.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Province" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Province.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="kind" use="optional" type="prodml:AddressKindEnum">
+			<xs:annotation>
+				<xs:documentation>The type of address: mailing, physical, or both. See AddressKindEnum. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="GeneralMeasureType">
+		<xs:annotation>
+			<xs:documentation>General measure type. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="uom" use="optional" type="eml:UomEnum">
+			<xs:annotation>
+				<xs:documentation>The unit of measure. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="GeneralQualifiedMeasure">
+		<xs:annotation>
+			<xs:documentation>A measure which may have a quality status. The measure class (e.g., length) must be defined within the context of the usage of this type (e.g., in another element). This should not be used if the measure class will always be the same thing. If the 'status' attribute is absent and the value is not "NaN", the data value can be assumed to be good with no restrictions.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractMeasureDataType">
+				<xs:sequence/>
+				<xs:attribute name="status" use="optional" type="prodml:ValueStatus">
+					<xs:annotation>
+						<xs:documentation>An indicator of the quality of the value.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="componentReference" use="optional" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>The kind of the value component. For example, "X" in a tuple of X and Y.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="uom" use="required" type="eml:UomEnum">
+					<xs:annotation>
+						<xs:documentation>The unit of measure for the value. This value must conform to the values allowed by the measure class.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="GeographicContext">
+		<xs:annotation>
+			<xs:documentation>A geographic context of a report.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Country" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the country.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="State" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The state or province within the country.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="County" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of county.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Field" type="prodml:NameStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the field within whose context the report exists.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A general comment that further explains the offshore location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OffshoreLocation" type="prodml:OffshoreLocation" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GeologyFeature">
+		<xs:annotation>
+			<xs:documentation>Geology features found in the location of the borehole string.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the feature.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GeologyType" type="prodml:GeologyType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Aquifer or reservoir. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MdTop" type="prodml:MeasuredDepthCoord" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Measured depth at the top of the interval.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MdBottom" type="prodml:MeasuredDepthCoord" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Measured depth at the base of the interval.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TvdTop" type="prodml:WellVerticalDepthCoord" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TvdBottom" type="prodml:WellVerticalDepthCoord" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="IndexedObject">
+		<xs:annotation>
+			<xs:documentation>Indexed object.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="index" use="optional" type="eml:NonNegativeLong">
+			<xs:annotation>
+				<xs:documentation>Index.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Name.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uom" use="optional" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Unit of measure.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="description" use="optional" type="eml:String2000">
+			<xs:annotation>
+				<xs:documentation>Description.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="IntegerQualifiedCount">
+		<xs:annotation>
+			<xs:documentation>An integer which may have a quality status. If the 'status' attribute is absent and the value is not "NaN", the data value can be assumed to be good with no restrictions.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractMeasureDataType">
+				<xs:sequence/>
+				<xs:attribute name="status" use="optional" type="prodml:ValueStatus">
+					<xs:annotation>
+						<xs:documentation>An indicator of the quality of the value.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="KeywordValueStruct">
+		<xs:annotation>
+			<xs:documentation>A value for the specified keyword. That is, a keyword-value pair. The allowed length of the value is constrained by the keyword.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:AbstractString">
+				<xs:attribute name="keyword" use="required" type="prodml:TimeSeriesKeyword">
+					<xs:annotation>
+						<xs:documentation>The keyword within which the value is unique. The concept of a keyword is very close to the concept of a classification system.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="KindQualifiedString">
+		<xs:annotation>
+			<xs:documentation>A kind which may have a quality status. If the 'status' attribute is absent and the value is not "NaN", the data value can be assumed to be good with no restrictions.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractMeasureDataType">
+				<xs:sequence/>
+				<xs:attribute name="status" use="optional" type="prodml:ValueStatus">
+					<xs:annotation>
+						<xs:documentation>An indicator of the quality of the value.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="LiquidComposition">
+		<xs:annotation>
+			<xs:documentation>The composition of liquid</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComponent" type="prodml:FluidComponent" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MeasuredDepthCoord">
+		<xs:annotation>
+			<xs:documentation>A measured depth coordinate in a wellbore. Positive moving from the reference datum toward the bottomhole. All coordinates with the same datum (and same UOM) can be considered to be in the same coordinate reference system (CRS) and are thus directly comparable.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:AbstractMeasure">
+				<xs:attribute name="uom" use="required" type="eml:VerticalCoordinateUom">
+					<xs:annotation>
+						<xs:documentation>The unit of measure of the measured depth coordinate.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MeasureOrQuantity">
+		<xs:annotation>
+			<xs:documentation>A measure with a UOM or a quantity (without a UOM). Use this only where the underlying class of data is captured elsewhere. For example, using a measure class.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:AbstractMeasure">
+				<xs:attribute name="uom" use="optional" type="eml:UomEnum">
+					<xs:annotation>
+						<xs:documentation>The unit of measure for the quantity. This value must conform to the values allowed by a measure class. If the value is a measure, then the UOM must be specified.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="NameStruct">
+		<xs:annotation>
+			<xs:documentation>The name of something within a naming system.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:String64">
+				<xs:attribute name="authority" use="optional" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>The authority for the naming system, e.g., a company. </xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="NaturalGas">
+		<xs:annotation>
+			<xs:documentation>Natural gas.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFluidComponent">
+				<xs:sequence>
+					<xs:element name="GasGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Gas gravity.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Molecular weight. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GrossEnergyContentPerUnitMass" type="eml:EnergyPerMassMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of gas. It is also known as higher heating value (HHV), gross energy, upper heating value, gross calorific value (GCV) or higher calorific Value (HCV). This value takes into account the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is practical.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NetEnergyContentPerUnitMass" type="eml:EnergyPerMassMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of gas. It is also known as lower heating value (LHV), net energy, net calorific value (NCV) or lower calorific value (LCV). This value ignores the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is not possible and is ignored.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GrossEnergyContentPerUnitVolume" type="eml:EnergyPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of gas. It is also known as higher heating value (HHV), gross energy, upper heating value, gross calorific value (GCV) or higher calorific value (HCV). This value takes into account the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is practical.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NetEnergyContentPerUnitVolume" type="eml:EnergyPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of gas. It is also known as lower heating value (LHV), net energy, net calorific value (NCV) or lower calorific value (LCV). This value ignores the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is not possible and is ignored.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="NorthSeaOffshore">
+		<xs:annotation>
+			<xs:documentation>A type of offshore location that captures the North Sea offshore terminology.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AreaName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An optional, uncontrolled value, which may be used to describe the general area of offshore North Sea in which the point is located.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Quadrant" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number or letter of the quadrant in the North Sea.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BlockSuffix" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A lower case letter assigned if a block is subdivided.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OffshoreLocation">
+		<xs:annotation>
+			<xs:documentation>A generic type of offshore location. This allows an offshore location to be given by an area name, and up to four block names. A comment is also allowed.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AreaName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A general meaning of area. It may be as general as 'UK North Sea' or 'Viosca Knoll'. The user community must agree on the meaning of this element.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BlockID" type="eml:String64" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A block ID that can more tightly locate the object. The BlockID should be an identifying name or code. The user community for an area must agree on the exact meaning of this element. An aggregate of increasingly specialized block IDs are sometimes necessary to define the location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An general comment that further explains the offshore location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NorthSeaOffshore" type="prodml:NorthSeaOffshore" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OverallComposition">
+		<xs:annotation>
+			<xs:documentation>Overall composition.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidComponent" type="prodml:FluidComponent" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonName">
+		<xs:annotation>
+			<xs:documentation>The components of a person's name.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Prefix" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A name prefix. Such as, Dr, Ms, Miss, Mr, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="First" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The person's first name, sometimes called their "given name".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Middle" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The person's middle name or initial.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Last" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The person's last or family name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Suffix" type="eml:String64" minOccurs="0" maxOccurs="9">
+				<xs:annotation>
+					<xs:documentation>A name suffix such as Esq, Phd, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PhoneNumberStruct" mixed="true">
+		<xs:annotation>
+			<xs:documentation>A phone number with two attributes, used to "type" and "qualify" a phone number. The type would carry information such as fax, modem, voice, and the qualifier would carry information such as home or office.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="type" use="required" type="prodml:PhoneType">
+			<xs:annotation>
+				<xs:documentation>The kind of phone such as voice or fax.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="qualifier" use="optional" type="prodml:AddressQualifier">
+			<xs:annotation>
+				<xs:documentation>Indicates whether the number is personal, business or both.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="extension" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The phone number extension.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PlusFluidComponent">
+		<xs:annotation>
+			<xs:documentation>Plus fluid component.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFluidComponent">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="Kind" type="prodml:PlusComponentEnumExt" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The kind from plus fluid component. See PlusComponentEnum. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SpecificGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fluid specific gravity.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartingCarbonNumber" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The start/min carbon number.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartingBoilingPoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The starting boiling temperature measure. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AvgDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The average density of the fluid.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AvgMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The average molecular weight of the fluid. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowExternalReference">
+		<xs:annotation>
+			<xs:documentation>A reference to an external port in a different product flow model.This value represents a foreign key from one element to another.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PortReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to a type of port. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConnectedPortReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the connected port. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConnectedModelReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the connected model.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConnectedInstallation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowNetwork">
+		<xs:annotation>
+			<xs:documentation>The non-contextual content of a product flow network object.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the product flow network. This must be unique within the context of the overall product flow model.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of a network plan. This indicates a planned network. All child network components must all be planned and be part of the same plan. The parent network must either contain the plan (i.e., be an actual) or be part of the same plan. Not specified indicates an actual network.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParentNetworkReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the network containing the unit that this network represents. That is, the unit must exist in a different network. If a parent network is not specified then the network represents the model. A model should only be represented by one network. The model network represents the overall installation. All other networks represent internal detail and should not be referenced from outside the model. The external ports on the model network represent the external ports to the overall product flow model. A pointer to an external port on the product flow model does not require the name of the model network because it is redundant to knowledge of the model name (i.e., there is a one-to-one correspondence).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the network.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Port" type="prodml:ProductFlowExternalPort" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An external port. This exposes an internal node for the purpose
+					of allowing connections to the internal behavior of the network.
+					Networks that represent a Flow Unit should always have external ports.
+					If this network represents a Unit then the name of the external port must match
+					the name of a port on the Unit (i.e., they are logically the same port).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Plan" type="prodml:ProductFlowNetworkPlan" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines the existance of a planned network which is a variant of this network
+					beginning at a specified point in time. Any changes to the actual network after
+					that time do not affect the plan.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChangeLog" type="prodml:ProductFlowChangeLog" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Documents that a change occurred at a particular time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Unit" type="prodml:ProductFlowUnit" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A flow behavior for one unit. Within this context, a unit
+					represents a usage of equipment for some purpose. The unit is generally identified
+					by its function rather than the actual equipment used to realize the function.
+					A unit might represent something complex like a field or separator or something simple 
+					like a valve or pump.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PseudoFluidComponent">
+		<xs:annotation>
+			<xs:documentation>Pseudo fluid component.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFluidComponent">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="Kind" type="prodml:PseudoComponentEnumExt" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type from pseudo component enumeration. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SpecificGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fluid specific gravity.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartingCarbonNumber" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The starting / smalestl carbon number.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EndingCarbonNumber" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The ending / largest carbon number.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AvgMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Average molecular weight.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AvgDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The average fluid density.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartingBoilingPoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The starting boiling point measure.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EndingBoilingPoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The ending boiling point measure.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AvgBoilingPoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The average boiling point measure.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PureFluidComponent">
+		<xs:annotation>
+			<xs:documentation>Pure fluid component. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFluidComponent">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="Kind" type="prodml:PureComponentEnumExt" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of component.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The molecular weight of the pure component.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="HydrocarbonFlag" type="xs:boolean" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Yes/no  flag indicates if hydrocarbon or not. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="StartEndDate">
+		<xs:annotation>
+			<xs:documentation>The start and end date for a reporting period.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDateTimeClass">
+				<xs:sequence>
+					<xs:element name="DateStart" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The beginning date that the period represents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DateEnd" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The ending date that the period represents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="StartEndTime">
+		<xs:annotation>
+			<xs:documentation>Start and end time of a reporting period.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDateTimeClass">
+				<xs:sequence>
+					<xs:element name="DTimStart" type="eml:TimeStamp" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The beginning date and time that the period represents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimEnd" type="eml:TimeStamp" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The ending date and time that the period represents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="StockTankOil">
+		<xs:annotation>
+			<xs:documentation>Stock tank oil (STO).</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFluidComponent">
+				<xs:sequence>
+					<xs:element name="APIGravity" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>API gravity.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Molecular weight. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GrossEnergyContentPerUnitMass" type="eml:EnergyPerMassMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of STO. It is also known as higher heating value (HHV), gross energy, upper heating value, gross calorific value (GCV) or higher calorific value (HCV). This value takes into account the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is practical.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NetEnergyContentPerUnitMass" type="eml:EnergyPerMassMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of STO. It is also known as lower heating value (LHV), net energy, lower heating value, net calorific value  (NCV) or lower calorific value (LCV). This value ignores the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is not possible and is ignored.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GrossEnergyContentPerUnitVolume" type="eml:EnergyPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of STO. It is also known as higher heating value (HHV), gross energy, upper heating value,  gross calorific value (GCV) or higher calorific value (HCV). This value takes into account the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is practical.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NetEnergyContentPerUnitVolume" type="eml:EnergyPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of heat released during the combustion of a specified amount of STO. It is also known as lower heating value  (LHV), net energy, net calorific value (NCV) or lower calorific value (LCV). This value ignores the latent heat of vaporization of water in the combustion products, and is useful in calculating heating values for fuels where condensation of the reaction products is not possible and is ignored.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="VaporComposition">
+		<xs:annotation>
+			<xs:documentation>Vapor composition.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComponent" type="prodml:FluidComponent" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VolumeQualifiedMeasure">
+		<xs:annotation>
+			<xs:documentation>A volume flow rate which may have a quality status. If the 'status' attribute is absent and the value is not "NaN", the data value can be assumed to be good with no restrictions.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="status" use="optional" type="prodml:ValueStatus">
+			<xs:annotation>
+				<xs:documentation>An indicator of the quality of the value.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WellElevationCoord">
+		<xs:annotation>
+			<xs:documentation>A vertical (gravity-based) elevation coordinate within the context of a well. Positive moving upward from the reference datum. All coordinates with the same datum (and same UOM) can be considered to be in the same coordinate reference system (CRS) and are thus directly comparable.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="uom" use="required" type="eml:VerticalCoordinateUom">
+			<xs:annotation>
+				<xs:documentation>The unit of measure of the quantity value. If not given then the default unit of measure of the explicitly or implicitly given datum must be assumed.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WellVerticalDepthCoord">
+		<xs:annotation>
+			<xs:documentation>A vertical (gravity-based) depth coordinate within the context of a well. Positive moving downward from the reference datum. All coordinates with the same datum (and same UOM) can be considered to be in the same coordinate reference system (CRS) and are thus directly comparable.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="uom" use="required" type="eml:VerticalCoordinateUom">
+			<xs:annotation>
+				<xs:documentation>The unit of measure of the quantity value.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

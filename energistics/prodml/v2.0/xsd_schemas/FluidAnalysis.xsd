@@ -1,0 +1,2946 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Product flow model information that supports the WITSML standard. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="FluidSystem.xsd"/>
+	<xs:include schemaLocation="FluidSample.xsd"/>
+	<xs:include schemaLocation="FluidCharacterization.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="CompressibilityKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of compressibility. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="average">
+				<xs:annotation>
+					<xs:documentation>The average measure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="point">
+				<xs:annotation>
+					<xs:documentation>A specific point measure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FluidAnalysisStepCondition">
+		<xs:annotation>
+			<xs:documentation>Specifies the conditions of a fluid analysis step.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="current reservoir conditions">
+				<xs:annotation>
+					<xs:documentation>The fluid analysis step is at current reservoir conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="initial reservoir conditions">
+				<xs:annotation>
+					<xs:documentation>The fluid analysis step is at initial reservoir conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="initial saturation conditions">
+				<xs:annotation>
+					<xs:documentation>The fluid analysis step is at initial saturation conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="stock tank conditions">
+				<xs:annotation>
+					<xs:documentation>The fluid analysis step is at stock tank conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FluidContaminant">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of contaminating fluid present in a fluid sample. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="cement fluids">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is cement fluids.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="completion fluid">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is completion fluid.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="drilling mud">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is drilling mud.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="extraneous gas">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is extraneous gas.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="extraneous oil">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is extraneous oil.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="extraneous water">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is extraneous water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="formation water">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is formation water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="treatment chemicals">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is treatment chemicals.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="solid">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is solid.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>The fluid contaminant is unknown.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SampleQuality">
+		<xs:annotation>
+			<xs:documentation>Specifies the values for the quality of data. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="invalid">
+				<xs:annotation>
+					<xs:documentation>The sample quality is invalid.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>The sample quality is unknown.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="valid">
+				<xs:annotation>
+					<xs:documentation>The sample quality is valid.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ThermodynamicPhase">
+		<xs:annotation>
+			<xs:documentation>Specifies the thermodynamic phases.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="aqueous">
+				<xs:annotation>
+					<xs:documentation>A water-rich liquid phase.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oleic">
+				<xs:annotation>
+					<xs:documentation>An oil-rich liquid phase.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="vapor">
+				<xs:annotation>
+					<xs:documentation>A gaseous phase at the conditions present.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="total hydrocarbon">
+				<xs:annotation>
+					<xs:documentation>A phase comprised of the total hydrocarbons (e.g., above the critical pressure for a gas condensate).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VolumeReferenceKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the conditions at which the volume was measured. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="initial reservoir">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at initial reservoir conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="saturation-calculated">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at saturation-calculated conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="saturation-measured">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at saturation-measured conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 1">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 1 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 10">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 10 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 2">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 2 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 3">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 3 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 4">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 4 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 5">
+				<xs:annotation>
+					<xs:documentation>The reference volume is at measured separator stage 5 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 6">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured  at separator stage 6 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 7">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 7 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 8">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 8 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator stage 9">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at separator stage 9 conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="stock tank">
+				<xs:annotation>
+					<xs:documentation>The reference volume is measured at stock tank conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>The reference volume was measured at unknown conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AbstractGasProducedRatioVolume" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract class of Gas Produced Ratio Volume. </xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0" maxOccurs="1"/>
+	</xs:complexType>
+	<xs:complexType name="AbstractLiquidDropoutPercVolume" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Provide either the liquid volume, or the liquid dropout percent, which is the liquid volume divided by the total volume.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="AbstractOilVolShrinkage" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract class of oil volume shrinkage.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="AtmosphericFlashTestAndCompositionalAnalysis">
+		<xs:annotation>
+			<xs:documentation>The flash test and compositional analysis.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An integer number to identify this test in a sequence of tests.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date when this test was performed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlashToPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure to which the sample is flashed in this analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlashToTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature to which the sample is flashed in this analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AtmosphericPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The atmospheric pressure at the time of this analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AtmosphericTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The atmospheric temperature at the time of this analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlashGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas-oil ratio of the flash in this analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilFormationVolumeFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The formation volume factor for the oil (liquid) phase at the conditions of this test--volume at test conditions/volume at standard conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DensityAtSamplePressureandTemperature" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the sample at the pressure and temperature conditions of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AvgMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The average molecular weight of the sample for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlashedLiquid" type="prodml:FlashedLiquid" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FlashedGas" type="prodml:FlashedGas" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ConstantCompositionExpansionTest">
+		<xs:annotation>
+			<xs:documentation>The CCE test</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A number for this test for purposes of e.g., tracking lab sequence.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation (or bubble point) pressure measured in this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidFractionReference" type="prodml:FluidVolumeReference" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Volume reference for the measured liquid fraction in a constant composition expansion test. Referenced to liquid volume at saturation pressure (generally).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RelativeVolumeReference" type="prodml:FluidVolumeReference" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Volume reference for the relative volume ratio in a constant composition expansion test. Referenced to liquid volume at saturation pressure (generally).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConstantCompositionExpansionTestStep" type="prodml:ConstantCompositionExpansionTestStep" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Measured relative volume ratio = measured volume/volume at Psat.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Expected to be a yes or no value to indicate if differential liberation/vaporization data are corrected to separator conditions/flash data or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ConstantCompositionExpansionTestStep">
+		<xs:annotation>
+			<xs:documentation>The CCE test steps. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepPressure" type="eml:PressureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidFraction" type="prodml:RelativeVolumeRatio" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fraction of liquid by volume for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilCompressibility" type="prodml:OilCompressibility" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil compressibility at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total volume of the expanded mixture at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RelativeVolumeRatio" type="prodml:RelativeVolumeRatio" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Measured relative volume ratio = measured volume/volume at Psat.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas density at the conditions for this viscosity correlation to be used.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasZFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas Z factor value at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasCompressibility" type="eml:ReciprocalPressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas compressibility at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="YFunction" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The Y function at this test step. See  Standing, M.B.: Volumetric And Phase Behavior Of Oil Field Hydrocarbon Systems, Eighth Edition, SPE Richardson, Texas (1977).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidCondition" type="prodml:FluidAnalysisStepCondition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid condition at this test step. Enum, see fluid analysis step condition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhasesPresent" type="prodml:PhasePresent" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The phases present at this test step (oil, water, gas etc.). Enum, see phases present.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The overall composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ConstantVolumeDepletionTest">
+		<xs:annotation>
+			<xs:documentation>The CVT test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A number for this test for purposes of, e.g., tracking lab sequence.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeGasProducedReferenceStd" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volume is corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SatuationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="LiquidDropoutReference" type="prodml:FluidVolumeReference" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CvdTestStep" type="prodml:FluidCvdTestStep" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CumulativeGasProducedRatioStd">
+		<xs:annotation>
+			<xs:documentation>The standard condition of cumulative gas produced ratio.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractGasProducedRatioVolume">
+				<xs:sequence>
+					<xs:element name="CumulativeGasProducedRatioStd" type="eml:VolumePerVolumeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The standard condition of cumulative gas produced ratio.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CumulativeGasProducedVol">
+		<xs:annotation>
+			<xs:documentation>The cumulative gas produced volume.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractGasProducedRatioVolume">
+				<xs:sequence>
+					<xs:element name="CumulativeGasProducedVolume" type="eml:VolumeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The cumulative gas oil produced ratio at standard conditions.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DifferentialLiberationTest">
+		<xs:annotation>
+			<xs:documentation>The differential liberation test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A number for this test for purposes of, e.g., tracking lab sequence.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation (or bubble point) pressure measured in this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SeparatorConditions" type="prodml:SeparatorConditions" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to a separator test element that contains the separator conditions (stages) that apply to this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CorrectionMethod" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A flag to indicate if differential liberation/vaporization data are corrected to separator conditions/flash data or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DlTestStep" type="prodml:FluidDifferentialLiberationTestStep" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ShrinkageReference" type="prodml:FluidVolumeReference" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FlashedGas">
+		<xs:annotation>
+			<xs:documentation>Flashed gas. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="GasGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas gravity of the flashed gas in this atmospheric flash test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molecular weight of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasZFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas Z factor value at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasHeatingValue" type="eml:EnergyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas molecular weight of the flashed gas in this atmospheric flash test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor composition of the flashed gas in this atmospheric flash test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FlashedLiquid">
+		<xs:annotation>
+			<xs:documentation>Flashed liquid.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OilAPIGravity" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil molecular weight of the flashed liquid in this atmospheric flash test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid composition of the flashed liquid in this atmospheric flash test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil API gravity of the flashed liquid in this atmospheric flash test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="FluidAnalysis" type="prodml:FluidAnalysis" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="FluidAnalysis">
+		<xs:annotation>
+			<xs:documentation>Fluid analysis.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="RequestDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date the analysis was requested.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AnalysisDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The description about the analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AnalysisPurpose" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The purpose of this analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AnalysisSite" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The location site of the analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="LabContact" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of the analyst or user who is responsible for the results.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StandardConditions" type="eml:AbstractTemperaturePressure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The standard temperature and pressure used for the representation of this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AnalysisQuality" type="prodml:SampleQuality" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum for the quality of this analysis.  See sample quality.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidSampleReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="FluidAnalysisReport" type="prodml:FluidAnalysisReport" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="SampleContaminant" type="prodml:SampleContaminant" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FluidAnalysisReport">
+		<xs:annotation>
+			<xs:documentation>Fluid analysis report.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReportIdentifier" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The identifier of this fluid analysis report.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date of this report.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Author" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The author of this fluid analysis report.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AnalysisLaboratory" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The laboratory that provided this fluid analysis report.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportDocumentReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to the report document, which will use the Energistics Attachment Object.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReportLocation" type="prodml:ReportLocation" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidCvdTestStep">
+		<xs:annotation>
+			<xs:documentation>The CVD test steps.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepPressure" type="eml:PressureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molecular weight of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas gravity at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasFormationVolumeFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas formation volume factor at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasZFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas Z factor value at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Phase2ZFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The standard Z = PV/RT, but here for a two-phase Z-factor, use total molar volume for both phases.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeFluidProducedFraction" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative fluid produced (molar) fraction at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidFraction" type="prodml:RelativeVolumeRatio" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fraction of liquid by volume for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidCondition" type="prodml:FluidAnalysisStepCondition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid condition at this test step. Enum, see fluid analysis step condition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhasesPresent" type="prodml:PhasePresent" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The phases present at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The overall composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidDifferentialLiberationTestStep">
+		<xs:annotation>
+			<xs:documentation>The DLT test steps.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepPressure" type="eml:PressureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilFormationVolumeFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The formation volume factor for the oil (liquid) phase at the conditions of this test--volume at test conditions/volume st standard conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilCompressibility" type="prodml:OilCompressibility" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil compressibility at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molecular weight of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas gravity at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of gas at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasFormationVolumeFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas formation volume factor at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasZFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas Z factor value at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalFormationVolumeFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total formation volume factor at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SolutionGORMeasured" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The solution GOR measured at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SolutionGORCorrect" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The solution GOR (corrected) at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeStockTankGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative stock tank GOR at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilFormationVolumeFactorCorrected" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil formation volume factor (corrected) at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResidualAPIGravity" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The residual API gravity at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidCondition" type="prodml:FluidAnalysisStepCondition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid condition at this test step. Enum, see fluid analysis step condition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhasesPresent" type="prodml:PhasePresent" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The phases present at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The overall composition at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidSeparatorTest">
+		<xs:annotation>
+			<xs:documentation>FluidSeparator  Test</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A number for this test for purposes of, e.g., tracking lab sequence.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReservoirTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reservoir temperature for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation (or bubble point) pressure measured in this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturatedOilFormationVolumeFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturated oil formation volume factor for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturatedOilDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturated oil density for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SeparatorTestGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The separator test GOR for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverallGasGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The overall gas gravity for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShrinkageReference" type="prodml:FluidVolumeReference" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="SeparatorTestStep" type="prodml:FluidSeparatorTestStep" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidSeparatorTestStep">
+		<xs:annotation>
+			<xs:documentation>Fluid separator test step.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepPressure" type="eml:PressureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BubblePointPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The bubble point pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResidualAPIGravity" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The residual API gravity for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilSpecificGravity" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil specific gravity for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilFormationVolumeFactorStd" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil formation volume factor at standard conditions for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilFormationVolumeFactorCorrected" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil formation volume factor (corrected) for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StageSeparatorGORStd" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The stage separator GOR at standard conditions for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StageSeparatorGORCorrected" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The stage separator GOR (corrected) for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasMolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molecular weight of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas gravity at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of gas at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasZFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas Z factor value at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas volume for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilShrinkageFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil shrinkage factor for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation (or bubble point) pressure measured in this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidCondition" type="prodml:FluidAnalysisStepCondition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid condition at this test step. Enum, see fluid analysis step condition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhasesPresent" type="prodml:PhasePresent" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The phases present for this test step. Enum, see phases present.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid composition for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor composition for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The overall composition for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidVolumeReference">
+		<xs:annotation>
+			<xs:documentation>The reference uid to the fluid volume</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:VolumeReferenceKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of fluid volume references. Enum, see volume reference kind.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference volume for this analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="HydrocarbonAnalysis">
+		<xs:annotation>
+			<xs:documentation>Hydrocarbon fluid analysis.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FluidAnalysis">
+				<xs:sequence>
+					<xs:element name="FluidComponentCatalog" type="prodml:FluidComponentCatalog" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fluid component catalog for this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SampleIntegrityAndPreparation" type="prodml:SampleIntegrityAndPreparation" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The sample integrity and preparation procedure for this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AtmosphericFlashTestAndCompositionalAnalysis" type="prodml:AtmosphericFlashTestAndCompositionalAnalysis" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>An atmospheric flash test and compositional analysis test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ConstantCompositionExpansionTest" type="prodml:ConstantCompositionExpansionTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A constant composition expansion test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SaturationTest" type="prodml:SaturationTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A saturation test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DifferentialLiberationTest" type="prodml:DifferentialLiberationTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A differential liberation test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ConstantVolumeDepletionTest" type="prodml:ConstantVolumeDepletionTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A constant volume depletion test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SeparatorTest" type="prodml:FluidSeparatorTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A separator test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TransportTest" type="prodml:OtherMeasurementTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A transport test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="VaporLiquidEquilibriumTest" type="prodml:VaporLiquidEquilibriumTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A vapor liquid equilibrium test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SwellingTest" type="prodml:SwellingTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A swelling test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SlimTubeTest" type="prodml:SlimTubeTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A slim tube test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MultipleContactMiscibilityTest" type="prodml:MultipleContactMiscibilityTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A multiple contact miscibility test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="STOAnalysis" type="prodml:STOAnalysis" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>An stock tank oil analysis within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InterfacialTensionTest" type="prodml:InterfacialTensionTest" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>An interfacial tension test within this fluid analysis.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InjectedGas">
+		<xs:annotation>
+			<xs:documentation>The injected gas volume.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The composition of injected gas (vapor) for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="InterfacialTensionTest">
+		<xs:annotation>
+			<xs:documentation>The interfacial tension test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An integer number to identify this test in a sequence of tests.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WettingPhase" type="prodml:ThermodynamicPhase" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The wetting phase for this interfacial tension test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="nonWettingPhase" type="prodml:ThermodynamicPhase" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The non-wetting phase for this interfacial tension test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Surfactant" type="prodml:AbstractFluidComponent" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The surfactant for this interfacial tension test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterfacialTensionTestStep" type="prodml:InterfacialTensionTestStep" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="InterfacialTensionTestStep">
+		<xs:annotation>
+			<xs:documentation>The interfacial tension test step.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WettingPhaseSaturation" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The wetting phase saturation for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SurfactantConcentration" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The surfactant concentration for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterfacialTension" type="eml:ForcePerLengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The interfacial tension for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="LiquidDropoutFraction">
+		<xs:annotation>
+			<xs:documentation>The fraction of liquid by volume.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractLiquidDropoutPercVolume">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="LiquidDropoutPercent" type="eml:VolumePerVolumeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fraction of liquid by volume for this test step.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="LiquidVolume">
+		<xs:annotation>
+			<xs:documentation>The amount of liquid by volume.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractLiquidDropoutPercVolume">
+				<xs:sequence>
+					<xs:element name="LiquidVolume" type="eml:VolumeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The amount of liquid by volume for this test step.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="MassBalance">
+		<xs:annotation>
+			<xs:documentation>The balance sheet of mass.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MassBalanceFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass balance fraction for this slim tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassIn" type="prodml:MassIn" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MassOut" type="prodml:MassOut" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MassIn">
+		<xs:annotation>
+			<xs:documentation>The mass of fluid in the connecting lines.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MassFluidSlimtube" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of fluid in the slim tube for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassFluidConnectingLines" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of fluid in the connecting lines for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassInjectedGasSolvent" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of injected gas solvent for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalMassIn" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total mass in for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MassOut">
+		<xs:annotation>
+			<xs:documentation>The  mass out for this slim tube.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MassEffluentStockTankOil" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of effluent stock tank oil for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassProducedEffluentGas" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of produced effluent gas for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassResidualOil" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of residual oil for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassProducedEffluentGasFlowDown" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of produced effluent gas flow down for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalMassOut" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total mass out for this slim tube test volume step mass balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MultipleContactMiscibilityTest">
+		<xs:annotation>
+			<xs:documentation>Multiple contact miscibility test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasSolventCompositionReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference to the composition of the gas solvent that is a fluid composition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MixRatio" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mix ratio for the multiple contact miscibility test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="OilCompressibility">
+		<xs:annotation>
+			<xs:documentation>Oil compressibility.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:ReciprocalPressureMeasure">
+				<xs:sequence/>
+				<xs:attribute name="kind" use="required" type="prodml:CompressibilityKind">
+					<xs:annotation>
+						<xs:documentation>The kind of measurement for oil compressibility.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="OilShrinkageFactor">
+		<xs:annotation>
+			<xs:documentation>Oil shrinkage factor.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractOilVolShrinkage">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="OilShrinkageFactor" type="eml:VolumePerVolumeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The oil shrinkage factor.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="OilVolume">
+		<xs:annotation>
+			<xs:documentation>Oil volume.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractOilVolShrinkage">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="OilVolume" type="eml:VolumeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The volume of oil.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="OtherMeasurementTest">
+		<xs:annotation>
+			<xs:documentation>Other measurement test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An integer number to identify this test in a sequence of tests.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OtherMeasurementTestStep" type="prodml:OtherMeasurementTestStep" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="FluidCharacterizationTable" type="prodml:FluidCharacterizationTable" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FluidCharacterizationTableFormatSet" type="prodml:FluidCharacterizationTableFormatSet" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="OtherMeasurementTestStep">
+		<xs:annotation>
+			<xs:documentation>Other measurement test step.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the oil phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilMassDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The oil mass density for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscosity of the gas phase at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas gravity at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasMassDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas density at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasZFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas Z factor value at this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidCondition" type="prodml:FluidAnalysisStepCondition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid condition at this test step. Enum, see fluid analysis step condition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterContent" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water content for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water viscosity for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Salinity" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The salinity for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rsw" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The rsw for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Shear" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The shear for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PhaseDensity">
+		<xs:annotation>
+			<xs:documentation>Phase density.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Pressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure corresponding to this phase density.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Density" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The phase density.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PhaseViscosity">
+		<xs:annotation>
+			<xs:documentation>Phase viscosity.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Pressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure corresponding to this phase viscosity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Viscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The phase viscosity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProducedGasProperties">
+		<xs:annotation>
+			<xs:documentation>The properties of produced gas.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProducedGasGravity" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The produced gas gravity of this produced gas.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The vapor composition of this produced gas.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProducedOilProperties">
+		<xs:annotation>
+			<xs:documentation>Properties of produced oil. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="STODensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The stock tank oil density of this produced oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="STOApiGravity" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The stock tank oil API gravity of this produced oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="STOMW" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The stock tank oil molecular weight of this produced oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="STOWaterContent" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The stock tank oil water content of this produced oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AsphalteneContent" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The asphaltene content of this produced oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RefInjectedGasAdded">
+		<xs:annotation>
+			<xs:documentation>Reference to injected gas added. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AmountOfSubstancePerAmountOfSubstanceMeasure">
+				<xs:sequence/>
+				<xs:attribute name="injectionGasReference" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>Reference to the injection gas composition.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="RelativeVolumeRatio">
+		<xs:annotation>
+			<xs:documentation>Reference to the fluid volume ratio. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:VolumePerVolumeMeasure">
+				<xs:sequence/>
+				<xs:attribute name="fluidVolumeReference" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>Reference to a fluid volume.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReportLocation">
+		<xs:annotation>
+			<xs:documentation>Report location. Informaiton about a network location (e.g., URL) where the report is stored. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LocationDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date when this report was stored in this location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LocationType" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of location in which the report is to be located.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The location of the report, e.g., a path or URL.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SampleContaminant">
+		<xs:annotation>
+			<xs:documentation>Sample contaminant information. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContaminantKind" type="prodml:FluidContaminant" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of contaminant.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeightFractionStockTank" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The contaminant weight percent in stock tank oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VolumeFractionStockTank" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The contaminant volume percent in stock tank oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeightFractionLiveSample" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The weight fraction of contaminant in the fluid sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VolumeFractionLiveSample" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volume fraction of contaminant in the fluid sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molecular weight of contaminant in the fluid sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Density" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of contaminant in the fluid sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ContaminantComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The composition of contaminant in the fluid sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Description of the contaminant.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleOfContaminantReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SampleIntegrityAndPreparation">
+		<xs:annotation>
+			<xs:documentation>Sample integrity And preparation information. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OpeningDate" type="xs:date" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date when this fluid sample was opened.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InitialVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The initial volume of the sample when prepared for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpeningPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The opening pressure of the sample when prepared for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpeningTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The opening temperature of the sample when prepared for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation (or bubble point) pressure measured in this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationTemperature" type="prodml:SaturationTemperature" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation temperature of the sample when prepared for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BasicSedimentAndWater" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The basic sediment and water of the sample when prepared for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FreeWaterVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The free water volume of the sample when prepared for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterContentInHydrocarbon" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water content in hydrocarbon of the sample when prepared for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpeningRemark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about the opening of the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleRestoration" type="prodml:SampleRestoration" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SampleRestoration">
+		<xs:annotation>
+			<xs:documentation>Sample restoration.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date when this test was performed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RestorationDuration" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The restoration duration when the sample is restored in preparation for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RestorationPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The restoration pressure when the sample is restored in preparation for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RestorationTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The restoration temperature when the sample is restored in preparation for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MixingMechanism" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mixing mechanism when the sample is restored in preparation for analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Sara">
+		<xs:annotation>
+			<xs:documentation>SARA analysis results. SARA stands for saturates, asphaltenes, resins and aromatics.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AromaticsWeightFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The aromatics weight fraction in the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AsphaltenesWeightFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The asphaltenes weight fraction in the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NapthenesWeightFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The napthenes weight fraction in the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParaffinsWeightFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The paraffins weight fraction in the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SaturationPressure">
+		<xs:annotation>
+			<xs:documentation>Saturation pressure.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:PressureMeasureExt">
+				<xs:sequence/>
+				<xs:attribute name="kind" use="required" type="prodml:SaturationPointKind">
+					<xs:annotation>
+						<xs:documentation>The kind of saturation point whose pressure is being measured. Enum. See saturationpointkind.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SaturationTemperature">
+		<xs:annotation>
+			<xs:documentation>Saturation temperature.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:ThermodynamicTemperatureMeasure">
+				<xs:sequence/>
+				<xs:attribute name="kind" use="required" type="prodml:SaturationPointKind">
+					<xs:annotation>
+						<xs:documentation>The kind of saturation point whose temperature is being measured. Enum. See saturationpointkind.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SaturationTest">
+		<xs:annotation>
+			<xs:documentation>Saturation test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A number for this test for purposes of, e.g., tracking lab sequence.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation (or bubble point) pressure measured in this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SeparatorConditions">
+		<xs:annotation>
+			<xs:documentation>Separator conditions.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="separatorTestReference" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Reference to a separator test element, which contains the separator conditions (stages) which apply to this test.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SlimTubeSpecification">
+		<xs:annotation>
+			<xs:documentation>Specifications of the slim tube used during a slim-tube test. 
+
+For definition of a slim tube and slim-tube test, see http://www.glossary.oilfield.slb.com/Terms/s/slim-tube_test.aspx</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Length" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The length of the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OuterDiameter" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The outer diameter of the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InnerDiameter" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The inner diameter of the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CrossSectionArea" type="eml:AreaMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cross section area of the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PackingMaterial" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The packing material used in the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PoreVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pore volume of the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Porosity" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The porosity of the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Permeability" type="eml:PermeabilityRockMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The permeability of the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjectedGas" type="prodml:InjectedGas" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Reference to the gas injected into the slim tube.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SlimTubeTest">
+		<xs:annotation>
+			<xs:documentation>Attributes of a slim-tube test. 
+
+For definition of a slim-tube test, see http://www.glossary.oilfield.slb.com/Terms/s/slim-tube_test.aspx</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An integer number to identify this test in a sequence of tests.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PumpTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pump temperature during the slim-tube test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SlimTubeTestPressureStep" type="prodml:SlimTubeTestStep" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SlimTubeSpecification" type="prodml:SlimTubeSpecification" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SlimTubeTestStep">
+		<xs:annotation>
+			<xs:documentation>Slim-tube test step. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepAveragePressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The average pressure for this slim-tube test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SlimTubeTestVolumeStep" type="prodml:SlimTubeTestVolumeStep" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SlimTubeTestVolumeStep">
+		<xs:annotation>
+			<xs:documentation>Slim-tube test volume step.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DifferentialPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The differential pressure of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RunTime" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The run time of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjectionVolumeAtPumpTemperature" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The injection volume at pump temperature of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjectionVolumeAtTestTemperature" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The injection volume at test temperature of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjectedPoreVolumeFraction" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The injected pore volume fraction of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DarcyVelocity" type="eml:LengthPerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The Darcy velocity of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeOilProductionPercOOIP" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative oil production as a fraction of the original oil in place of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeOilProductionSTO" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative oil production of stock stank oil for the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IncrementalProducedGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The incremental produced GOR of the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeProducedGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative oil production GOR for the slim-tube test volume step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProducedGasProperties" type="prodml:ProducedGasProperties" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ProducedOilProperties" type="prodml:ProducedOilProperties" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MassBalance" type="prodml:MassBalance" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="STOAnalysis">
+		<xs:annotation>
+			<xs:documentation>Stock tank oil analysis.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Date" type="xs:date" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date when this test was performed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlashFromPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure from which the sample was flashed for the stock tank oil analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlashFromTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature from which the sample was flashed for the stock tank oil analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molecular weight for the stock tank oil analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidCondition" type="prodml:FluidAnalysisStepCondition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid condition at this test step. Enum, see fluid analysis step condition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PhasesPresent" type="prodml:PhasePresent" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The phases present for the stock tank oil analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid composition for the stock tank oil analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor composition for the stock tank oil analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The overall composition for the stock tank oil analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="STOFlashedLiquid" type="prodml:STOFlashedLiquid" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="STOFlashedLiquid">
+		<xs:annotation>
+			<xs:documentation>Stock tank oil flashed liquid properties and composition. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OilAPIGravity" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Oil API gravity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterContent" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WatsonKFactor" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The Watson K factor of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AsphalteneContent" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The asphaltene content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParaffinContent" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The paraffin content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CloudPoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cloud point of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaxAppearanceTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The wax appearance temperature of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PourPoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pour point of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ASTMFlashPoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ASTM flash point of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalAcidNumber" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total acid number of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalSulfur" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total sulfur content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Nitrogen" type="eml:MassPerMassMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The nitrogen content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ElementalSulfur" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The elemental sulfur content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Lead" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The lead content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Nickel" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The nickel content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Vanadium" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vanadium content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Iron" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The iron content of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ViscosityAtTemperature" type="prodml:ViscosityAtTemperature" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The viscosity at test temperature of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReidVaporPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reid vapor pressure of the liquid phase of the stock tank analysis.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Sara" type="prodml:Sara" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SwellingTest">
+		<xs:annotation>
+			<xs:documentation>Swelling test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An integer number to identify this test in a sequence of tests.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjectedGas" type="prodml:InjectedGas" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Reference to the gas injected during the swelling test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SwellingTestStep" type="prodml:SwellingTestStep" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SwellingTestStep">
+		<xs:annotation>
+			<xs:documentation>Swelling test step</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IncrementalGasAdded" type="prodml:RefInjectedGasAdded" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The incremental gas added for this swelling test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeGasAdded" type="prodml:RefInjectedGasAdded" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The cumulative gas added for this swelling test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Gor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas-oil ratio for this swelling test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The saturation (or bubble point) pressure measured in this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SwollenVolume" type="prodml:RelativeVolumeRatio" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The swollen volume for this swelling test step, relative to a reference volume.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SwellingFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The swelling factor for this swelling test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DensityAtSaturationPoint" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density at saturation point for this swelling test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConstantCompositionExpansionTest" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to a constant composition expansion test associated with this swelling test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransportPropertyTestReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to a transport property test associated with this swelling test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="VaporLiquidEquilibriumTest">
+		<xs:annotation>
+			<xs:documentation>Properties and results for a vapor-liquid equilibrium (VLE) test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An integer number to identify this test in a sequence of tests.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure of this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasSolventAdded" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The gas solvent added for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MixtureVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mixture volume for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MixtureGasSolventMoleFraction" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mixture gas solvent mole fraction for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MixtureGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mixture gas-oil ratio for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MixturePsatTestTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mixture saturation pressure test temperature for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MixtureRelativeVolumeRelativeToPsat" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mixture relative volume relative to volume a saturation pressure for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AtmosphericFlashTestReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the atmospheric flash test for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InjectedGasAdded" type="prodml:InjectedGas" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the injected gas added for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeGasAdded" type="prodml:RefInjectedGasAdded" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the cumulative gas added for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporPhaseVolume" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor phase volume for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporPhaseViscosity" type="prodml:PhaseViscosity" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The vapor phase viscosity for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporPhaseDensity" type="prodml:PhaseDensity" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The vapor phase density for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidPhaseVolume" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid phase volume for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidPhaseDensity" type="prodml:PhaseDensity" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid phase density for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:FluidComponent" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The vapor composition for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporTransportTestReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to a vapor transport property test associated with this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidTransportTestReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to a liquid transport property test associated with this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The liquid composition for this VLE test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ViscosityAtTemperature">
+		<xs:annotation>
+			<xs:documentation>Viscosity measurement at a specific temperature.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Viscosity" type="eml:DynamicViscosityMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Viscosity measurement at the associated temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ViscosityTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Temperature at which the viscosity was measured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WaterAnalysis">
+		<xs:annotation>
+			<xs:documentation>Water analysis.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FluidAnalysis">
+				<xs:sequence>
+					<xs:element name="SampleIntegrityAndPreparation" type="prodml:SampleIntegrityAndPreparation" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="WaterAnalysisTest" type="prodml:WaterAnalysisTest" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="WaterSampleComponent" type="prodml:WaterSampleComponent" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WaterAnalysisTest">
+		<xs:annotation>
+			<xs:documentation>Water analysis test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An integer number to identify this test in a sequence of tests.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidGravity" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The liquid gravity for the water analysis test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Salinity" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The salinity for the water analysis test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalDissolvedSolids" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total dissolved solids for the water analysis test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalSuspendedSolids" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total suspended solids for the water analysis test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TotalHardness" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total water hardness for the water analysis test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PH" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ph for the water analysis test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Resistivity" type="eml:ElectricalResistivityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The resistivity for the water analysis test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterAnalysisTestStep" type="prodml:WaterAnalysisTestStep" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The name of the Fluid Analysis Result.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WaterAnalysisTestStep">
+		<xs:annotation>
+			<xs:documentation>Water analysis test step.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StepNumber" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The step number is the index of a (P,T) step in the overall test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepPressure" type="eml:PressureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StepTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature for this test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SolutionGasWaterRatio" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The solution gas-water ratio for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterFormationVolumeFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water formation volume factor for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterIsothermalCompressibility" type="eml:ReciprocalPressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water isothermal compressibility for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water density for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterSpecificVolume" type="eml:VolumePerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water specific volume for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterDensityChangeWithPressure" type="eml:MassPerVolumePerPressureMeasureExt" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water density change with pressure for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterDensityChangeWithTemperature" type="eml:MassPerVolumePerTemperatureMeasureExt" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water density change with temperature for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water viscosity for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterViscousCompressibility" type="eml:ReciprocalPressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water viscous compressibility for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterSpecificHeat" type="eml:EnergyPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water specific heat for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterHeatCapacity" type="eml:EnergyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water heat capacity for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterThermalConductivity" type="eml:ElectricConductivityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water thermal conductivity for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterThermalExpansion" type="eml:VolumetricThermalExpansionMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water thermal expansion for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterEnthalpy" type="eml:MolarEnergyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water enthalpy for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterEntropy" type="eml:EnergyLengthPerTimeAreaTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The water entropy for the water analysis test step.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WaterSampleComponent">
+		<xs:annotation>
+			<xs:documentation>Water sample component.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Ion" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ion of the water sample component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassConcentration" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass concentration of the water sample component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EquivalentConcentration" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The equivalent concentration of the water sample component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

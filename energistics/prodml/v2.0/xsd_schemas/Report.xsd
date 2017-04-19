@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Report schema.</xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="ReportVersionStatus">
+		<xs:annotation>
+			<xs:documentation>Specifies the statuses of a version of a report. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="final">
+				<xs:annotation>
+					<xs:documentation>Final, the report is approved. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="preliminary">
+				<xs:annotation>
+					<xs:documentation>Preliminary, the report has not yet been approved.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Report" type="prodml:Report" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="Report">
+		<xs:annotation>
+			<xs:documentation>Report.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of report. This should define and constrain the expected content of the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Date" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date that the report represents (i.e., not a year or month). Only one of date, month or year should be specified.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DateEnd" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The ending date that the report represents, if it represents an interval.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Month" type="prodml:CalendarMonth" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The month that the report represents (i.e., not a year, date or date range). Only one of date, month or year should be specified.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Year" type="prodml:CalendarYear" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The year that the report represents (i.e., not a month, date or date range). Only one of date, month or year should be specified.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A textual comment about the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReportVersion" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The current report version.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReportStatus" type="prodml:ReportVersionStatus" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The current document version status.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of the facility which is represented by this report. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The name and type of a facility whose context is relevant to the represented installation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="IssueDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date that the report was issued.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ApprovalDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date that the report was approved.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Operator" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="IssuedBy" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Approver" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="GeographicContext" type="prodml:GeographicContext" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
