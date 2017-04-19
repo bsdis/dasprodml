@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Schemas for distributed temperature survey (DTS) instrument box. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="DtsInstalledSystem.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:complexType name="AbstractDtsEquipment" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract class of equipment in the optical path from which all components in the optical path inherit.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The DTS instrument equipment name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Manufacturer" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The manufacturer for this item of equipment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ManufacturingDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date when the equipment (e.g., instrument box) was manufactured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of equipment. This might include the model type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SupplyDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date on which this fiber segment was supplied.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SupplierModelNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The model number (alphanumeric) that is used by the supplier to reference the type of fiber that is supplied to the user.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SoftwareVersion" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Latest known version of the software/firmware that is running in the equipment</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the equipment (e.g., optical fiber).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Supplier" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Contact details for the company/person supplying the equipment.  </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="DtsInstrumentBox" type="prodml:DtsInstrumentBox" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="DtsInstrumentBox">
+		<xs:annotation>
+			<xs:documentation>The group of elements corresponding to a DTS instrument box.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="SerialNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>An identification tag for the instrument box. A serial number is a type of identification tag; however, some tags contain many pieces of information. This structure only identifies the tag and does not describe the contents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InternalOvenLocationNear" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Near distance of the oven from the beginning of the fiber.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InternalOvenLocationFar" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Far distance of the oven from the beginning of the fiber.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReferenceCoilTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The temperature of the oven.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Parameter" type="prodml:IndexedObject" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Additional parameters to define the instrument box as a piece of equipment. These should not be parameters to define the installation or use of the box in the wellbore or other system. Only use this element if an appropriate parameter is not available as an element or in the calibration operation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WarmupTime" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The duration of time starting from the initiation of the first temperature measurement until the unit complies with the stated values of the main measurement specifications.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartupTime" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The duration of time from the initial powering on of the instrument until the first temperature measurement is permitted.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityIdentifier" type="prodml:FacilityIdentifier" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="DtsPatchCord" type="prodml:DtsPatchCord" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Information regarding the patch cord used to connect the instrument box to the start of the optical fiber path.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InstrumentCalibration" type="prodml:DtsCalibration" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Calibration parameters vary from vendor to vendor, depending 
+								on the calibration method being used. This is a general type that allows a calibration 
+								date, business associate, and many  name/value pairs.
+								</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Instrument" type="prodml:Instrument" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DtsPatchCord">
+		<xs:annotation>
+			<xs:documentation>Information regarding the patch cord used to connect the instrument box to the start of the optical fiber path.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="FiberLength" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Optical distance between the instrument and the end of the patch cord that will be attached to the rest of the optical path from which a measurement will be taken.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="eml:String2000" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A textual description of the patch cord.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Instrument">
+		<xs:annotation>
+			<xs:documentation>The general class of an instrument, including vendor information, in the installed system.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDtsEquipment">
+				<xs:sequence>
+					<xs:element name="InstrumentVendor" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Contact information for the person/company that provided the equipment</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

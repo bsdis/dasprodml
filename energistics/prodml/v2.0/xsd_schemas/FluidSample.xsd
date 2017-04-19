@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>This set of objects contains properties and attributes of a fluid sample. Initially in a sampling project, each fluid sample represents a small amount of fluid extracted from a parent fluid system, as described by the FluidSampleAacquisition within the FluidSampleAcquisitionJob.</xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:include schemaLocation="FluidAnalysis.xsd"/>
+	<xs:include schemaLocation="FluidSampleAcquisitionJob.xsd"/>
+	<xs:include schemaLocation="FluidSystem.xsd"/>
+	<xs:include schemaLocation="FluidSampleContainer.xsd"/>
+	<xs:simpleType name="FluidSampleKind">
+		<xs:annotation>
+			<xs:documentation>Species the kinds of fluid sample by reference to how it was obtained. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="synthetic">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from synthetic creation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator water">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from separator water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator oil">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from separator oil.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="separator gas">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from separator gas.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="downhole cased">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from downhole cased hole sampling.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="downhole open">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from downhole openhole sampling.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="recombined">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from recombined samples.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wellhead">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from wellhead sampling.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="commingled">
+				<xs:annotation>
+					<xs:documentation>The fluid sample has originated from commingled flow.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SampleAction">
+		<xs:annotation>
+			<xs:documentation>Specifies the actions that may be performed to a fluid sample. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="custodyTransfer">
+				<xs:annotation>
+					<xs:documentation>The action on the sample for this event was custody transfer to new custodian.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="destroyed">
+				<xs:annotation>
+					<xs:documentation>The action on the sample for this event was destruction.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sampleTransfer">
+				<xs:annotation>
+					<xs:documentation>The action on the sample for this event was sample transfer.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="stored">
+				<xs:annotation>
+					<xs:documentation>The action on the sample for this event was movement to storage.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="subSample Dead">
+				<xs:annotation>
+					<xs:documentation>The action on the sample for this event was  sub-sampling under dead conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="subSample Live">
+				<xs:annotation>
+					<xs:documentation>The action on the sample for this event was sub-sampling under live conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="FluidSample" type="prodml:FluidSample" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="FluidSample">
+		<xs:annotation>
+			<xs:documentation>The fluid sample.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="SampleKind" type="prodml:FluidSampleKind" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The kind of sample. Enum.  See fluid sample kind.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="RockFluidUnitFeatureReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Reference to a RockFluidUnitFeature (a RESQML feature).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Representative" type="xs:boolean" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Boolean to state whether the sample is representative or not.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SampleDisposition" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The sample disposition, if any.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidSystemReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="FluidSampleChainofCustodyEvent" type="prodml:FluidSampleChainofCustodyEvent" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>chain of chustody</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidSampleComposition" type="prodml:FluidSampleComposition" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="SampleRecombinationRequirement" type="prodml:SampleRecombinationRequirement" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="FluidSampleAcquisitionJobSource" type="prodml:FluidSampleAcquisitionJobSource" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="OriginalSampleContainerReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FluidSampleAcquisitionJobSource">
+		<xs:sequence>
+			<xs:element name="FluidSampleAcquisitionReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the fluid sample acquisition (by uid) within a fluid sample acquisition job (which is referred to as a top-level object) which acquired this fluid sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidSampleAcquisitionJobReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FluidSampleChainofCustodyEvent">
+		<xs:annotation>
+			<xs:documentation>Fluid sample custody history event. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TransferVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The transfer volume for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The transfer pressure for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransferTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The transfer temperature for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleIntegrity" type="prodml:SampleQuality" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The sample integrity for this chain of custody event. Enum. See sample quality.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RemainingVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The remaining volume of sample for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LostVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The lost volume of sample for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustodyDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustodyAction" type="prodml:SampleAction" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The action for this chain of custody event. Enum. See sample action.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Custodian" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The custodian for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ContainerLocation" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The container location for this chain of custody event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PrevContainer" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="CurrentContainer" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidSampleComposition">
+		<xs:annotation>
+			<xs:documentation>Fluid sample points to a mixture from other samples. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VolumeFraction" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volume fraction of this parent sample within this combined sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass fraction of this parent sample within this combined sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MoleFraction" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mole fraction of this parent sample within this combined sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidSample" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="SampleRecombinationRequirement">
+		<xs:annotation>
+			<xs:documentation>A sample recombination.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LiquidSample" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the liquid sample used in this sample recombination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporSample" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reference to the vapor sample used in this sample recombination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecombinationPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The recombination pressure for this sample recombination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecombinationTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The recombination temperature for this sample recombination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecombinationGOR" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The recombination gas-oil ratio for this sample recombination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RecombinationSaturationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The recombination saturation pressure for this sample recombination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LiquidComposition" type="prodml:LiquidComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid sampling recombination started with this liquid composition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VaporComposition" type="prodml:VaporComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid sampling recombination started with this vapor composition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OverallComposition" type="prodml:OverallComposition" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The aim of the fluid sampling recombination was this overall composition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

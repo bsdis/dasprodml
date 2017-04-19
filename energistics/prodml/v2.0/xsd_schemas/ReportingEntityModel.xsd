@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Reporting entity model schema for simply product volume reporting. 
+A reporting entity refers to a physical, organizational or geographic “thing” that production data is reported against. For example: wells, fields, leases, business units, countries or states are reporting entities. 
+At its basic level, the reporting entity data object is simply a “placeholder” object, which all other simple product volume data objects reference. That is, the object identifies the name or ID of the entity against which production data is being reported, but not much other information about it.
+Optionally, you can provide other additional data for a reporting entity, using one or both of these methods:
+	- Define hierarchies to give appropriate context. For example, a hierarchy might be: business unit, fields within a BU, wells within a field, and wellbores within a well.
+	- Reference a physical data object. For example, a reporting entity that is a well or wellbore can reference a fully defined well or wellbore in WITSML.
+
+For more information about reporting entities, see the PRODML Technical Usage Guide. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:element name="ReportingEntity" type="prodml:ReportingEntity" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="ReportingEntity">
+		<xs:annotation>
+			<xs:documentation>Reporting Entity: The top-level entity in hierarchy structure.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Kind" type="prodml:ReportingEntityKind" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of reporting entity. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TargetFacilityReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Reference to the target facility. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Alias" type="eml:ObjectAlias" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ReportingHierarchy" type="prodml:ReportingHierarchy" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="ReportingHierarchy">
+		<xs:annotation>
+			<xs:documentation>The hierarchy structure that elements refer to in the asset registry.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="ReportingNode" type="prodml:ReportingHierarchyNode" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReportingHierarchyNode">
+		<xs:annotation>
+			<xs:documentation>Association that contains the parent and child of this node.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ChildNode" type="prodml:ReportingHierarchyNode" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ReportingEnitityReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="id" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The identification of node.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The entity name.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

@@ -23,9 +23,11 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy pandas pytest requests h5py
   - source activate test-environment
+  - pip install lxml
   - pip install generateDS
   - pip install coverage==3.7.1
   - pip install pytest-cov coveralls
+  - bash build-xsd-classes.sh
   - python setup.py install
 
 script:

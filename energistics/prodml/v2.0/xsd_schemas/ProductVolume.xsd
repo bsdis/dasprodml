@@ -1,0 +1,1881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>The Product Volume data object can be used to report production flows or other parameters. For example, it can be used to report the daily allocated volume of oil production for a well or group of wells. It could also be used to report other characteristics (pressure, temperature, flow rate, concentrations, etc.) associated with a specific wellhead. It utilizes a general hierarchy of: 
+Product Volume
+   Facility (wellhead, separator, flow line, choke, completion ...) 
+       Parameter Set (block valve status, reciprocating speed, available room ...) 
+            Parameter
+        Flow (production, injection, export, import, gas lift ...) 
+               Product (oil, water, gas, CO2, oil-gas, cuttings ...) 
+                       Period (instant, day, month, year …) 
+                        temperature
+                        pressure
+                        flow rate
+For more information, see the PRODML Product Volume, Network Model &amp; Time Series Usage Guide.</xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProductFlowModel.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="BalanceDestinationType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of destinations. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="harbor">
+				<xs:annotation>
+					<xs:documentation>Defines the name of the destination harbor.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="terminal">
+				<xs:annotation>
+					<xs:documentation>Defines the name of the destination terminal.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>Unknown. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BalanceEventKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of events related to a product balance. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="bill of lading">
+				<xs:annotation>
+					<xs:documentation>For a cargo, the date of the bill of lading for the cargo involved.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="transaction date">
+				<xs:annotation>
+					<xs:documentation>For a transaction (e.g. gas sales transaction), the date for the transaction involved.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>Unknown. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BalanceFlowPart">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of subdivisions of a flow related to the stock balance.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="adjusted closing">
+				<xs:annotation>
+					<xs:documentation>Volume that remains after the operation of transfer.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="closing balance">
+				<xs:annotation>
+					<xs:documentation>A volume that is the total volume on stock at the end of a time period.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="closing storage inventory">
+				<xs:annotation>
+					<xs:documentation>A closing storage balance that is adjusted according to imbalance at end of period.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="completed lifting">
+				<xs:annotation>
+					<xs:documentation>A volume that is the total volume of a hydrocarbon product  that is exported from a stock within a given time period.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gain/loss">
+				<xs:annotation>
+					<xs:documentation>A volume that is a lack of proper proportion or relation between the corresponding input and lifting transactions.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="input to storage">
+				<xs:annotation>
+					<xs:documentation>A volume that is the total volume of additions to a stock within a given time period.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lifted">
+				<xs:annotation>
+					<xs:documentation>A volume that is transferred ("lifted").</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lifting entitlement">
+				<xs:annotation>
+					<xs:documentation>A volume that is the contracted volume which can be transferred.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="lifting entitlement remaining">
+				<xs:annotation>
+					<xs:documentation>A volume that is the contracted volume which is not transferred but which remains available for subsequent transfer.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="linepack">
+				<xs:annotation>
+					<xs:documentation>A gas volume that is the quantity of gas which the operator responsible for gas transportation decides must be provided by the gas producing fields in order to make deliveries as requested by gas shippers and provide operating tolerances.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="opening balance">
+				<xs:annotation>
+					<xs:documentation>A volume that is the total volume on stock at the beginning of a time period.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="opflex">
+				<xs:annotation>
+					<xs:documentation>A gas volume that is the unused and available quantity of gas within a gas transportation system and/or at one or many gas producing fields that is accessible by the operator responsible for gas transportation for the purposes of alleviating field curtailment.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="partial lifting">
+				<xs:annotation>
+					<xs:documentation>A volume that is the volume of a hydrocarbon product lifting up to a (not completed) determined point in time.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pipeline lifting">
+				<xs:annotation>
+					<xs:documentation>A volume that is the volume of a hydrocarbon product lifting transferred by pipeline.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production - mass adjustment">
+				<xs:annotation>
+					<xs:documentation>A part of a mass adjustment process of a given production volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production -- value adjustment">
+				<xs:annotation>
+					<xs:documentation>A value that is adjusted due to a change in the value of a product.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="production imbalance">
+				<xs:annotation>
+					<xs:documentation>A gas volume that is the difference between gas volume entering and exiting a shipper's nomination portfolio. This will take into account all differences whatever the time or reason it occurs.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="swap">
+				<xs:annotation>
+					<xs:documentation>A swap of a volume in between different parties (often used in crude sales),e.g. "I have this volume with this quality and value and you can give me this higher volume for it with a lower quality."</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tanker lifting">
+				<xs:annotation>
+					<xs:documentation>A volume that is the volume of a hydrocarbon product lifting transferred by tanker.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="transaction">
+				<xs:annotation>
+					<xs:documentation>Typically used within the cargo shipper operations and in this context: is a change in ownership as executed between shippers of the cargo.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="transfer">
+				<xs:annotation>
+					<xs:documentation>A volume that is the volume of a hydrocarbon product which changes custody in the operation.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>Unknown.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CalculationMethod">
+		<xs:annotation>
+			<xs:documentation>Specifies the calculation methods available for "filling in" values in an indexed set. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="none">
+				<xs:annotation>
+					<xs:documentation>No calculations are performed to create data where none exists at index points within an existing set of data.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="step wise constant">
+				<xs:annotation>
+					<xs:documentation>The value is held constant until the next index point.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>Unknown.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="CommonPropertiesProductVolume">
+		<xs:annotation>
+			<xs:documentation>Properties that are common to multiple structures in the product volume schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Gor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Gas oil ratio. The ratio between the total produced gas volume and the total produced oil volume including oil and gas volumes used on the installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GorMTD" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Gas oil ratio month to date. The gas oil ratio from the beginning of the month to the end of the reporting period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasLiquidRatio" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volumetric ratio of gas to liquid for all products in the whole flow.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterConcMass" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Water concentration mass basis. The ratio of water produced compared to the mass of total liquids produced.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterConcVol" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Water concentration volume basis. The ratio of water produced compared to the mass of total liquids produced.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Atmosphere" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The average atmospheric pressure during the reporting period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Temp" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Temperature of the port. Specifying the temperature here (as opposed to in Period) implies that the temperature is constant for all periods of the flow.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Pres" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Pressure of the port. Specifying the pressure here (as opposed to in Period) implies that the pressure is constant for all periods of the flow.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AbsoluteMinPres" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Absolute minimum pressure before the system will give an alarm.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mass" type="eml:MassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Work" type="eml:EnergyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The electrical energy represented by the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Efficiency" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The actual volume divided by the potential volume.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rvp" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reid vapor pressure of the product. The absolute vapor pressure of volatile crude oil and volatile petroleum liquids, except liquefied petroleum gases, as determined in accordance with American Society for Testing and Materials under the designation ASTM D323-56.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Tvp" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>True vapor pressure of the product. The equilibrium partial pressure exerted by a petroleum liquid as determined in accordance with standard methods.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Bsw" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Basic sediment and water is measured from a liquid sample of the production stream. It includes free water, sediment and emulsion and is measured as a volume percentage of the production stream.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BswPrevious" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The basic sediment and water as measured on the previous reporting period (e.g., day).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DensityFlowRate" type="eml:MassPerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass basis flow rate of the product. This is used for things like a sand component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Concentration" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The concentration of the product as a volume percentage of the product stream.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molecular weight of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeightPercent" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The weight fraction of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MolePercent" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mole fraction of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MoleAmt" type="eml:AmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The molar amount.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Sg" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The specific gravity of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HcDewpoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature at which the heavier hydrocarbons come out of solution.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterDewpoint" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature at which the first water comes out of solution.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WobbeIndex" type="eml:IsothermalCompressibilityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indicator value of the interchangeability of fuel gases.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GrossCalorificValueStd" type="eml:EnergyPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of heat that would be released by the complete combustion in air of a specific quantity of product at standard temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RvpStabilizedCrude" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Reid vapor pressure of stabilized crude.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BswStabilizedCrude" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Basic sediment and water content in stabilized crude.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DensityStabilizedCrude" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of stabilized crude.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DensityValue" type="eml:DensityValue" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PortDiff" type="prodml:ProductVolumePortDifference" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The internal differences between this port and one other port on this unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VolumeValue" type="eml:VolumeValue" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="FlowRateValue" type="eml:FlowRateValue" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="FluidComponentBasis">
+		<xs:annotation>
+			<xs:documentation>Specifies, in a mixture such as an oil or gas, either a single chemical component, a group of isomeric chemicals, or a fraction. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="1">
+				<xs:annotation>
+					<xs:documentation>1</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="1-dimethylcyclopentane">
+				<xs:annotation>
+					<xs:documentation>1-dimethylcyclopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2">
+				<xs:annotation>
+					<xs:documentation>2</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2 dimethylbenzene">
+				<xs:annotation>
+					<xs:documentation>2 dimethylbenzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2 dimethylpropane">
+				<xs:annotation>
+					<xs:documentation>2 dimethylpropane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-dimethylbutane">
+				<xs:annotation>
+					<xs:documentation>2-dimethylbutane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-dimethylcyclopentane">
+				<xs:annotation>
+					<xs:documentation>2-dimethylcyclopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-dimethylhexane">
+				<xs:annotation>
+					<xs:documentation>2-dimethylhexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-dimethylpentane">
+				<xs:annotation>
+					<xs:documentation>2-dimethylpentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-methylbutane">
+				<xs:annotation>
+					<xs:documentation>2-methylbutane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-methylhexane">
+				<xs:annotation>
+					<xs:documentation>2-methylhexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-methylpentane">
+				<xs:annotation>
+					<xs:documentation>2-methylpentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="2-methylpropane">
+				<xs:annotation>
+					<xs:documentation>2-methylpropane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3">
+				<xs:annotation>
+					<xs:documentation>3</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3 dimethylbenzene">
+				<xs:annotation>
+					<xs:documentation>3 dimethylbenzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-dimethylbutane">
+				<xs:annotation>
+					<xs:documentation>3-dimethylbutane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-dimethylcyclopentane">
+				<xs:annotation>
+					<xs:documentation>3-dimethylcyclopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-dimethylpentane">
+				<xs:annotation>
+					<xs:documentation>3-dimethylpentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-ethylpentane">
+				<xs:annotation>
+					<xs:documentation>3-ethylpentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-methylhexane">
+				<xs:annotation>
+					<xs:documentation>3-methylhexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-methylpentane">
+				<xs:annotation>
+					<xs:documentation>3-methylpentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-trimethylbutane">
+				<xs:annotation>
+					<xs:documentation>3-trimethylbutane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="3-trimethylpentane">
+				<xs:annotation>
+					<xs:documentation>3-trimethylpentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="4-dimethylbenzene">
+				<xs:annotation>
+					<xs:documentation>4-dimethylbenzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="4-dimethylhexane">
+				<xs:annotation>
+					<xs:documentation>4-dimethylhexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="4-Dimethylpentane">
+				<xs:annotation>
+					<xs:documentation>4-Dimethylpentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="4-trimethylbenzene">
+				<xs:annotation>
+					<xs:documentation>4-trimethylbenzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="5-dimethylhexane">
+				<xs:annotation>
+					<xs:documentation>5-dimethylhexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="argon">
+				<xs:annotation>
+					<xs:documentation>argon</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="benzene">
+				<xs:annotation>
+					<xs:documentation>benzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="butane">
+				<xs:annotation>
+					<xs:documentation>butane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c11 fraction">
+				<xs:annotation>
+					<xs:documentation>c11 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c12 fraction">
+				<xs:annotation>
+					<xs:documentation>c12 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c13 fraction">
+				<xs:annotation>
+					<xs:documentation>c13 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c14 fraction">
+				<xs:annotation>
+					<xs:documentation>c14 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c15 fraction">
+				<xs:annotation>
+					<xs:documentation>c15 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c16 fraction">
+				<xs:annotation>
+					<xs:documentation>c16 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c17 fraction">
+				<xs:annotation>
+					<xs:documentation>c17 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c18 fraction">
+				<xs:annotation>
+					<xs:documentation>c18 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c19 fraction">
+				<xs:annotation>
+					<xs:documentation>c19 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c20 fraction">
+				<xs:annotation>
+					<xs:documentation>c20 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c21 fraction">
+				<xs:annotation>
+					<xs:documentation>c21 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c22 fraction">
+				<xs:annotation>
+					<xs:documentation>c22 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c23 fraction">
+				<xs:annotation>
+					<xs:documentation>c23 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c24 fraction">
+				<xs:annotation>
+					<xs:documentation>c24 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c25 fraction">
+				<xs:annotation>
+					<xs:documentation>c25 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c26 fraction">
+				<xs:annotation>
+					<xs:documentation>c26 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c27 fraction">
+				<xs:annotation>
+					<xs:documentation>c27 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c28 fraction">
+				<xs:annotation>
+					<xs:documentation>c28 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c29 fraction">
+				<xs:annotation>
+					<xs:documentation>c29 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c30 fraction">
+				<xs:annotation>
+					<xs:documentation>c30 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c31 fraction">
+				<xs:annotation>
+					<xs:documentation>c31 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c32 fraction">
+				<xs:annotation>
+					<xs:documentation>c32 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c33 fraction">
+				<xs:annotation>
+					<xs:documentation>c33 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c34 fraction">
+				<xs:annotation>
+					<xs:documentation>c34 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c35 fraction">
+				<xs:annotation>
+					<xs:documentation>c35 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c36 fraction">
+				<xs:annotation>
+					<xs:documentation>c36 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c37 fraction">
+				<xs:annotation>
+					<xs:documentation>c37 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c38 fraction">
+				<xs:annotation>
+					<xs:documentation>c38 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c39 fraction">
+				<xs:annotation>
+					<xs:documentation>c39 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c40 fraction">
+				<xs:annotation>
+					<xs:documentation>c40 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c41 fraction">
+				<xs:annotation>
+					<xs:documentation>c41 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c42 fraction">
+				<xs:annotation>
+					<xs:documentation>c42 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c43 fraction">
+				<xs:annotation>
+					<xs:documentation>c43 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c44 fraction">
+				<xs:annotation>
+					<xs:documentation>c44 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c45 fraction">
+				<xs:annotation>
+					<xs:documentation>c45 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c46 fraction">
+				<xs:annotation>
+					<xs:documentation>c46 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c47 fraction">
+				<xs:annotation>
+					<xs:documentation>c47 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c48 fraction">
+				<xs:annotation>
+					<xs:documentation>c48 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c49 fraction">
+				<xs:annotation>
+					<xs:documentation>c49 fraction</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="carbon dioxide">
+				<xs:annotation>
+					<xs:documentation>carbon dioxide</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cis-1">
+				<xs:annotation>
+					<xs:documentation>cis-1</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cyclohexane">
+				<xs:annotation>
+					<xs:documentation>cyclohexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="cyclopentane">
+				<xs:annotation>
+					<xs:documentation>cyclopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="decanes">
+				<xs:annotation>
+					<xs:documentation>decanes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ethane">
+				<xs:annotation>
+					<xs:documentation>ethane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ethylbenzene">
+				<xs:annotation>
+					<xs:documentation>ethylbenzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ethylcyclopentane">
+				<xs:annotation>
+					<xs:documentation>ethylcyclopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="heptanes">
+				<xs:annotation>
+					<xs:documentation>heptanes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hexane">
+				<xs:annotation>
+					<xs:documentation>hexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hexanes">
+				<xs:annotation>
+					<xs:documentation>hexanes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydrogen">
+				<xs:annotation>
+					<xs:documentation>hydrogen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydrogen sulfide">
+				<xs:annotation>
+					<xs:documentation>hydrogen sulfide</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methane">
+				<xs:annotation>
+					<xs:documentation>methane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methylbenzene">
+				<xs:annotation>
+					<xs:documentation>methylbenzene</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methylcyclohexane">
+				<xs:annotation>
+					<xs:documentation>methylcyclohexane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="methylcyclopentane">
+				<xs:annotation>
+					<xs:documentation>methylcyclopentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="nitrogen">
+				<xs:annotation>
+					<xs:documentation>nitrogen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="nonanes">
+				<xs:annotation>
+					<xs:documentation>nonanes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="octanes">
+				<xs:annotation>
+					<xs:documentation>octanes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oxygen">
+				<xs:annotation>
+					<xs:documentation>oxygen</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pentane">
+				<xs:annotation>
+					<xs:documentation>pentane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="propane">
+				<xs:annotation>
+					<xs:documentation>propane</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="trans-1">
+				<xs:annotation>
+					<xs:documentation>trans-1</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water">
+				<xs:annotation>
+					<xs:documentation>water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WellOperationMethod">
+		<xs:annotation>
+			<xs:documentation>Specifies the lift methods for producing a well. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="continuous gas lift">
+				<xs:annotation>
+					<xs:documentation>continuous gas lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="electric submersible pump lift">
+				<xs:annotation>
+					<xs:documentation>electric submersible pump lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="foam lift">
+				<xs:annotation>
+					<xs:documentation>foam lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="hydraulic pump lift">
+				<xs:annotation>
+					<xs:documentation>hydraulic pump lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="intermittent gas lift">
+				<xs:annotation>
+					<xs:documentation>intermittent gas lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="jet pump lift">
+				<xs:annotation>
+					<xs:documentation>jet pump lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="natural flow">
+				<xs:annotation>
+					<xs:documentation>natural flow</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="plunger gas lift">
+				<xs:annotation>
+					<xs:documentation>plunger gas lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="progressive cavity pump lift">
+				<xs:annotation>
+					<xs:documentation>progressive cavity pump lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="sucker rod pump lift">
+				<xs:annotation>
+					<xs:documentation>sucker rod pump lift</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AbstractMeasureDataType" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract base type of measure data.</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="1" maxOccurs="1"/>
+	</xs:complexType>
+	<xs:complexType name="AbstractRefProductFlow" abstract="true">
+		<xs:annotation>
+			<xs:documentation>A reference to a flow within the current product volume report. This represents a foreign key from one element to another.</xs:documentation>
+		</xs:annotation>
+		<xs:choice/>
+	</xs:complexType>
+	<xs:complexType name="AbstractRelatedFacilityObject" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract base type of related facility. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FacilityParent" type="prodml:FacilityParent" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CurveData">
+		<xs:annotation>
+			<xs:documentation>The data of a curve. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractMeasureDataType">
+				<xs:sequence>
+					<xs:element name="Index" type="eml:PositiveLong" minOccurs="1" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The value of an independent (index) variable in a row of the curve table. The units of measure are specified in the curve definition. The first value corresponds to order=1 for columns where isIndex is true. The second to order=2. And so on. The number of index and data values must match the number of columns in the table.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Value" type="xs:double" minOccurs="1" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The value of a dependent (data) variable in a row of the curve table. The units of measure are specified in the curve definition. The first value corresponds to order=1 for columns where isIndex is false. The second to order=2. And so on. The number of index and data values must match the number of columns in the table.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="uid" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CurveDefinition">
+		<xs:annotation>
+			<xs:documentation>The definition of a curve.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Order" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The order of the value in the index or data tuple. If isIndex is true, this is the order of the (independent) index element. If isIndex is false, this is the order of the (dependent) value element.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parameter" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the variable in this curve.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IsIndex" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>True (equal "1" or "true") indicates that this is an independent variable in this curve. At least one column column should be flagged as independent.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MeasureClass" type="eml:MeasureClass" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The measure class of the variable. This defines which units of measure are valid for the value.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Unit" type="eml:UomEnum" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The unit of measure of the variable. The unit of measure must match a unit allowed by the measure class.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FacilityParent">
+		<xs:annotation>
+			<xs:documentation>Facility parent.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractRelatedFacilityObject">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="Name" type="prodml:FacilityIdentifierStruct" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of the facility. The name can be qualified by a naming system. This can also define the kind of facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityParent1" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>For facilities whose name is unique within the context of another facility, the name of the parent facility. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityParent2" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>For facilities whose name is unique within the context of another facility, the name of the parent facility of parent1. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FacilityUnitPort">
+		<xs:annotation>
+			<xs:documentation>Facility unit port.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractRelatedFacilityObject">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="PortReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The product flow port associated with the product flow unit.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="UnitReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The product flow unit representing the facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NetworkReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The product flow network representing the facility. This is only required if the network is not the same as the primary network that represents the Product Flow Model. This must be unique within the context of the product flow model represented by this report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="IntegerData">
+		<xs:annotation>
+			<xs:documentation>Integer data.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractMeasureDataType">
+				<xs:sequence>
+					<xs:element name="IntegerValue" type="prodml:IntegerQualifiedCount" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The value of a dependent (data) variable in a row of the curve table. The units of measure are specified in the curve definition. The first value corresponds to order=1 for columns where isIndex is false. The second to order=2. And so on. The number of index and data values must match the number of columns in the table.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="OwnershipBusinessAcct">
+		<xs:choice/>
+	</xs:complexType>
+	<xs:complexType name="Parentfacility">
+		<xs:annotation>
+			<xs:documentation>Parent facility. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractRefProductFlow">
+				<xs:sequence>
+					<xs:element name="ParentfacilityReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to a flow within the current product volume report. This represents a foreign key from one element to another.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ProductVolume" type="prodml:ProductVolume" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="ProductVolume">
+		<xs:annotation>
+			<xs:documentation>The non-contextual content of a product volume object.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of the facility which is represented by this report. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The name and type of a facility whose context is relevant to the represented installation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PeriodKind" type="prodml:ReportingDurationKind" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of period that is being reported. This value must be consistent with the reporting start and end values.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimMin" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum time index contained within the report. For the purposes of this parameter, a "period" or "facility parameter" without any time data should be assumed to have the time associated with the overall report. The minimum and maximum indexes are server query parameters and will be populated with valid values in a "get" result. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimMax" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum time index contained within the report. For the purposes of this parameter, a "period" or "facility parameter" without any time data should be assumed to have the time associated with the overall report. The minimum and maximum indexes are server query parameters and will be populated with valid values in a "get" result. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimCurrent" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The definition of the "current time" index for this report. The current time index is a server query parameter which requests the selection of a single node from a recurring "period" set (e.g., the data related to one point in a time series). For the purposes of this parameter, a "period" without any time data should be assumed to have the time associated with the overall report. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CalculationMethod" type="prodml:CalculationMethod" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The calculation method for  "filling in" values in an indexed set. If not given, the default is that no calculations are performed to create data where none exists within an existing set. This is not to be construed as to prevent concepts such as simulation and forecasting from being applied in order to create a new set. This is a server query parameter.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Operator" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The operator of the facilities in the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Title" type="prodml:NameStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The tile of the report if different from the name of the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GeographicContext" type="prodml:GeographicContext" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The geographic context of the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="IssueDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date that the report was issued.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="IssuedBy" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The person or company that issued the report. This may contain the role of the person or company within the context of the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ApprovalDate" type="xs:date" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date that the report was approved.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Approver" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The person or company that approved the report. This may contain the role of the person or company within the context of the report.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StandardTempPres" type="eml:ReferenceCondition" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Defines the default standard temperature and pressure to which all volumes, densities and flow rates in this report have been corrected. The default may be locally overridden for an individual value. If not specified, then the conditions must be presumed to be ambient conditions (i.e., uncorrected) unless otherwise specified at a local level.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductFlowModel" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="DateTime" type="prodml:AbstractDateTimeClass" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Facility" type="prodml:ProductVolumeFacility" minOccurs="1" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A facility for which product information is being reported.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BusinessUnit" type="prodml:ProductVolumeBusinessUnit" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A business unit and related account or ownership share information.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeAlert">
+		<xs:annotation>
+			<xs:documentation>Alert Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Target" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An XPATH to the target value within the message containing this XPATH value.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Level" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The level of the alert.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of alert. For example "off specification".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A textual description of the alert.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeBalanceDetail">
+		<xs:annotation>
+			<xs:documentation>Product Volume Balance Detail Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Owner" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the business unit which owns the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceUnit" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Points to the business unit from which the product originated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Share" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The owner's share of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AccountNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An account identifier for the balance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleAnalysisResult" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A pointer to a fluid sample analysis result object that is relevant to the balance. This sample may have been acquired previous to or after this period and is used for determining the allocated characteristics.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ComponentContent" type="prodml:ProductVolumeComponentContent" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Event" type="prodml:ProductVolumeBalanceEvent" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VolumeValue" type="eml:VolumeValue" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeBalanceEvent">
+		<xs:annotation>
+			<xs:documentation>Captures information about an event related to a product balance.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Date" type="xs:date" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date of the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Kind" type="prodml:BalanceEventKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeBalanceSet">
+		<xs:annotation>
+			<xs:documentation>Product Flow Balance Set Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:BalanceFlowPart" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the aspect being described.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CargoNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A cargo identifier for the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CargoBatchNumber" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A cargo batch number. Used if the vessel needs to temporarily disconnect for some reason (e.g., weather).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Shipper" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the shipper</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BalanceDetail" type="prodml:ProductVolumeBalanceDetail" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Destination" type="prodml:ProductVolumeDestination" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeBusinessSubUnit">
+		<xs:annotation>
+			<xs:documentation>Product volume schema for defining ownership shares of business units.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Points to business unit which is part of another business unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OwnershipBusinessAcct" type="prodml:OwnershipBusinessAcct" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeBusinessUnit">
+		<xs:annotation>
+			<xs:documentation>Product volume schema for defining business units.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:BusinessUnitKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of business unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The human contextual name of the business unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A textual description of the business unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SubUnit" type="prodml:ProductVolumeBusinessSubUnit" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A component part of the unit. 
+					The composition of a unit may vary with time.
+					This defines the ownership share or account information for a sub unit within the context of the whole unit.
+					For ownership shares, at any one point in time the sum of the shares should be 100%.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeComponentContent">
+		<xs:annotation>
+			<xs:documentation>Product Volume Component Content Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:ReportingProduct" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of product whose relative content is being described. This should be a specific component (e.g., water) rather than a phase (e.g., aqueous).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceKind" type="prodml:ReportingProduct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of product to which the product is being compared. If not given then the product is being compared against the overall flow stream.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Properties" type="prodml:CommonPropertiesProductVolume" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeDestination">
+		<xs:annotation>
+			<xs:documentation>Product Flow Sales Destination Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the destination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Type" type="prodml:BalanceDestinationType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of destination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Country" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The country of the destination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeFacility">
+		<xs:annotation>
+			<xs:documentation>Report Facility Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FacilityParent" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Facility parent.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityParent2" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Facility parent2.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityAlias" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An alternative name of a facility. This is generally unique within a naming system. The above contextually unique name (that is, within the context of a parent) should also be listed as an alias.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Unit" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NetWork" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Network.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="prodml:FacilityIdentifierStruct" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the facility. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StatusWell" type="eml:WellStatus" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Status of the well. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidWell" type="prodml:WellFluid" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>POSC well fluid. The type of fluid being produced from or injected into a well facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperatingMethod" type="prodml:WellOperationMethod" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The lift method being used to operate the well.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellProducing" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>True (or 1) indicates that the well is producing. False (or 0) or not given indicates that the well is not producing. This only applies if the facility is a well or wellbore.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellInjecting" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>True (or 1) indicates that the well is injecting. False (or 0) or not given indicates that the well is not injecting. This only applies if the facility is a well or wellbore.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Capacity" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The storage capacity of the facility (e.g., a tank).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OperationTime" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The amount of time that the facility was active during the reporting period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Flow" type="prodml:ProductVolumeFlow" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Reports a flow of a product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ParameterSet" type="prodml:ProductVolumeParameterSet" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="DowntimeReason" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Comment" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeFlow">
+		<xs:annotation>
+			<xs:documentation>Product Volume Flow Component Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of this flow within the context of this report. This might reflect some combination of the kind of flow, port, qualifier and related facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Kind" type="prodml:ReportingFlow" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indicates the type of flow that is being reported. The type of flow is an indication of the overall source or target of the flow.  - A production flow has one or more wells as the originating source.  - An injection flow has one or more wells as the ultimate target.  - An import flow has an offsite source.  - An export flow has an offsite target. - A consumption flow generally has a kind of equipment as a target. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Port" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Port.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Direction" type="prodml:ProductFlowPortType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Direction. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Facility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityAlias" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Facility alias.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Qualifier" type="prodml:FlowQualifier" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Qualifies the type of flow that is being reported.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SubQualifier" type="prodml:FlowSubQualifier" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines a specialization of the qualifier value. This should only be given if a qualifier is given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Version" type="eml:TimeStamp" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Version. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VersionSource" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Identifies the source of the version. This will commonly be the name of the software which created the version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceFlow" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This is a pointer to the flow from which this flow was derived. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RelatedFacility" type="prodml:ProductVolumeRelatedFacility" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Product" type="prodml:ProductVolumeProduct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Reports a product flow stream.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Properties" type="prodml:CommonPropertiesProductVolume" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeParameterSet">
+		<xs:annotation>
+			<xs:documentation>Product Volume Facility Parameter Set Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="prodml:FacilityParameter" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the facility parameter. This should reflect the business semantics of all values in the set and not the underlying kind. For example, specify "diameter" rather than "length" or "distance".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChildFacilityIdentifier" type="prodml:ProdmlRelativeIdentifier" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The PRODML Relative Identifier (or URI) of a child of the parent facility. The identifier path is presumed to begin with the identity of the parent facility. This identifies a sub-facility which is identified within the context of the parent facilityParent2/facilityParent1/name identification hierarchy. The property is only expected to be defined for this child and not for the parent.
+For more information about URIs, see the Energistics Identifier Specification, which is available in the zip file when download PRODML. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Port" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The port to which this parameter is assigned. This must be a port on the unit representing the parent facility of this parameter. If not specified then the parameter represents the unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MeasureClass" type="eml:MeasureClass" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>If the value is a measure (value with unit of measure), this defines the measurement class of the value. The units of measure for the value must conform to the list allowed by the measurement class in the unit dictionary file. Mutually exclusive with curveDefinition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CoordinateReferenceSystem" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pointer to the coordinate reference system (CRS). This is needed for coordinates such as measured depth to specify the reference datum.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Qualifier" type="prodml:FlowQualifier" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Qualifies the type of parameter that is being reported.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SubQualifier" type="prodml:FlowSubQualifier" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines a specialization of the qualifier value. This should only be given if a qualifier is given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Version" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A timestamp representing the version of this data. A parameter set with a more recent timestamp will represent the "current" version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VersionSource" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Identifies the source of the version. This will commonly be the name of the software which created the version.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Product" type="prodml:ReportingProduct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of product that is being reported. This would be useful for something like specifying a tank product volume or level.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PeriodKind" type="prodml:ReportingDurationKind" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of period that is being reported.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A comment about the parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parameter" type="prodml:ProductVolumeParameterValue" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A parameter value, possibly at a time.
+					If a time is not given then only one parameter should be given.
+					If a time is specified with one value then time should be specified
+					for all values. Each value in a time series should be of the same 
+					underling kind of value (for example, a length measure).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurveDefinition" type="prodml:CurveDefinition" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>If the value is a curve, this defines the meaning of the one column 
+					in the table representing the curve.
+					Mutually exclusive with measureClass.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeParameterValue">
+		<xs:annotation>
+			<xs:documentation>Parameter Value Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="DTim" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time at which the parameter applies. If no time is specified then the value is static.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time at which the parameter no longer applies. The "active" time interval is inclusive of this point. If dTimEnd is given then dTim shall also be given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Port" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A port related to the parameter. If a port is given then the corresponding unit usually must be given. For example, an "offset along network" parameter must specify a port from which the offset was measured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Unit" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A unit related to the parameter. For example, an "offset along network" parameter must specify a port (on a unit) from which the offset was measured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Alert" type="prodml:ProductVolumeAlert" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An indication of some sort of abnormal condition relative
+					this parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MeasureDataType" type="prodml:AbstractMeasureDataType" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumePeriod">
+		<xs:annotation>
+			<xs:documentation>Product Volume Period Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:ReportingDurationKind" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of period that is being reported. If not specified and a time is not given then the period is defined by the reporting period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="prodml:DatedComment" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A time-stamped remark about the amounts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BalanceSet" type="prodml:ProductVolumeBalanceSet" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Provides the sales context for this period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ComponentContent" type="prodml:ProductVolumeComponentContent" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The relative amount of a component product in the product stream.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DateTime" type="prodml:AbstractDateTimeClass" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Properties" type="prodml:CommonPropertiesProductVolume" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Alert" type="prodml:ProductVolumeAlert" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An indication of some sort of abnormal condition relative
+					the values in this period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumePortDifference">
+		<xs:annotation>
+			<xs:documentation>Product Volume port differential characteristics.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PortReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A port on the other end of an internal connection. This should always be specified if a product flow network is being referenced by this report. If this is not specified then there is an assumption that there is only one other port for the unit. For example, if this end of the connection represents an inlet port then the implied other end is the outlet port for the unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PresDiff" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The differential pressure between the ports.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TempDiff" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The differential temperature between the ports.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChokeSize" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The size of the choke. This characterizes the overall unit with respect to the flow restriction between the ports. The restriction might be implemented using a valve or an actual choke.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChokeRelative" type="eml:LengthPerLengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The relative size of the choke restriction. This characterizes the overall unit with respect to the flow restriction between the ports. The restriction might be implemented using a valve or an actual choke.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeProduct">
+		<xs:annotation>
+			<xs:documentation>Product Volume Product Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:ReportingProduct" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of product that is being reported.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="prodml:NameStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of product that is being reported. This is reserved for generic kinds like chemical.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SplitFactor" type="prodml:NonNegativeFraction" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This factor describes the fraction of fluid in the source flow that is allocated to this product stream. The volumes reported here are derived from the source flow based on this split factor. This should be an allocation flow.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassFraction" type="eml:MassPerMassMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The weight fraction of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MoleFraction" type="eml:AmountOfSubstancePerAmountOfSubstanceMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mole fraction of the product.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ComponentContent" type="prodml:ProductVolumeComponentContent" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The relative amount of a component product in the product stream.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourceFlow" type="prodml:AbstractRefProductFlow" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Period" type="prodml:ProductVolumePeriod" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Product amounts for a specific period.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Properties" type="prodml:CommonPropertiesProductVolume" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductVolumeRelatedFacility">
+		<xs:annotation>
+			<xs:documentation>A second facility related to this flow. For a production flow, this would represent a role of 'produced for'. For an import flow, this would represent a role of 'import from'. For an export flow, this would represent a role of 'export to'.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="Kind" type="prodml:ReportingFacility" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A kind of facility where the specific name is not relevant.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RelatedFacilityObject" type="prodml:AbstractRelatedFacilityObject" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReferenceFlow">
+		<xs:annotation>
+			<xs:documentation>Reference flow.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractRefProductFlow">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="FlowReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A pointer to the flow within the facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="StringData">
+		<xs:annotation>
+			<xs:documentation>String data. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractMeasureDataType">
+				<xs:sequence>
+					<xs:element name="StringValue" type="prodml:KindQualifiedString" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The value of a dependent (data) variable in a row of the curve table. The units of measure are specified in the curve definition. The first value corresponds to order=1 for columns where isIndex is false. The second to order=2. And so on. The number of index and data values must match the number of columns in the table.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

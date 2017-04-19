@@ -1,0 +1,1557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>The fluid characterization data object describes the characteristics and properties of a fluid sample or fluid system under the conditions expected in a historical or future state.</xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:include schemaLocation="FluidSystem.xsd"/>
+	<xs:include schemaLocation="FluidAnalysis.xsd"/>
+	<xs:complexType name="AbstractCompositionalModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of compositional model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractPvtModel">
+				<xs:sequence>
+					<xs:element name="MixingRule" type="prodml:MixingRule" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The mixing rule which was applied in the compositional model. Enum. See mixing rule.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ComponentPropertySet" type="prodml:ComponentPropertySet" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="BinaryInteractionCoefficientSet" type="prodml:BinaryInteractionCoefficientSet" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractCorrelationModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of correlation model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractPvtModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractCorrelationViscosityDeadModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of correlation viscosity dead model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityModel">
+				<xs:sequence>
+					<xs:element name="DeadOilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The dead oil viscosity output from the dead oil viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReservoirTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reservoir temperature for the dead oil viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationTableRow">
+		<xs:annotation>
+			<xs:documentation>The row of a table.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:AbstractString">
+				<xs:attribute name="row" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>The string containing the contents of a row in the table.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="kind" use="optional" type="prodml:saturationKind">
+					<xs:annotation>
+						<xs:documentation>This type characteristic describes the row of data as either saturated or under-saturated at the conditions defined for the row.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="MixingRule">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of mixing rules.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="asymmetric">
+				<xs:annotation>
+					<xs:documentation>The mixing rule kind is asymmetric.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="classical">
+				<xs:annotation>
+					<xs:documentation>The mixing rule kind is classical.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OutputFluidProperty">
+		<xs:annotation>
+			<xs:documentation>Specifies the output fluid properties.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="Compressibility">
+				<xs:annotation>
+					<xs:documentation>Compressibility (expected to be defined for a phase). UoM: 1/pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Density">
+				<xs:annotation>
+					<xs:documentation>Density (expected to be defined for a phase). UoM: mass/volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Derivative of Density w.r.t Pressure">
+				<xs:annotation>
+					<xs:documentation>Derivative of density w.r.t pressure (expected to be defined for a phase). UoM: density/pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Derivative of Density w.r.t Temperature">
+				<xs:annotation>
+					<xs:documentation>Derivative of density w.r.t temperature (expected to be defined for a phase). UoM: density/temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Enthalpy">
+				<xs:annotation>
+					<xs:documentation>Enthalpy (expected to be defined for a phase). UoM: energy/mass.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Entropy">
+				<xs:annotation>
+					<xs:documentation>Entropy (expected to be defined for a phase). UoM: energy/temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Expansion Factor">
+				<xs:annotation>
+					<xs:documentation>Expansion factor - volume expanded/volume in reservoir (expected to be defined for a phase). UoM: volume/volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Formation Volume Factor">
+				<xs:annotation>
+					<xs:documentation>Formation volume factor - volume in reservoir/volume expanded (expected to be defined for a phase). UoM: volume/volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Gas-Oil Interfacial Tension">
+				<xs:annotation>
+					<xs:documentation>Gas-oil interfacial tension. UoM: force/length.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Gas-Water Interfacial Tension">
+				<xs:annotation>
+					<xs:documentation>Gas-water interfacial tension. UoM: force/length.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Index">
+				<xs:annotation>
+					<xs:documentation>Index number (which will be the index of a row in the table). UoM: integer.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="K value">
+				<xs:annotation>
+					<xs:documentation>The ratio of vapor concentration to liquid concentration at equilibrium (expected to be defined for a phase). UoM: dimensionless.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Misc Bank Critical Solvent Saturation">
+				<xs:annotation>
+					<xs:documentation>The critical solvent saturation of a miscible bank . UoM: volume/volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Misc Bank Phase Density">
+				<xs:annotation>
+					<xs:documentation>The density of a phase within a miscible bank  (expected to be defined for a phase). UoM: density.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Misc Bank Phase Viscosity">
+				<xs:annotation>
+					<xs:documentation>The viscosity of a phase within a miscible bank  (expected to be defined for a phase). UoM: viscosity.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Miscibility Parameter (Alpha)">
+				<xs:annotation>
+					<xs:documentation>The critical solvent saturation of a miscible bank.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Mixing Parameter Oil-Gas">
+				<xs:annotation>
+					<xs:documentation>Mixing parameter for oil and gas.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Oil-Gas Ratio">
+				<xs:annotation>
+					<xs:documentation>The oil-gas ratio in a vapour-liquid system. UoM: volume/volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Oil-Water Interfacial Tension">
+				<xs:annotation>
+					<xs:documentation>Oil-water interfacial tension.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Parachor">
+				<xs:annotation>
+					<xs:documentation>Parachor is the quantity defined according to the formula: P = γ1/4 M / D. Where γ1/4 is the fourth root of surface tension.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Pressure">
+				<xs:annotation>
+					<xs:documentation>Pressure. UoM: pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="P-T Cross Term">
+				<xs:annotation>
+					<xs:documentation>This is a specific parameter unique to CMG software. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Saturation Pressure">
+				<xs:annotation>
+					<xs:documentation>The saturation pressure of a mixture. UoM: pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Solution GOR">
+				<xs:annotation>
+					<xs:documentation>The gas-oil ratio in a liquid-vapour system. UoM: volume/volume.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Solvent Density">
+				<xs:annotation>
+					<xs:documentation>The density of a solvent phase. UoM: density.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Specific Heat">
+				<xs:annotation>
+					<xs:documentation>The amount of heat per unit mass required to raise the temperature by one unit temperature (expected to be defined for a phase). UoM: energy/mass/temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Temperature">
+				<xs:annotation>
+					<xs:documentation>Temperature. UoM: temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Thermal Conductivity">
+				<xs:annotation>
+					<xs:documentation>Thermal conductivity (expected to be defined for a phase). UoM: power/length.temperature.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Viscosity">
+				<xs:annotation>
+					<xs:documentation>Viscosity (expected to be defined for a phase). UoM: viscosity.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Viscosity Compressibility">
+				<xs:annotation>
+					<xs:documentation>Slope of viscosity change with pressure in a semi-log plot (1/psi) (expected to be defined for a phase). UoM: viscosity/pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Water vapor mass fraction in gas phase">
+				<xs:annotation>
+					<xs:documentation>The mass fraction of water in a gas phase. UoM: mass/mass.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="Z Factor">
+				<xs:annotation>
+					<xs:documentation>The compressibility factor (z).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OutputFluidPropertyExt">
+		<xs:annotation>
+			<xs:documentation>Output fluid property extension.</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:OutputFluidProperty eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="PvtModelParameterKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of PVT model parameters. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="b0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter b0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="b1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter b1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="b2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter b2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter c1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter c2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="d1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter d1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="d2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter d2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="e1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter e1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="e2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter e2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="f1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter f1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="f2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter f2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="g1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter g1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="g2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter g2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="h1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter h1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="h2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter h2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a1">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a1.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a2">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a2.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a3">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a3.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a4">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a4.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a5">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a5.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a6">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a6.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a7">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a7.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a8">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a8.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a9">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a9.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="a10">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter a10.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="c0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter c0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="d0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter d0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="e0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter e0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="f0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter f0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="g0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter g0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="h0">
+				<xs:annotation>
+					<xs:documentation>The value represents the parameter h0.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PvtModelParameterKindExt">
+		<xs:annotation>
+			<xs:documentation>PVT model parameter enumeration extension.</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:PvtModelParameterKind eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="saturationKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of saturation. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="saturated">
+				<xs:annotation>
+					<xs:documentation>The fluid is saturated.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="undersaturated">
+				<xs:annotation>
+					<xs:documentation>The fluid is under-saturated.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AbstractCompositionalEoSModel " abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of compositional EoS model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractCompositionalViscosityModel " abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of compositional viscosity model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalModel">
+				<xs:sequence/>
+				<xs:attribute name="phase" use="required" type="prodml:ThermodynamicPhase">
+					<xs:annotation>
+						<xs:documentation>The phase the compositional viscosity model applies to.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractCorrelationGasViscosityModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of correlation gas viscosity model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityModel">
+				<xs:sequence>
+					<xs:element name="GasViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The gas viscosity output from the gas viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReservoirTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reservoir temperature for the gas viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractCorrelationViscosityBubblePointModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of viscosity bubble point model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityModel">
+				<xs:sequence>
+					<xs:element name="DeadOilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The dead oil viscosity input for the bubble point viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BubblePointOilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The bubble point viscosity output from the bubble point viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SolutionGasOilRate" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The solution gas oil ratio for the bubble point viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractCorrelationViscosityModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of correlation viscosity  model. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationModel">
+				<xs:sequence>
+					<xs:element name="MolecularWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The molecular weight of the fluid for the viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractCorrelationViscosityUndersaturatedModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of viscosity under-saturated model.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityModel">
+				<xs:sequence>
+					<xs:element name="UndersaturatedOilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The under saturated viscosity output from the under saturated viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BubblePointOilViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The bubble point viscosity input for the under saturated viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BubblePointPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The bubble point pressure for the under saturated viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Pressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pressure for the under saturated viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AbstractPvtModel" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of  PVT model.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CustomPvtModelExtension" type="prodml:CustomPvtModelExtension" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="PvtModelParameterSet" type="prodml:PvtModelParameterSet" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ApplicationInfo">
+		<xs:annotation>
+			<xs:documentation>Information about the application.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ApplicationName" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The name of the application that is expected to use these fluid characterization data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="version" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The version of the application that is expected to use these fluid characterization data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="BerganAndSutton-Undersaturated">
+		<xs:annotation>
+			<xs:documentation>Bergan And Sutton-Undersaturated.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityUndersaturatedModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BerganSutton-Dead">
+		<xs:annotation>
+			<xs:documentation>BerganSutton-Dead. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityDeadModel">
+				<xs:sequence>
+					<xs:element name="DeadOilViscosityAt100F" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The dead oil viscosity at 100 f input to the dead oil viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DeadOilViscosityAt210F" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The dead oil viscosity at 210 f input to the dead oil viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BergmanSutton-BubblePoint">
+		<xs:annotation>
+			<xs:documentation>BergmanSutton-BubblePoint.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityBubblePointModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BinaryInteractionCoefficient">
+		<xs:annotation>
+			<xs:documentation>Binary interaction coefficient.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:AbstractMeasure">
+				<xs:attribute name="fluidComponent1Reference" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>Reference to the first fluid component for this binary interaction coefficient.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="fluidComponent2Reference" use="optional" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>Reference to the second fluid component for this binary interaction coefficient.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="BinaryInteractionCoefficientSet">
+		<xs:annotation>
+			<xs:documentation>Binary interaction coefficient set.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BinaryInteractionCoefficient" type="prodml:BinaryInteractionCoefficient" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CarrDempsey">
+		<xs:annotation>
+			<xs:documentation>CarrDempsey.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationGasViscosityModel">
+				<xs:sequence>
+					<xs:element name="GasMolarWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The molecular weight of the gas as an input to this viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GasViscosityAt1Atm" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The gas viscosity at 1 atm for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PseudoReducedTemperature" type="eml:ThermodynamicTemperaturePerThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pseudo reducedtemperature for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PseudoReducedPressure" type="eml:PressurePerPressureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pseudo reduced pressure for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ComponentPropertySet">
+		<xs:annotation>
+			<xs:documentation>Component property set.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FluidComponentProperty" type="prodml:FluidComponentProperty" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompositionalThermalModel">
+		<xs:annotation>
+			<xs:documentation>A class that AbstractCompositionalModel can inherit; it is NOT abstract because the concrete model types have not been specified. For now, use the non-abstract thermal model, and use the CustomPvtModelExtension to add anything needed. Later, it will be made abstract and have concrete classes it inherits from, similar to EoS.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CorrelationThermalModel">
+		<xs:annotation>
+			<xs:documentation>A class that AbstractCompositionalModel can inherit; it is NOT abstract because the concrete model types have not been specified. For now, use the non-abstract thermal model, and use the CustomPvtModelExtension to add anything needed. Later, it will be made abstract and have concrete classes it inherits from, similar to EoS.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CSPedersen84">
+		<xs:annotation>
+			<xs:documentation>CSPedersen84.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalViscosityModel ">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CSPedersen87">
+		<xs:annotation>
+			<xs:documentation>CSPedersen87.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalViscosityModel ">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CustomPvtModelExtension">
+		<xs:annotation>
+			<xs:documentation>Custom PVT model extension.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Description" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A description of the custom model.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CustomPvtModelParameter" type="prodml:CustomPvtModelParameter" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CustomPvtModelParameter">
+		<xs:annotation>
+			<xs:documentation>Custom PVT model parameter.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CustomParameterValue" type="eml:ExtensionNameValue" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="fluidComponentReference" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Reference to a fluid component to which this custom model parameter applies.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DeGhetto-BubblePoint">
+		<xs:annotation>
+			<xs:documentation>DeGhetto-BubblePoint.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityBubblePointModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DeGhetto-Dead">
+		<xs:annotation>
+			<xs:documentation>DeGhetto-Dead.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityDeadModel">
+				<xs:sequence>
+					<xs:element name="OilAPIAtStockTank" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The oil API at stock tank for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DeGhetto-Undersaturated">
+		<xs:annotation>
+			<xs:documentation>DeGhetto-Undersaturated.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityUndersaturatedModel">
+				<xs:sequence>
+					<xs:element name="ReservoirTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reservoir temperature for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SolutionGasOilRatio" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The solution gas-oil ratio for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DindorukChristman-BubblePoint">
+		<xs:annotation>
+			<xs:documentation>DindorukChristman-BubblePoint.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityBubblePointModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DindorukChristman-Dead">
+		<xs:annotation>
+			<xs:documentation>DindorukChristman-Dead.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityDeadModel">
+				<xs:sequence>
+					<xs:element name="OilGravityAtStockTank" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The oil gravity at stock tank for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DindorukChristman-Undersaturated">
+		<xs:annotation>
+			<xs:documentation>DindorukChristman-Undersaturated.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityUndersaturatedModel">
+				<xs:sequence>
+					<xs:element name="ReservoirTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reservoir temperature for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SolutionGasOilRatio" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The solution gas-oil ratio for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="FluidCharacterization" type="prodml:FluidCharacterization" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="FluidCharacterization">
+		<xs:annotation>
+			<xs:documentation>Fluid characterization. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="ApplicationSource" type="prodml:ApplicationInfo" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The software used to generate  the fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ApplicationTarget" type="prodml:ApplicationInfo" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The software which is the consumer of the fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidSystemCharacterizationType" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The kind of fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="IntendedUsage" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The intended usage of the fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="RockFluidUnitFeatureReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Reference to a rock fluid unit feature (a RESQML feature).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StandardConditions" type="eml:AbstractTemperaturePressure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The standard temperature and pressure used for the representation of this fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidCharacterizationSource" type="prodml:FluidCharacterizationSource" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Reference to the fluid analysis tests which were the source data for this fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidComponentCatalog" type="prodml:FluidComponentCatalog" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fluid component catalog for this fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidCharacterizationModel" type="prodml:FluidCharacterizationModel" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The model used to generate the fluid characterization.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidCharacterizationTableFormatSet" type="prodml:FluidCharacterizationTableFormatSet" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The collection of fluid characterization table formats.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FluidSystem" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationModel">
+		<xs:annotation>
+			<xs:documentation>Fluid characterization model.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the fluid analysis result.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferencePressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference pressure for this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceStockTankPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference stock tank pressure for this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference temperature for this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceStockTankTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference stock tank temperature for this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceSeparatorStage" type="prodml:ReferenceSeparatorStage" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ModelSpecification" type="prodml:AbstractPvtModel" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FluidCharacterizationTable" type="prodml:FluidCharacterizationTable" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationSource">
+		<xs:annotation>
+			<xs:documentation>Fluid characterization source.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FluidAnalysisTestReference" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A reference to a fluid analysis test which was used as source data for this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidAnalysisReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationTable">
+		<xs:annotation>
+			<xs:documentation>Fluid characterization table.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TableConstant" type="prodml:FluidCharacterizationTableConstant" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A constant associated with this fluid characterization table.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TableRow" type="prodml:FluidCharacterizationTableRow" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="tableFormat" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The uid reference of the table format for this table.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The name of this table.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationTableColumn">
+		<xs:annotation>
+			<xs:documentation>Column of a table.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Property" type="prodml:OutputFluidPropertyExt" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The property that this column contains. Enum. See output fluid property ext.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Phase" type="prodml:ThermodynamicPhase" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="KeywordAlias" type="eml:ObjectAlias" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="fluidComponentReference" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The  reference to a fluid component for this column in this fluid characterization table.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The name for this column in this fluid characterization table.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="sequence" use="optional" type="eml:NonNegativeLong">
+			<xs:annotation>
+				<xs:documentation>Index number for this column for consumption by an external system.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uom" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The UOM for this column in this fluid characterization table.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationTableConstant">
+		<xs:annotation>
+			<xs:documentation>The constant definition used in the table.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Property" type="prodml:OutputFluidPropertyExt" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The property that this table constant contains. Enum. See output fluid property ext.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Phase" type="prodml:ThermodynamicPhase" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="KeywordAlias" type="eml:ObjectAlias" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="fluidComponentReference" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Reference to the fluid component to which this value relates.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>User-defined name for this attribute.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="value" use="required" type="xs:decimal">
+			<xs:annotation>
+				<xs:documentation>The value for this table constant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uom" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The UOM for this constant for this fluid characterization table.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationTableFormat">
+		<xs:annotation>
+			<xs:documentation>Fluid characterization table format.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="NullValue" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The null value for this fluid characterization table format.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Delimiter" type="prodml:TableDelimiter" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The delimiter for this fluid characterization table format.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TableColumn" type="prodml:FluidCharacterizationTableColumn" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FluidCharacterizationTableFormatSet">
+		<xs:annotation>
+			<xs:documentation>A set of table format definitions. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FluidCharacterizationTableFormat" type="prodml:FluidCharacterizationTableFormat" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FluidComponentProperty">
+		<xs:annotation>
+			<xs:documentation>The properties of a fluid component. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CriticalPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The critical pressure for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CriticalTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The critical temperature for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CriticalViscosity" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The critical viscosity for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CompactVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The compact volume for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CriticalVolume" type="eml:MolarVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The critical volume for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AcentricFactor" type="xs:decimal" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The acentric factor for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MassDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The mass density for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OmegaA" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The omega A for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OmegaB" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The omega B for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VolumeShiftParameter" type="xs:decimal" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volume shift parameter for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PartialMolarDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The partial molar density for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parachor" type="xs:double" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The parachor for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PartialMolarVolume" type="eml:MolarVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The partial molar volume for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceDensityZJ" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference density for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceGravityZJ" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference gravity for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReferenceTemperatureZJ" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reference temperature for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ViscousCompressibility" type="eml:ReciprocalPressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The viscous compressibility for this fluid component.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="fluidComponentReference" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The reference to the fluid component to which these properties apply.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FrictionTheory">
+		<xs:annotation>
+			<xs:documentation>Friction theory.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalViscosityModel ">
+				<xs:sequence>
+					<xs:element name="PrsvParameter" type="prodml:PrsvParameter" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="LeeGonzalez">
+		<xs:annotation>
+			<xs:documentation>LeeGonzalez.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationGasViscosityModel">
+				<xs:sequence>
+					<xs:element name="GasMolarWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The molecular weight of the gas as an input to this viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GasDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The gas density at the conditions for this viscosity correlation to be used.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Lohrenz-Bray-ClarkCorrelation">
+		<xs:annotation>
+			<xs:documentation>Lohrenz-Bray-ClarkCorrelation. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalViscosityModel ">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="LondonoArcherBlasinggame">
+		<xs:annotation>
+			<xs:documentation>LondonoArcherBlasinggame. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationGasViscosityModel">
+				<xs:sequence>
+					<xs:element name="GasDensity" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The gas density at the conditions for this viscosity correlation to be used.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GasViscosityAt1Atm" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The gas viscosity at 1 atm for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GasViscosityCoefficient1Atm" type="prodml:PvtModelParameter" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Lucas">
+		<xs:annotation>
+			<xs:documentation>Lucas.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationGasViscosityModel">
+				<xs:sequence>
+					<xs:element name="GasMolarWeight" type="eml:MolecularWeightMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The molecular weight of the gas as an input to this viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GasViscosityAt1Atm" type="eml:DynamicViscosityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The gas viscosity at 1 atm for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PseudoCriticalTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pseudo critical temperature for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PseudoCriticalPressure" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pseudo critical pressure for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PseudoReducedTemperature" type="eml:ThermodynamicTemperaturePerThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pseudo reduced temperature for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PseudoReducedPressure" type="eml:PressurePerPressureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pseudo reduced pressure for the viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PengRobinson76_EOS">
+		<xs:annotation>
+			<xs:documentation>PengRobinson76_EOS.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalEoSModel ">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PengRobinson78_EOS">
+		<xs:annotation>
+			<xs:documentation>PengRobinson78_EOS.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalEoSModel ">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PetroskyFarshad-BubblePoint">
+		<xs:annotation>
+			<xs:documentation>PetroskyFarshad-BubblePoint.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityBubblePointModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PetroskyFarshad-Dead">
+		<xs:annotation>
+			<xs:documentation>PetroskyFarshad-Dead.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityDeadModel">
+				<xs:sequence>
+					<xs:element name="OilGravityAtStockTank" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The oil gravity at stock tank conditions for this viscosity correlation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PetroskyFarshad-Undersaturated">
+		<xs:annotation>
+			<xs:documentation>PetroskyFarshad-Undersaturated.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityUndersaturatedModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PrsvParameter">
+		<xs:annotation>
+			<xs:documentation>PRSV parameter.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="a1" type="xs:double" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The parameter a1.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="a2" type="xs:double" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The parameter a2.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="b1" type="xs:double" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The parameter b1.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="b2" type="xs:double" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The parameter b2.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="c2" type="xs:double" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The parameter c2.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="fluidComponentReference" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The fluid component to which this PRSV parameter set applies.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PvtModelParameter">
+		<xs:annotation>
+			<xs:documentation>PVT model parameter.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:AbstractMeasure">
+				<xs:attribute name="kind" use="required" type="prodml:PvtModelParameterKindExt">
+					<xs:annotation>
+						<xs:documentation>The kind of model parameter. Extensible enum.  See PVT model parameter kind ext.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="name" use="optional" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>The  user-defined name of a parameter, which can be added to any model.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="PvtModelParameterSet">
+		<xs:annotation>
+			<xs:documentation>A collection of parameters.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Coefficient" type="prodml:PvtModelParameter" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReferenceSeparatorStage">
+		<xs:annotation>
+			<xs:documentation>Reference to the separator stage. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SeparatorPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The separator pressure for a separator stage used to define the separation train, which is used as the basis of this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SeparatorTemperature" type="eml:ThermodynamicTemperatureMeasureExt" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The separator temperature for a separator stage used to define the separation train, which is used as the basis of this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SeparatorNumber" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The separator number for a separator stage used to define the separation train, which is used as the basis of this fluid characterization.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Srk_EOS">
+		<xs:annotation>
+			<xs:documentation>Srk_EOS.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCompositionalEoSModel ">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Standing-BubblePoint">
+		<xs:annotation>
+			<xs:documentation>Standing-BubblePoint.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityBubblePointModel">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Standing-Dead">
+		<xs:annotation>
+			<xs:documentation>Standing-Dead.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityDeadModel">
+				<xs:sequence>
+					<xs:element name="OilGravityAtStockTank" type="eml:APIGravityMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The oil gravity at stock tank for the viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Standing-Undersaturated">
+		<xs:annotation>
+			<xs:documentation>Standing-Undersaturated.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCorrelationViscosityUndersaturatedModel">
+				<xs:sequence>
+					<xs:element name="ReservoirTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reservoir temperature for the viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SolutionGasOilRatio" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The solution gas oil ratio for the viscosity model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TableDelimiter">
+		<xs:annotation>
+			<xs:documentation>Delimiter definition for a table. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="asciiCharacters" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The ascii character which represents a column delimiter in each row of a table using this table format.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

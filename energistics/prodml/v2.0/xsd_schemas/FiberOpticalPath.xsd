@@ -1,0 +1,1148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Schema for defining a fiber optical path. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="DtsInstrumentBox.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="CableType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of cable. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="electrical-fiber-cable">
+				<xs:annotation>
+					<xs:documentation>electrical-fiber-cable</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="multi-fiber-cable">
+				<xs:annotation>
+					<xs:documentation>multi-fiber-cable</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="single-fiber-cable">
+				<xs:annotation>
+					<xs:documentation>single-fiber-cable</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ControlLineEncapsulationSize">
+		<xs:annotation>
+			<xs:documentation>Specifies the control line encapsulation sizes.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="11x11">
+				<xs:annotation>
+					<xs:documentation>11x11</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="23x11">
+				<xs:annotation>
+					<xs:documentation>23x11</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ControlLineEncapsulationType">
+		<xs:annotation>
+			<xs:documentation>Specifies the control line encapsulation types. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="round">
+				<xs:annotation>
+					<xs:documentation>round</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="square">
+				<xs:annotation>
+					<xs:documentation>square</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ControlLineMaterial">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of control line material.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="inc 825">
+				<xs:annotation>
+					<xs:documentation>inc 825</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ss 316">
+				<xs:annotation>
+					<xs:documentation>ss 316</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ControlLineSize">
+		<xs:annotation>
+			<xs:documentation>Specifies the control line sizes. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="diameter 0.25 in weight 0.028 lb/ft">
+				<xs:annotation>
+					<xs:documentation>diameter 0.25 in weight 0.028 lb/ft</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="diameter 0.25 in weight 0.035 lb/ft">
+				<xs:annotation>
+					<xs:documentation>diameter 0.25 in weight 0.035 lb/ft</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="diameter 0.375 in weight 0.048 lb/ft">
+				<xs:annotation>
+					<xs:documentation>diameter 0.375 in weight 0.048 lb/ft</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FiberConnectorTypes">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of fiber connector. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="dry mate">
+				<xs:annotation>
+					<xs:documentation>dry mate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="wet mate">
+				<xs:annotation>
+					<xs:documentation>wet mate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FiberEndType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of fiber end. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="angle polished">
+				<xs:annotation>
+					<xs:documentation>angle polished</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="flat polished">
+				<xs:annotation>
+					<xs:documentation>flat polished</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FiberSpliceTypes">
+		<xs:annotation>
+			<xs:documentation>Specifies the type of fiber splice. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="cable splice"/>
+			<xs:enumeration value="h splice"/>
+			<xs:enumeration value="user-custom"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InterventionConveyanceType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of intervention conveyance. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="coiled tubing"/>
+			<xs:enumeration value="rod"/>
+			<xs:enumeration value="slickline"/>
+			<xs:enumeration value="wireline"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OTDRDirection">
+		<xs:annotation>
+			<xs:documentation>Specifies the OTDR directions. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="backward">
+				<xs:annotation>
+					<xs:documentation>backward</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="forward">
+				<xs:annotation>
+					<xs:documentation>forward</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OTDRReason">
+		<xs:annotation>
+			<xs:documentation>Specifies the reasons an OTDR test was run within a distributed temperature survey (DTS). </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="dts">
+				<xs:annotation>
+					<xs:documentation>dts</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other">
+				<xs:annotation>
+					<xs:documentation>other</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="post-installation">
+				<xs:annotation>
+					<xs:documentation>post-installation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pre-installation">
+				<xs:annotation>
+					<xs:documentation>pre-installation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="run">
+				<xs:annotation>
+					<xs:documentation>run</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PathDefectTypes">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of fiber zone that can be reported on. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="darkened fiber">
+				<xs:annotation>
+					<xs:documentation>darkened fiber</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other">
+				<xs:annotation>
+					<xs:documentation>other</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PermanentCableInstallationType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of permanent cable installations. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="buried parallel to tubular"/>
+			<xs:enumeration value="clamped to tubular"/>
+			<xs:enumeration value="wrapped around tubular"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TerminationType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of fiber terminations. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="looped back to instrument box"/>
+			<xs:enumeration value="termination at cable"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AbstractAttenuationMeasure" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract class of attenuation measure.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="1" maxOccurs="1"/>
+	</xs:complexType>
+	<xs:complexType name="AbstractCable" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract class of class.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="1" maxOccurs="1"/>
+	</xs:complexType>
+	<xs:complexType name="AbstractFiberFacility" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract base type of FiberFacility.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="1" maxOccurs="1"/>
+	</xs:complexType>
+	<xs:complexType name="FiberCommon">
+		<xs:annotation>
+			<xs:documentation>A specialization of the equipment class containing information on reflectance, loss and reason for decommissioning, from which all equipment in the optical path inherits.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDtsEquipment">
+				<xs:sequence>
+					<xs:element name="Reflectance" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fraction of incident light that is reflected by a fiber path component. Measured in dB.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Loss" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fraction of incident light that is lost by a fiber path component. Measured in dB.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReasonForDecommissioning" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Any remarks that help understand why the optical fiber is no longer in use.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="uid" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>Unique identifier of this object.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberConnection">
+		<xs:annotation>
+			<xs:documentation>A connection component within the optical path.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FiberCommon">
+				<xs:sequence minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="ConnectorType" type="prodml:FiberConnectorTypes" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Specifies whether this is a dry mate or wet mate.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EndType" type="prodml:FiberEndType" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Describes whether the fiber end is angle polished or flat polished.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberControlLine">
+		<xs:annotation>
+			<xs:documentation>Information regarding the control line into which a fiber cable may be pumped to measure a facility.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCable">
+				<xs:sequence>
+					<xs:element name="Size" type="prodml:ControlLineSize" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum of the common sizes of control line. The enum list gives diameters and weight per length values. A fiber may be installed inside the control line.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Material" type="prodml:ControlLineMaterial" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum of the common materials from which a control line may be made. A fiber may be installed inside the control line.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EncapsulationType" type="prodml:ControlLineEncapsulationType" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum of square or round encapsulation for a control line. A fiber may be installed inside the control line.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EncapsulationSize" type="prodml:ControlLineEncapsulationSize" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum of the size of encapsulation of a fiber within a control line.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A descriptive remark about the fiber control line.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PumpActivity" type="prodml:FiberPumpActivity" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The activity of pumping the fiber downhole into a control line (small diameter tube).
+						  </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="downholeControlLineReference" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>A reference to the control line string in a completion data object that represents this control line containing a fiber.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberConveyance">
+		<xs:annotation>
+			<xs:documentation>The means by which this fiber segment is conveyed into the well. Choices: permanent, intervention, or control line conveyance method.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Cable" type="prodml:AbstractCable" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FiberFacilityGeneric">
+		<xs:annotation>
+			<xs:documentation>If a facility mapping is not explicitly to a well or pipeline, use this element to show what optical path distances map to lengths in a generic facility.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFiberFacility">
+				<xs:sequence>
+					<xs:element name="FacilityName" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name or description of the facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityKind" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A comment to describe this facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberFacilityMapping">
+		<xs:annotation>
+			<xs:documentation>Relates lengths of fiber to corresponding lengths of facilities (probably wellbores or pipelines). The facilityMapping also contains the datum from which the InterpretedData is indexed.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TimeStart" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date when the mapping between the facility and the optical path becomes effective.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date when the mapping between the facility and the optical path is no longer valid.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the facility mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FiberFacilityMappingPart" type="prodml:FiberFacilityMappingPart" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Relates distances measured along the optical path to specific lengths along facilities (wellbores or pipelines).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FiberFacilityMappingPart">
+		<xs:annotation>
+			<xs:documentation>Relates distances measured along the optical path to specific lengths along facilities (wellbores or pipelines).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OpticalPathDistanceStart" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Distance between the beginning of the optical path to the distance where the mapping with the facility takes place.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpticalPathDistanceEnd" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Distance between the beginning of the optical path to the distance where the mapping with the facility ends.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityLengthStart" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Distance between the facility datum and the distance where the mapping with the optical path takes place.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityLengthEnd" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Distance between the facility datum and the distance where the mapping with the optical path ends.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the facility mapping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FiberFacility" type="prodml:AbstractFiberFacility" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier or this object. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FiberFacilityPipeline">
+		<xs:annotation>
+			<xs:documentation>If facility mapping is to a pipeline, this element shows what optical path distances map to pipeline lengths.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFiberFacility">
+				<xs:sequence minOccurs="1" maxOccurs="1">
+					<xs:element name="Name" type="prodml:NameStruct" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of this facilityMapping instance.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DatumPortReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A description of which "port" (i.e., connection/end or defined point on a pipeline) the facilityLength is indexed from.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of the facility that is represented by this facilityMapping.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The kind of facility mapped to the optical path. Expected to be a pipeline, but this element can be used to show other facilities being mapped to fiber length in future.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name and type of a facility whose context is relevant to the represented installation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberFacilityWell">
+		<xs:annotation>
+			<xs:documentation>If facility mapping is to a wellbore, this element shows what optical path distances map to wellbore measured depths.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractFiberFacility">
+				<xs:sequence minOccurs="1" maxOccurs="1">
+					<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of this facilityMapping instance.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellDatum" type="eml:WellboreDatumReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the wellDatum from which the facilityLength (i.e., in this case, depth of a wellbore being mapped) is measured from.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellboreReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberOneWayAttenuation">
+		<xs:annotation>
+			<xs:documentation>The power loss for one-way travel of a beam of light, usually measured in decibels per unit length. It is necessary to include both the value (and its unit) and the wavelength at which this attenuation was measured.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Value" type="eml:LogarithmicPowerRatioPerLengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The value of the one-way loss per unit of length. The usual UOM is decibels per kilometer (dB/km) although this might vary depending on the calibration method used.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AttenuationMeasure" type="prodml:AbstractAttenuationMeasure" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:UuidString">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="FiberOpticalPath" type="prodml:FiberOpticalPath" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="FiberOpticalPath">
+		<xs:annotation>
+			<xs:documentation>The optical fiber path used for distributed property surveys, e.g. temperature (DTS) or acoustics (DAS). Comprises a number of items of equipment, such as fiber segments and connectors of various types.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Inventory" type="prodml:FiberOpticalPathInventory" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The list of equipment used in the optical path.  Equipment may be used in the optical path for different periods of time, so this inventory contains all items of equipment which are used at some period of time.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OpticalPathNetwork" type="prodml:FiberOpticalPathNetwork" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="FacilityMapping" type="prodml:FiberFacilityMapping" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Relates distances measured along the optical path to specific lengths along facilities (wellbores or pipelines).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Defect" type="prodml:FiberPathDefect" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A zone of the fibre which has defective optical properties (e.g., darkening).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Otdr" type="prodml:FiberOTDR" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>This records the result arrays along with context information for an Optical Time Domain Reflectometry (OTDR) survey. 
+					The arrays will define the relative scattered power from the Rayleigh scattering vs distance along the fiber. 
+					The actual data values are recorded in a OTDR file and/or image file, which are referenced in subelements.
+					</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InstallingVendor" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The vendor who performed the physical deployment</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityIdentifier" type="prodml:FacilityIdentifier" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberOpticalPathInventory">
+		<xs:annotation>
+			<xs:documentation>The list of equipment used in the optical path. Equipment may be used in the optical path for different periods of time, so this inventory contains all items of equipment that are used at some period of time. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Connection" type="prodml:FiberConnection" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A connection component within the optical path.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Turnaround" type="prodml:FiberTurnaround" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A turnaround component within the optical path.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Segment" type="prodml:FiberOpticalPathSegment" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A single segment of the optical fiber used for distributed temperature surveys. Multiple such segments may be connected by other types of component including connectors, splices and fiber turnarounds.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Terminator" type="prodml:FiberTerminator" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The terminator of the optical path. This may be a component (in the case of a single ended fiber installation), or it may be a connection back into the instrument box in the case of a double ended fiber installation.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Splice" type="prodml:FiberSplice" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A splice component within the optical path.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FiberOpticalPathNetwork">
+		<xs:annotation>
+			<xs:documentation>The sequence of connected items of equipment along the optical path. Represented by a flow network.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Installation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Context facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>DTimStart.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimeEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>DTimeEnd.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExistenceTime" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>ExistenceTime.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimMin" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>DTimMin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimMax" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>DTimMax.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Comment.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExternalConnect" type="prodml:ProductFlowExternalReference" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Network" type="prodml:ProductFlowNetwork" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FiberOpticalPathSegment">
+		<xs:annotation>
+			<xs:documentation>A single segment of the optical fiber used for distributed temperature surveys. Multiple such segments may be connected by other types of components including connectors, splices and fiber turnarounds.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FiberCommon">
+				<xs:sequence>
+					<xs:element name="FiberLength" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The length of fiber in this optical path section.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OverStuffing" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>For this fiber segment, the amount of "overstuffing", i.e., the excess length of fiber that was installed compared to the length of the facility that is to be surveyed. Example: if 110 m of fiber were to be installed to measure 100 m length of pipeline, the overstuffing would be 10 m. Overstuffing can be allowed for in the facilityMapping section. The overstuffing is assumed to be linear distributed along the facility being measured.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CoreDiameter" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The inner diameter of the core, generally measured in microns (um).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CladdedDiameter" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The diameter of the core plus the cladding, generally measured in microns (um).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OutsideDiameter" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The diameter of the cable containing the fiber, including all its sheathing layers.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Mode" type="prodml:FiberMode" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The mode of fiber. Enum. Values are single- or multi- mode fiber, or other/unknown.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Coating" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of coating on the fiber.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Jacket" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of jacket covering the fiber.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CoreType" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Property of the fiber core.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Parameter" type="prodml:IndexedObject" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Additional parameters to define the fiber as a material.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SpoolNumberTag" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The spool number of the particular spool from which this fiber segment was taken. The spool number may contain alphanumeric characters.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SpoolLength" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The length of the fiber on the spool when purchased.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="CableType" type="prodml:CableType" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum. The type of cable used in this segment. Example: single-fiber-cable.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="RefractiveIndex" type="prodml:FiberRefractiveIndex" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The refractive index of a material depends on the frequency (or wavelength) of the light. Hence it is necessary to include both the value (a unitless number) and the frequency (or wavelength) it was measured at. The frequency will be a quantity type with a frequency unit such as Hz.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FiberConveyance" type="prodml:FiberConveyance" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The means by which this fiber segment is conveyed into the well.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OneWayAttenuation" type="prodml:FiberOneWayAttenuation" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The power loss for one way travel of a beam of light, usually measured in decibels per unit length. It is necessary to include both the value (and its unit) and the wavelength. The wavelength varies with the refractive index, while the frequency remains constant. 
+							The wavelength given to specify this type is the wavelength in a vacuum (refractive index = 1).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberOTDR">
+		<xs:annotation>
+			<xs:documentation>Records the result arrays along with context information for an optical time domain reflectometry (OTDR) survey. The arrays define the relative scattered power from the Rayleigh scattering vs. distance along the fiber. The actual data values are recorded in an OTDR file and/or image file, which are referenced in sub-elements.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of this object.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ReasonForRun" type="prodml:OTDRReason" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The reason the OTDR test was run. Reasons include:
+	- pre-installation, which is before the installation of the fiber 
+	- post-installation, which is used to validate a successful fiber installation 
+	- DTS run, a quality check of the fiber before a DTS run
+	- Other</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimRun" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The dateTime of the run.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DataInOTDRFile" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to the external file used to record the OTDR data. Note this file will not be in an Energistics format but likely in a special OTDR format.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OTDRImageFile" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to the well log used to record the table of data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpticalPathDistanceStart" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The point measured along the optical path at which this OTDR survey starts.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpticalPathDistanceEnd" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The point measured along the optical path at which this OTDR survey ends.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Direction" type="prodml:OTDRDirection" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Enum. The direction of the OTDR survey. "Forward" means "in the same direction as the positive direction along the optical path".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Wavelength" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The wavelength at which this OTDR survey was carried out.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FiberOTDRInstrumentBox" type="prodml:FiberOTDRInstrumentBox" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MeasurementContact" type="prodml:BusinessAssociate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Contact for the person who performed the OTDR reading</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExtensionNameValue" type="eml:ExtensionNameValue" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Extensions to the schema based on a name-value construct.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FiberOTDRInstrumentBox">
+		<xs:annotation>
+			<xs:documentation>Information about an OTDR instrument box taht is used to perform OTDR surveys on the optical path.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:Instrument">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberPathDefect">
+		<xs:annotation>
+			<xs:documentation>A zone of the fiber that has defective optical properties (e.g., darkening).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="OpticalPathDistanceStart" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Starting point of the detected defect as distance in the optical path from the lightbox.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OpticalPathDistanceEnd" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Ending point of the detected defect as distance in the optical path from the lightbox. if the defect is found at a specific location rather than a segment, then it can have the same value as the opticalPathDistanceStart.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DefectType" type="prodml:PathDefectTypes" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Enum. The type of defect on the optical path.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date when the defect was detected.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date when the defect was no longer detected (or was corrected).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the defect found on this location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="defectID" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The unique identifier of this object. </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FiberPumpActivity">
+		<xs:annotation>
+			<xs:documentation>The activity of pumping the fiber downhole into a control line (small diameter tube).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A name that can be used to reference the pumping activity. In general, a pumping activity does not have a natural name, so this element is often not used.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InstalledFiber" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the InstalledFiberInstance that this activity relates to.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PumpingDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date of the pumping activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EngineerName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The person in charge of the pumping activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ServiceCompany" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The company that performed the pumping activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PumpFluidType" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of fluid used in the pump.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ControlLineFluid" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of fluid used in the control line.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PumpDirection" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The direction of the pumping.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FiberEndSeal" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of end seal on the fiber.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CableMeterType" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of cable meter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CableMeterSerialNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The serial number of the cable meter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CableMeterCalibrationDate" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date the cable meter was calibrated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExcessFiberRecovered" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The length of the excess fiber that was removed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Comment about the pump activity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FiberRefractiveIndex">
+		<xs:annotation>
+			<xs:documentation>The refractive index of a material depends on the frequency (or wavelength) of the light. Hence, it is necessary to include both the value (a unitless number) and the frequency (or wavelength) it was measured at. The frequency will be a quantity type with a frequency unit such as Hz.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Value" type="eml:LogarithmicPowerRatioPerLengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The value of the refractive index.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Frequency" type="eml:FrequencyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The frequency (and UOM) for which the refractive index is measured.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Wavelength" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The wavelength (and UOM) for which the refractive index is measured. The reported wavelength should be the wavelength of the light in a vacuum.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>Unique identifier of this object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="FiberSplice">
+		<xs:annotation>
+			<xs:documentation>A splice component within the optical path.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FiberCommon">
+				<xs:sequence>
+					<xs:element name="SpliceEquipmentUsedReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A useful description of the equipment used to create the splice.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StrippingType" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A useful description of the stripping type that was conducted.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProtectorType" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A useful description of the type of protector used in the splice.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FiberSpliceType" type="prodml:FiberSpliceTypes" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum. The type of splice.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PressureRating" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The pressure rating for which the splice is expected to withstand.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BendAngle" type="eml:PlaneAngleUom" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The measurement of the bend on the splice.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberTerminator">
+		<xs:annotation>
+			<xs:documentation>The terminator of the optical path. This may be a component (in the case of a single ended fiber installation), or it may be a connection back into the instrument box in the case of a double ended fiber installation.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FiberCommon">
+				<xs:sequence>
+					<xs:element name="TerminationType" type="prodml:TerminationType" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Information about the termination used for the fiber.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FiberTurnaround">
+		<xs:annotation>
+			<xs:documentation>A turnaround component within the optical path.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:FiberCommon">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Frequency">
+		<xs:annotation>
+			<xs:documentation>Frequency.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractAttenuationMeasure">
+				<xs:sequence>
+					<xs:element name="Frequency" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Frequency.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InterventionConveyance">
+		<xs:annotation>
+			<xs:documentation>Information on type of intervention conveyance used by the optical path.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCable">
+				<xs:sequence>
+					<xs:element name="InterventionConveyanceType" type="prodml:InterventionConveyanceType" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type from the enumeration list of InterventionConveyanceType.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Comment about the intervention conveyance.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PermanentCable">
+		<xs:annotation>
+			<xs:documentation>Information on the type of permanent conveyance used by the optical path.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractCable">
+				<xs:sequence>
+					<xs:element name="PermanentCableInstallationType" type="prodml:PermanentCableInstallationType" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Enum. For permanent conveyance option, the type of conveyance. Example: clamped to tubular.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Comment about the intervention conveyance.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WaveLength">
+		<xs:annotation>
+			<xs:documentation>Wave length. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractAttenuationMeasure">
+				<xs:sequence>
+					<xs:element name="WaveLength" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Wave length.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

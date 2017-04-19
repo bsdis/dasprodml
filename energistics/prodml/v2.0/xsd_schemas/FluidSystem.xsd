@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Used to designate each distinct subsurface accumulation of economically significant fluids. This data object primarily serves to identify the source of one or more fluid samples and provides a connection to the geologic environment that contains it. Characteristics of the fluid system include the type of system (e.g., black oil, dry gas, etc.), the fluid phases present, and its lifecycle status (e.g., undeveloped, producing, etc.). </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="FluidAnalysis.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="PhasePresent">
+		<xs:annotation>
+			<xs:documentation>Specifies the values for phase present. It can be water, gas or oil;  each combination of any two phases; or all three phases.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="gas and oil and water">
+				<xs:annotation>
+					<xs:documentation>All three phases--gas and oil and water--are present.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water">
+				<xs:annotation>
+					<xs:documentation>The phase present is water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas">
+				<xs:annotation>
+					<xs:documentation>The phase present is gas.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil">
+				<xs:annotation>
+					<xs:documentation>The phase present is oil.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil and gas">
+				<xs:annotation>
+					<xs:documentation>The phases present are oil and gas.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil and water">
+				<xs:annotation>
+					<xs:documentation>The phases present are oil and water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas and water">
+				<xs:annotation>
+					<xs:documentation>The phases present are gas and water.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReservoirLifeCycleState">
+		<xs:annotation>
+			<xs:documentation>Specifies the states of the reservoir lifecycle. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="abandoned"/>
+			<xs:enumeration value="primary production"/>
+			<xs:enumeration value="prospect"/>
+			<xs:enumeration value="tertiary production"/>
+			<xs:enumeration value="undeveloped"/>
+			<xs:enumeration value="secondary recovery"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="FluidSystem" type="prodml:FluidSystem" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="FluidSystem">
+		<xs:annotation>
+			<xs:documentation>Used to designate each distinct subsurface accumulation of economically significant fluids. This data object primarily serves to identify the source of one or more fluid samples and provides a connection to the geologic environment that contains it. Characteristics of the fluid system include the type of system (e.g., black oil, dry gas, etc.), the fluid phases present, and its lifecycle status (e.g., undeveloped, producing, etc.). </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="StandardConditions" type="eml:AbstractTemperaturePressure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The standard temperature and pressure used for the representation of this fluid system.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReservoirFluidKind" type="prodml:ReservoirFluidKind" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The kind of reservoir fluid for this fluid system. Enum. See reservoir fluid kind.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PhasesPresent" type="prodml:PhasePresent" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The phases present for this fluid system. Enum. See phase present.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ReservoirLifeCycleState" type="prodml:ReservoirLifeCycleState" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reservoir life cycle state for this fluid system. Enum. See reservoir life cycle state.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="RockFluidUnitFeatureReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Reference to a RockFluidUnitFeature (a RESQML data object).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SaturationPressure" type="prodml:SaturationPressure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The saturation (or bubble point) pressure for the fluid system.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SolutionGOR" type="eml:VolumePerVolumeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The solution gas-oil ratio for this fluid system.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Remarks and comments about this data item.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FormationWater" type="prodml:FormationWater" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="StockTankOil" type="prodml:StockTankOil" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="NaturalGas" type="prodml:NaturalGas" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

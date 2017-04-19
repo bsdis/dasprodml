@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Schema for distributed acoustic sensing (DAS) acquisition. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="DtsInstrumentBox.xsd"/>
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:include schemaLocation="FiberOpticalPath.xsd"/>
+	<xs:simpleType name="DasCalibrationType">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of calibration.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="last locus to end of fiber">
+				<xs:annotation>
+					<xs:documentation>Calibration point describing the fiber distance between the last locus acquired and the end of the fiber.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="locus calibration">
+				<xs:annotation>
+					<xs:documentation>Calibration point describing the relationship between acquired locus number, optical path (fiber) distance, and facility length. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tap test">
+				<xs:annotation>
+					<xs:documentation>Calibration point describing the location of the (well head) tap test as a relationship between estimated locus number, optical path (fiber) distance, and facility length. This calibration point is often acquired in the field during acquisition start to obtain the approximate  position of the well head along the fiber.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DasCalibrationTypeExt">
+		<xs:annotation>
+			<xs:documentation>This extension of calibration type</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="prodml:DasCalibrationType eml:EnumExtensionPattern"/>
+	</xs:simpleType>
+	<xs:simpleType name="DasDimensions">
+		<xs:annotation>
+			<xs:documentation>Specifies the possible orientations of the data array. For multiple H5 files:
+	- Must specify that the indexes split OVER TIME
+	- Even if loci were the index
+	- Each divided file still contains the split time array</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="frequency">
+				<xs:annotation>
+					<xs:documentation>Enumeration value to indicate the frequency dimension in a multi-dimensional array.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="locus">
+				<xs:annotation>
+					<xs:documentation>Enumeration value to indicate the locus dimension in a multi-dimensional array.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="time">
+				<xs:annotation>
+					<xs:documentation>Enumeration value to indicate the time dimension in a multi-dimensional array.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FacilityKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of facility kinds.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="generic">
+				<xs:annotation>
+					<xs:documentation>The calibration affects the acquisition which runs neither inside a well or a pipeline.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pipeline">
+				<xs:annotation>
+					<xs:documentation>The calibration affects the acquisition which runs inside a pipeline.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well">
+				<xs:annotation>
+					<xs:documentation>The calibration affects the acquisition which runs inside a well.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="DasAcquisition" type="prodml:DasAcquisition" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="DasAcquisition">
+		<xs:annotation>
+			<xs:documentation>Contains metadata about the DAS acquisition common to the various types of data acquired during the acquisition, which includes DAS measurement instrument data, fiber optical path, time zone, and core acquisition settings like pulse rate and gauge length, measurement start time and whether or not this was a triggered measurement.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="AcquisitionId" type="eml:UuidString" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A universally unique identifier (UUID) for an instance of a DAS acquisition.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="AcquisitionDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Free format description of the acquired DAS data. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OpticalPath" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Description of the fiber optical path. A fiber optical path consists of a series of fibers, connectors, etc. together forming the path for the light pulse emitted from the measurement instrument. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DasInstrumentBox" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Description of the measurement instrument. Often referred to as interrogator unit or IU. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityId" type="eml:String64" minOccurs="1" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>This is a human-readable name for the facility or facilities which this acquisition is measuring.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="VendorCode" type="prodml:BusinessAssociate" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Description of the vendor providing the DAS data acquisition service. 
+Note that in the HDF5 (H5) file, this is a single string describing vendor name and some additional information that the vendor deems relevant, e.g., ‘VendorX FBE data version 2.3’.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PulseRate" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The rate at which the interrogator unit interrogates the fiber sensor. For most interrogators, this element is informally known as the ‘pulse rate’.  </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PulseWidth" type="eml:TimeMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The width of the ‘pulse’ sent down the fiber. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GaugeLength" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A distance (length along the fiber) which the DAS interrogator unit manufacturer designs and implements by hardware or software to affect the interrogator unit spatial resolution. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="GaugeLengthUnit" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Only required in an HDF5 (H5) file to record the unit of measure of the gauge length.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SpatialSamplingInterval" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The separation between two consecutive ‘spatial sample’ points on the fiber at which the signal is measured. Not to be confused with ‘spatial resolution’.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SpatialSamplingIntervalUnit" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Only required in an HDF5 (H5) file to record the unit of measure of the sampling interval.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MinimumFrequency" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum signal frequency a measurement instrument can provide as specified by the vendor. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MaximumFrequency" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum signal frequency a measurement instrument can provide as specified by the vendor. This is the Nyquist frequency (or some fraction thereof) of PulseRate.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="NumberOfLoci" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The total number of ‘loci’ (acoustic sample points) acquired by the measurement instrument in a single ‘scan’ of the fiber. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StartLocusIndex" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The first ‘locus’ acquired by the interrogator unit. Where ‘Locus Index 0’ is the acoustic sample point at the connector of the measurement instrument.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MeasurementStartTime" type="eml:TimeStamp" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The time-date specification of the beginning of a data ‘sample’ in a ‘time series’ in ISO 8601 compatible format. This is typically a GPS-locked time measurement.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TriggeredMeasurement" type="xs:boolean" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Measurement for an acquisition that requires synchronization between a transmitting source (Tx) and a recording (Rx) measurement system. It must be recorded for every measurement regardless of what application it will serve.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PulseWidthUnit" type="eml:String64" minOccurs="0" maxOccurs="1" fixed="ns">
+						<xs:annotation>
+							<xs:documentation>Only required in an HDF5 (H5) file to record the unit of measure of the pulse width. Default is nanoseconds (ns).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Raw" type="prodml:DasRaw" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Custom" type="prodml:DasCustom" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Calibration" type="prodml:DasCalibration" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Processed" type="prodml:DasProcessed" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DasCalibration">
+		<xs:annotation>
+			<xs:documentation>This object contains a mapping of loci-to-fiber distance along the optical path for the DAS acquisition. The actual calibration points are provided in an array of DasCalibrationPoint structures consisting of three elements: a locus index, the corresponding fiber distance, and a description of the calibration type. Provide as many calibration points as necessary. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CalibrationIndex" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The nth count of this Calibration in the Acquisition.  Recommended if there is more than 1 Calibration in this Acquisition.  This index corresponds to the Calibration array number in the H5 file.  </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumberOfCalibrationPoints" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total number of calibration points in the array. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Free format description of the DAS calibration provided for an instance of a DAS acquisition. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationOpticalPathDistanceUnit" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Unit of measurement of OpticalPathDistance value CalibrationPoints </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationFacilityLengthUnit" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Unit of measurement of FacilityLength value CalibrationPoints </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationDatum" type="eml:WellboreDatumReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Datum used as basis for measurement of calibration point distance and length.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityName" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Indicates which facility is being calibrated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityKind" type="prodml:FacilityKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Enumeration to indicate the type of facility (well or pipeline) for this acquisition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationDataPoints" type="prodml:DasCalibrationPoint" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DasCalibrationPoint">
+		<xs:annotation>
+			<xs:documentation>This object contains calibration points in the array</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CalibrationLocusIndex" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The locus index for the calibration point. Where ‘Locus Index 0’ is the acoustic sample point at the connector of the measurement instrument.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationOpticalPathDistance" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ‘fiber distance’ corresponding with the locus index of the calibration point. This is similar to the OpticalPathDistance used in DTS. This ‘fiber distance’ is the distance from the connector of the measurement instrument to the acoustic sample point along the fiber that is the furthest from the measurement instrument for that particular test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationFacilityLength" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ‘facility length’ corresponding to the CalibrationOpticPathDistance. The ‘facility length’ is the length along the ‘optical path’ and is corrected for overstuffing, additional fiber in turnaround-subs or H-splices that increase the optical path length on the OTDR, but not the actual facility length. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CalibrationType" type="prodml:DasCalibrationTypeExt" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A brief meaningful description of the type of calibration point. This is an extensible enumeration type. Current reserved keywords are ‘locus calibration’, ‘tap test’ and ‘last locus to end of fiber’ for commonly used calibration points.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DasCustom">
+		<xs:annotation>
+			<xs:documentation>This object contains service–provider-specific customization parameters. Service providers can define the contents of this data element as required. This data object has intentionally not been described in detail to allow for flexibility.
+Note that this object is optional and if used, the service provider needs to provide a description of the data elements to the customer.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="DasExternalDatasetPart">
+		<xs:annotation>
+			<xs:documentation>Array of integer values provided explicitly by an HDF5 dataset. The null value must be  explicitly provided in the NullValue attribute of this class.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:ExternalDatasetPart">
+				<xs:sequence minOccurs="0" maxOccurs="1">
+					<xs:element name="PartStartTime" type="eml:TimeStamp" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The timestamp in human readable, ISO 8601 format of the first recorded sample in the sub-record of the raw data array stored in the corresponding HDF data file. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PartEndTime" type="eml:TimeStamp" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The timestamp in human readable, ISO 8601 format of the last recorded sample in the sub-record of the raw data array stored in the corresponding HDF data file. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DasFbe">
+		<xs:annotation>
+			<xs:documentation>This object contains the attributes of FBE processed data. This includes the FBE data unit, location of the FBE data along the fiber optical path, information about times, (optional) filter related parameters, and UUIDs of the original raw and/or spectra files from which the files were processed. Note that the actual FBE data samples and times arrays are not present in the XML files but only in the HDF5 files because of their size. The XML files only contain references to locate the corresponding HDF files containing the actual FBE samples and times.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FbeIndex" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The nth count of this Fbe instance in the Acquisition.  Recommended if there is more than 1 Fbe instance in this Acquisition.  This index corresponds to the Fbe array number in the H5 file.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FbeDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Description of the FBE data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FbeDataUnit" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Data unit for the FBE data. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OutputDataRate" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The rate at which the FBE data is provided for all ‘loci’ (spatial samples). This is typically equal to the interrogation rate/pulse rate of the DAS measurement system or an integer fraction thereof.
+Note this attribute is mandatory for FBE and spectrum data. For raw data this attribute is optional. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StartLocusIndex" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The first ‘locus’ acquired by the interrogator unit, where ‘Locus Index 0’ is the acoustic sample point at the connector of the measurement instrument.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumberOfLoci" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total number of ‘loci’ (acoustic sample points) acquired by the measurement instrument in a single ‘scan’ of the fiber. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpatialSamplingInterval" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The separation between two consecutive ‘spatial sample’ points on the fiber at which the signal is measured. It should not be confused with ‘spatial resolution’. If this data element is present in the DASFbe object, then it overwrites the SpatialSamplingInterval value described in DASAcquistion.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpatialSamplingIntervalUnit" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Only required in Hdf5 file to record the unit of measure of the sampling interval of the Fbe.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FilterType" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A string describing the type of filter applied by the vendor. Important frequency type filter classes are: frequency response filters (low-pass, high-pass, band-pass, notch filters) and butterworth, chebyshev and bessel filters. The filter type and characteristics applied to the acquired or processed data is important information for end-user applications.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WindowSize" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of samples in the filter window applied.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WindowOverlap" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of sample overlaps between consecutive filter windows applied.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WindowFunction" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The window function applied to the sample window used to calculate the frequency band. Example 'HANNING', 'HAMMING', 'BESSEL' window.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransformType" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A string describing the type of mathematical transformation applied by the vendor. Typically this is some type of discrete fast Fourier transform (often abbreviated as DFT, DFFT or FFT).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransformSize" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of samples used in the TransformType.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawReference" type="eml:UuidString" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A universally unique identifier (UUID) for the HDF file containing the raw data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpectraReference" type="eml:UuidString" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A universally unique identifier (UUID) for the HDF file containing the spectra data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FbeData" type="prodml:DasFbeData" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A DAS array object containing the FBE DAS data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FbeDataTime" type="prodml:DasTimeArray" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A DAS array object containing the sample times corresponding to a single ‘scan’ of the fiber. In a single ‘scan’, the DAS measurement system acquires raw data samples for all the loci specified by StartLocusIndex and NumberOfLoci. The ‘scan’ frequency is equal to the DAS acquisition pulse rate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Custom" type="prodml:DasCustom" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uuid" use="required" type="eml:UuidString">
+			<xs:annotation>
+				<xs:documentation>A universally unique identifier (UUID) of an instance of FBE DAS data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DasFbeData">
+		<xs:annotation>
+			<xs:documentation>Two dimensional (loci &amp; time) array containing processed frequency band extracted data samples. This processed data type is obtained by applying a frequency band filter to the raw data acquired by the DAS acquisition system. For each frequency band provided, a separate DASFbeData array object is created. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FbeDataIndex" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The nth count of this DasFbeData in the DasFbe.  Recommended if there is more than 1 dataset in this Fbe.  This index corresponds to the FbeData array number in the H5 file.  </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StartFrequency" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Start of an individual frequency band in a DAS FBE data set. This typically corresponds to the frequency of the 3dB point of the filter. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndFrequency" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>End of an individual frequency band in a DAS FBE data set. This typically corresponds to the frequency of the 3dB point of the filter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Dimensions" type="prodml:DasDimensions" minOccurs="2" maxOccurs="2">
+				<xs:annotation>
+					<xs:documentation>An array of two elements describing the ordering of the FBE data array. The fastest running index is stored in the second element. For example the 
+{‘time’, ‘locus’} indicates that ‘locus’ is the fastest running index. Note that vendors may deliver data with different orderings.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FbeDataArray" type="eml:AbstractNumericArray" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="DasInstrumentBox" type="prodml:DasInstrumentBox" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="DasInstrumentBox">
+		<xs:annotation>
+			<xs:documentation>The group of elements corresponding to a DAS instrument box.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="SerialNumber" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>An identification tag for the instrument box. A serial number is a type of identification tag however some tags contain many pieces of information. This structure just identifies the tag and does not describe the contents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Parameter" type="prodml:IndexedObject" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Additional parameters to define the instrument box as a piece of equipment. These should not be parameters to define the installation or use of the box in the wellbore, or other system. This element should be used only if an appropriate parameter is not available as an element, or in the calibration operation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FacilityIdentifier" type="prodml:FacilityIdentifier" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Identifies the facility to which an instrument is attached.  Type is the PRODML Common Facility Identifier.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Instrument" type="prodml:Instrument" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The general data of an instrument, including vendor information, in the installed system.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="FirmwareVersion" type="eml:String64" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Firmware version of the DAS Instrument box. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PatchCord" type="prodml:DtsPatchCord" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Description of the patch cord connecting the fiber optic path to the DAS instrument box connector. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="InstrumentBoxDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>An identification tag for the instrument box. A serial number is a type of identification tag however some tags contain many pieces of information. This structure just identifies the tag and does not describe the contents.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DasProcessed">
+		<xs:annotation>
+			<xs:documentation>This object contains data objects for processed data types and has no data attributes. Currently only two processed data types have been defined: the frequency band extracted (FBE) and spectra. In the future other processed data types may be added. 
+Note that a DasProcessed object is optional and only present if DAS FBE or DAS spectra data is exchanged. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Fbe" type="prodml:DasFbe" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Spectra" type="prodml:DasSpectra" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DasRaw">
+		<xs:annotation>
+			<xs:documentation>This object contains the attributes of raw data acquired by the DAS measurement instrument. This includes the raw data unit, the location of the raw data acquired along the fiber optical path, and information about times and (optional) triggers. Note that the actual raw data samples, times and trigger times arrays are not present in the XML files but only in the HDF5 files because of their size. The XML files only contain references to locate the corresponding HDF files, which contain the actual raw samples, times, and (optional) trigger times.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="RawIndex" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The nth count of this Raw instance in the Acquisition.  Recommended if there is more than 1 Raw instance in this Acquisition.  This index corresponds to the Raw array number in the H5 file.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Free format description of the raw DAS data acquired.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawDataUnit" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Data unit for the DAS measurement instrument. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OutputDataRate" type="eml:FrequencyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The rate at which the spectra data is provided for all ‘loci’ (spatial samples). This is typically equal to the interrogation rate/pulse rate of the DAS measurement system or an integer fraction thereof.
+This attribute is optional in the Raw Data object. If present, it overrides the Acquisition PulseRate. If not present, then OutputDataRate is assumed equal to the PulseRate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StartLocusIndex" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The first ‘locus’ acquired by the interrogator unit. Where ‘Locus Index 0’ is the acoustic sample point at the connector of the measurement instrument.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumberOfLoci" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total number of ‘loci’ (acoustic sample points) acquired by the measurement instrument in a single ‘scan’ of the fiber. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawData" type="prodml:DasRawData" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A DAS array object containing the raw DAS data. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawDataTime" type="prodml:DasTimeArray" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A DAS array object containing the sample times corresponding to a single ‘scan’ of the fiber. In a single ‘scan’, the DAS measurement system acquires raw data samples for all the loci specified by StartLocusIndex . The ‘scan’ frequency is equal to the DAS Acquisition Pulse Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawDataTriggerTime" type="prodml:DasTimeArray" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A DAS array object containing the times of the triggers in a triggered measurement. Multiple times may be stored to indicate multiple triggers within a single DAS raw data recording. This array contains only valid data if TriggeredMeasurement is set to ‘true’ in DAS Acquisition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Custom" type="prodml:DasCustom" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uuid" use="required" type="eml:UuidString">
+			<xs:annotation>
+				<xs:documentation>A universally unique identifier (UUID) for an instance of raw DAS data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DasRawData">
+		<xs:annotation>
+			<xs:documentation>Two- dimensional array containing raw data samples acquired by the DAS acquisition system. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Dimensions" type="prodml:DasDimensions" minOccurs="2" maxOccurs="2">
+				<xs:annotation>
+					<xs:documentation>An array of two elements describing the ordering of the raw data array. The fastest running index is stored in the second element. For the DAS measurement instrument, the ordering is typically {‘time’, ‘locus’} indicating that the locus is the fastest running index, but in some cases the order may be reversed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawDataArray" type="eml:AbstractNumericArray" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DasSpectra">
+		<xs:annotation>
+			<xs:documentation>This object contains the attributes of spectra processed data. This includes the spectra data unit, location of the spectra data along the fiber optical path, information about times, (optional) filter related parameters, and UUIDs of the original raw from which the spectra file was processed and/or the UUID of the FBE files that were processed from the spectra files. Note that the actual spectrum data samples and times arrays are not present in the XML files but only in the HDF5 files because of their size. The XML files only contain references to locate the corresponding HDF files containing the actual spectrum samples and times.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SpectraIndex" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The nth count of this Spectra instance in the acquisition. Recommended if there is more than 1 Spectra instance in this acquisition.  This index corresponds to the Spectra array number in the H5 file.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpectraDescription" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Description of the spectra data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpectraDataUnit" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Data unit for the spectra data. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OutputDataRate" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The rate at which the spectra data is provided for all ‘loci’ (spatial samples). This is typically equal to the interrogation rate/pulse rate of the DAS measurement system or an integer fraction thereof.
+Note this attribute is mandatory for FBE and spectrum data. For raw data this attribute is optional.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="StartLocusIndex" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The first ‘locus’ acquired by the interrogator unit, where ‘Locus Index 0’ is the acoustic sample point at the connector of the measurement instrument.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumberOfLoci" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The total number of ‘loci’ (acoustic sample points) acquired by the measurement instrument in a single ‘scan’ of the fiber. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpatialSamplingInterval" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The separation between two consecutive ‘spatial sample’ points on the fiber at which the signal is measured. It should not be confused with ‘spatial resolution’. If this data element is present in the DasSpectrum object, then it overwrites the SpatialSamplingInterval value described in DasAcquistion.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpatialSamplingIntervalUnit" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Only required in an HDF5 file to record the unit of measure of the sampling interval of the spectra.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FilterType" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A string describing the type of filter applied by the vendor. Important frequency type filter classes are: frequency response filters (low-pass, high-pass, band-pass, notch filters) and butterworth, chebyshev and bessel filters. The filter type and characteristics applied to the acquired or processed data is important information for end-user applications.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WindowSize" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of samples in the filter window applied.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WindowOverlap" type="eml:NonNegativeLong" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of sample overlaps between consecutive filter windows applied.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WindowFunction" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A string describing the window function applied by the vendor. 
+Examples are "Hamming" or "Hanning".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransformType" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A string describing the type of mathematical transformation applied by the vendor. Typically this is some type of discrete fast Fourier transform (often abbreviated as DFT, DFFT or FFT).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TransformSize" type="eml:NonNegativeLong" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The number of samples used in the TransformType.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RawReference" type="eml:UuidString" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Unique identifier for the HDF5 file containing the raw data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FbeReference" type="eml:UuidString" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A universally unique identifier (UUID) of an instance of DAS FBE data.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpectraData" type="prodml:DasSpectraData" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A DAS array object containing the spectra DAS data. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpectraDataTime" type="prodml:DasTimeArray" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A DAS array object containing the sample times corresponding to a single ‘scan’ of the fiber. In a single ‘scan’, the DAS measurement system acquires raw data samples for all the loci specified by StartLocusIndex and NumberOfLoci. The ‘scan’ frequency is equal to the DAS acquisition pulse rate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Custom" type="prodml:DasCustom" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uuid" use="required" type="eml:UuidString">
+			<xs:annotation>
+				<xs:documentation>A universally unique identifier (UUID) for an instance of spectra DAS data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DasSpectraData">
+		<xs:annotation>
+			<xs:documentation>Three-dimensional array (loci, time, transform) containing spectrum data samples. Spectrum data is processed data obtained by applying a mathematical transformation function to the DAS raw data acquired by the acquisition system. The array is 3D and contains TransformSize points for each locus and time for which the data is provided. For example, many service providers will provide Fourier transformed versions of the raw data to customers, but other transformation functions are also allowed. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StartFrequency" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Start frequency in a DAS spectra data set. This value typically is set to the minimum frequency present in the spectra data set.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndFrequency" type="eml:FrequencyMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>End frequency in a DAS spectra data set. This value is typically set to the maximum frequency present in the spectra data set.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Dimensions" type="prodml:DasDimensions" minOccurs="3" maxOccurs="3">
+				<xs:annotation>
+					<xs:documentation>An array of three elements describing the ordering of the raw data array. The fastest running index is stored in the last element. For example {‘time’, ‘locus’, ‘frequency’} indicates that the frequency is the fastest running index. Note that vendors may deliver data with different orderings.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SpectraDataArray" type="eml:AbstractNumericArray" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DasTimeArray">
+		<xs:annotation>
+			<xs:documentation>The Times arrays contain the ‘scan’ or ‘trace’ times at which the raw, FBE and spectrum arrays were acquired or processed: 
+	- For raw data, these are the times for which all loci in the ‘scanned’ fiber section were interrogated by a single pulse of the DAS measurement system. 
+	- For the processed data, these are the times of the first sample in the time window used in the frequency filter or transformation function to calculate the FBE or spectrum data.  </xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element name="StartTime" type="eml:TimeStamp" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The timestamp in human readable, ISO 8601 format of the last recorded sample in the acquistion. Note that this is the start time of the acquistion if a raw dataset is stored in multiple HDF files. The end time of the sub-record stored in an individual HDF file is stored in PartStartTime.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EndTime" type="eml:TimeStamp" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The timestamp in human readable, ISO 8601 format of the last recorded sample in the acquisition. Note that this is the end time of the acquistion if a raw data set is stored in multiple HDF files. The end time of the sub-record stored in an individual HDF file is stored in PartEndTime.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeArray" type="eml:IntegerExternalArray" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

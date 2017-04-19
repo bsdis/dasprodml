@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>A companion to the Time Series Data object. It has the same elements as time series data including the keyword concept, to identify a time series of data. However, it has elements to define the minimum and maximum time values, between which the data statistics apply. This is followed by a set of statistical data applying to the time series data, to the elements listed in TimeSeriesStatistic below. 
+For more information, see the PRODML Technical Usage Guide and  PRODML Product Volume, Network Model &amp; Time Series Usage Guide (which are included in the zip file download of the PRODML standard). </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:complexType name="EndpointDateTime">
+		<xs:annotation>
+			<xs:documentation>A value used for the endpoint of a date-time interval. The meaning of the endpoint of an interval must be defined by the endpoint attribute.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="endpoint" use="required" type="prodml:EndpointQualifierInterval">
+			<xs:annotation>
+				<xs:documentation>Defines the semantics (inclusive or exclusive) of the endpoint within the context of the interval.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="EndpointQuantity">
+		<xs:annotation>
+			<xs:documentation>A value used for the endpoint of an interval. If the value represents a measure then the unit must be specified elsewhere. The meaning of the endpoint of an interval must be defined by the endpoint attribute.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="eml:AbstractMeasure">
+				<xs:attribute name="endpoint" use="required" type="prodml:EndpointQualifierInterval">
+					<xs:annotation>
+						<xs:documentation>Defines the semantics (inclusive or exclusive) of the endpoint within the context of the interval.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="TimeSeriesStatistic" type="prodml:TimeSeriesStatistic" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="TimeSeriesStatistic">
+		<xs:annotation>
+			<xs:documentation>Time series statistics data. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Key" type="prodml:KeywordValueStruct" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>A keyword value pair which characterizes the underlying nature of this value. The key value may provide part of the unique identity of an instance of a concept or it may characterize the underlying concept. The key value will be defined within the specified keyword naming system. This is essentially a classification of the data in the specified system (keyword).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Unit" type="eml:UomEnum" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>If the time series is a measure then this specifies the unit of measure. The unit acronym must be chosen from the list that is valid for the measure class. If this is specified then the measure class must be specified.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MeasureClass" type="eml:MeasureClass" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Defines the type of measure that the time series represents. If this is specified then unit must be specified. This may be redundant to some information in the keys but it is important for allowing an application to understand the nature of a measure value even if it does not understand all of the underlying nature.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A comment about the time series.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Minimum" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum value within the time range of dTimMin to dTimMax. Element "unit" defines the unit of measure of this value.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Maximum" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum value within the time range of dTimMin to dTimMax. Element "unit" defines the unit of measure of this value.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Sum" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The sum of all values within the time range of dTimMin to dTimMax. Element "unit" defines the unit of measure of this value.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Mean" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The arithmetic mean (sum divided by count) of all values within the time range of dTimMin to dTimMax. Element "unit" defines the unit of measure of this value.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Median" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The median value of all values within the time range of dTimMin to dTimMax. Element "unit" defines the unit of measure of this value.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StandardDeviation" type="eml:DimensionlessMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The standard deviation of all values within the time range of dTimMin to dTimMax. Element "unit" defines the unit of measure of this value.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TimeAtThreshold" type="prodml:TimeSeriesThreshold" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Defines a value threshold window and the time duration where values 
+					(within the time range of dTimMin to dTimMax) were within that window.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimMin" type="prodml:EndpointDateTime" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="DTimMax" type="prodml:EndpointDateTime" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TimeSeriesThreshold">
+		<xs:annotation>
+			<xs:documentation>Defines a value threshold window and the cumulative time duration that the data was within that window.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ThresholdMinimum" type="prodml:EndpointQuantity" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The lower bound of the threshold for testing whether values are within a specific range.The element "unit" defines the unit of measure of this value. At least one of minimumValue and maximumValue must be specified. The thresholdMinimum must be less than thresholdMaximum. If thresholdMinimum is not specified then the minimum shall be assumed to be minus infinity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ThresholdMaximum" type="prodml:EndpointQuantity" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The upper bound of the threshold for testing whether values are within a specific range. Element "unit" defines the unit of measure of this value. At least one of minimumValue and maximumValue must be specified. The thresholdMaximum must be greater than thresholdMinimum. If thresholdMaximum is not specified then the maximum shall be assumed to be plus infinity.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Duration" type="eml:TimeMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The sum of the time intervals over the range of dTimMin to dTimMax during which the values were within the specified threshold range.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

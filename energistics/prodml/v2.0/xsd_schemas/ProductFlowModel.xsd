@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Can be used to define a directed graph of flow connections. The basic building block is a Unit which can be used to define the flow behavior of any facility (where the term facility represents any use of equipment to perform a function) such as a separator, a wellhead, a valve, a flow line. It utilizes a general hierarchy of: 
+Model (collection of networks)
+        Network (collection of connected units)
+                  Unit (black box with ports)
+                            Port (allows flow in or out)
+	                        Node (allows ports to connect)
+
+For more information, see the PRODML Product Volume, Network Model &amp; Time Series Usage Guide.</xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:complexType name="ConnectedNode">
+		<xs:annotation>
+			<xs:documentation>Product Flow Connected Node Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Node" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the node to which this port is connected. Only two ports should be actively connected to the same node at the same point in time. That is, a port should only be connected to one other port. There are no semantics for the node except common connection. All ports that are connected to a node with the same name are inherently connected to each other. The name of the node is only required to be unique within the context of the current Product Flow Network (that is, not the overall model). All ports must be connected to a node and whether or not any other port is connected to the same node depends on the requirements of the network. Any node that is internally connected to only one node is presumably a candidate to be connected to an external node. The behavior of ports connected at a common node is as follows: a) There is no pressure drop across the node. All ports connected to the node have the same pressure. That is, there is an assumption of steady state fluid flow. b) Conservation of mass exists across the node. The mass into the node via all connected ports equals the mass out of the node via all connected ports. c) The flow direction of a port connected to the node may be transient. That is, flow direction may change toward any port if the relative internal pressure of the Product Flow Units change and a new steady state is achieved.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of a network plan. This indicates a planned connection. The connected port must be part of the same plan or be an actual. Not specified indicates an actual connection.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time that the connection was activated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time that the connection was terminated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark associated with this connection, possibly including a reason for termination.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ExpectedFlowQualifier">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowChangeLog">
+		<xs:annotation>
+			<xs:documentation>Documents the point in time where changes were made.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A name assigned to the change.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTim" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The timestamp associated with the change. All changes must use this timestamp.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Reason" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A textual reason for the change.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowExpectedUnitProperty">
+		<xs:annotation>
+			<xs:documentation>Defines expected properties of a facility represented by a unit.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Property" type="prodml:FacilityParameter" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The expected kind of facility property. Each property is documented to have values of a particular type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChildFacilityIdentifier" type="prodml:ProdmlRelativeIdentifier" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The PRODML Relative Identifier (or URI) of a child of the parent facility. The identifier path is presumed to begin with the identity of the parent facility. This identifies a sub-facility which is identified within the context of the parent facilityParent2/facilityParent1/name identification hierarchy. The property is only expected to be defined for this child and not for the parent.
+For more information about URIs, see the Energistics Identifier Specification, which is available in the zip file when download PRODML. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TagAlias" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An alternative name for the sensor that  measures the property.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Deadband" type="prodml:GeneralMeasureType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Difference between two consecutive readings, which must exceed deadband value to be accepted. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MaximumFrequency" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The maximum time difference from the last sent event before the next event is sent.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark associated with this property.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpectedFlowQualifier" type="prodml:ExpectedFlowQualifier" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="ExpectedFlowProduct" type="prodml:ProductFlowQualifierExpected" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines the expected flow and product pairs to be 
+					assigned to this port by a Product Volume report.
+					A set of expected qualifiers can be defined for each pair.
+					The aggregate of expectations on all properties should be a subset of 
+					the aggregate of expectations on the port. 
+					If no expectations are defined on the port then the port
+					aggregate will be defined by the properties.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowExternalPort">
+		<xs:annotation>
+			<xs:documentation>Product Flow Network External Port Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the external port within the context of the current product flow network.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Direction" type="prodml:ProductFlowPortType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines whether this port is an inlet or outlet. Note that this is a nominal intended direction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Exposed" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>True ("true" or "1") indicates that the port is an exposed internal port and cannot be used in a connection external to the network. False ("false" or "0") or not given indicates a normal port.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConnectedNode" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the internal node to which this external port is connected. All ports (whether internal or external) that are connected to a node with the same name are connected to each other. Node names are unique to each network. The purpose of the external port is to provide input to or output from the internal network except when the port is an "exposed" port. The purpose of an exposed port is to allow the properties of the port to be seen external to the network. For an exposed port, the connection points to the associated port.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark about the port.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="ProductFlowModel" type="prodml:ProductFlowModel" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="ProductFlowModel">
+		<xs:annotation>
+			<xs:documentation>The non-contextual content of a product flow model data object. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="Installation" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The name of the facility that is represented by this model. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The name and type of a facility whose context is relevant to the represented installation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date and time of the start of validity for this model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date and time of the termination of validity for this model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ExistenceTime" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The time for which "currently existing" data is desired from the network. All connections (and related data) existing at this time (i.e., start and end bracket this value) will  be returned if requested. The existence time is a server query parameter. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimMin" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum time index contained within the report. The minimum and maximum indexes are server query parameters and will be populated with valid values in a "get" result. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimMax" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum time index contained within the report. The minimum and maximum indexes are server query parameters and will be populated with valid values in a "get" result. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A descriptive remark about the model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ExternalConnect" type="prodml:ProductFlowExternalReference" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Defines the external port in another Product Flow Model to which 
+					an external port in this model is connected.
+					An external port should be connected to an external port with the opposite direction.
+					The connected external port must be in another Product Flow Model.
+					These connections should always be defined on a one-to-one basis. For example, if a facility
+					may receive input from multiple other facilities then a separate input port should be defined
+					for each of those facilities. This allows any question about mass balancing to be contained 
+					within each individual model.
+					The external port name must match the name of an external port on the network
+					that represents this model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Network" type="prodml:ProductFlowNetwork" minOccurs="1" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The description of one named network within this model.
+					Each model is self contained but may reference other newtorks for defining
+					internal detail. One of the networks must represent this model.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowNetworkPlan">
+		<xs:annotation>
+			<xs:documentation>A plan to extend an actual network.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name assigned to the plan.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time of the start of the plan. This point coincides with the end of the actual configuration. The configuration of the actual at this point in time represents the configuration of the plan at this starting point. All changes to this plan must be in the future from this point in time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Purpose" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A textual description of the purpose of the plan.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChangeLog" type="prodml:ProductFlowChangeLog" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Documents that a change occurred at a particular time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowPort">
+		<xs:annotation>
+			<xs:documentation>Product Flow Port Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Direction" type="prodml:ProductFlowPortType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines whether this port is an inlet or outlet. This is a nominal intended direction.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the port within the context of the product flow unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of a network plan. This indicates a planned port. All child network components must all be planned and be part of the same plan. The parent unit must be part of the same plan or be an actual. Not specified indicates an actual port.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Facility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the facility represented by this ProductFlowPort The name can be qualified by a naming system. The facility name is assumed to be unique within the context of the facility represented by the unit. This also defines the kind of facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityAlias" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An alternative name of a facility. This is generally unique within a naming system. The above contextually unique name should also be listed as an alias.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Exposed" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>True ("true" or "1") indicates that the port is an exposed internal port and cannot be used in a connection external to the unit. False ("false" or "0") or not given indicates a normal port.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark associated with this port.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpectedFlowProperty" type="prodml:ProductFlowExpectedUnitProperty" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines the properties that are expected to be measured at this port.
+					This can also specify the equipment tag(s) of the sensor that will read the value.
+					Only one of each property kind should be active at any point in time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ConnectedNode" type="prodml:ConnectedNode" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines the node to which this port is connected.
+					A timestamp activates and deactivates the connection. 
+					Only one connectedNode should be active at any one point in time.
+					There are no semantics for the node except common connection.
+					All ports that are connected to a node with the the same name are inherently connected to each other.
+					The name of the node is only required to be unique within the context of the
+					current Product Flow Network (that is, not the overall model).
+					All ports must be connected to a node and whether or not any other port is connected
+					to the same node depends on the requirements of the network. 
+					Any node that is internally connected to only one port is presumably a candidate 
+					to be connected to an external node.
+					The behavior of ports connected at a common node is as follows: 
+					a) There is no pressure drop across the node. All ports connected to the node have  
+					the same pressure. That is, there is an assumption of steady state fluid flow. 
+					b) Conservation of mass exists across the node. The mass into the node via all  
+					connected ports equals the mass out of the node via all connected ports. 
+					c) The flow direction of a port connected to the node may be transient. That is, flow  
+					direction may change toward any port(s) if the relative internal pressure of 
+					the Product Flow Units change and a new steady state is achieved.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpectedFlowProduct" type="prodml:ProductFlowQualifierExpected" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines the expected flow and product pairs to be 
+					assigned to this port by a Product Volume report.
+					A set of expected qualifiers can be defined for each pair.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowQualifierExpected">
+		<xs:annotation>
+			<xs:documentation>Defines an expected combination of kinds.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:ExpectedFlowQualifier">
+				<xs:sequence>
+					<xs:element name="Flow" type="prodml:ReportingFlow" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The expected kind of flow.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Product" type="prodml:ReportingProduct" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The expected kind of product within the flow.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="Qualifier" type="prodml:FlowQualifier" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The expected kind of qualifier of the flow.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="uid" use="required" type="eml:String64">
+					<xs:annotation>
+						<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ProductFlowUnit">
+		<xs:annotation>
+			<xs:documentation>Product Flow Unit Schema.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the ProductFlowUnit within the context of the ProductFlowNetwork.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PlanName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of a network plan. This indicates a planned unit. All child network components must all be planned and be part of the same plan. The parent network must either contain the plan (i.e., be an actual) or be part of the same plan. Not specified indicates an actual unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InternalNetworkReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the network representing the internal behavior of this unit. The names of the external ports on the internal network must match the names of the ports on this unit. That is they are logically the same ports.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Facility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the facility for which this Product Flow Unit describes fluid flow connection behavior. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityParent1" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>For facilities whose name is unique within the context of another facility, the name of the parent facility this named facility. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityParent2" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>For facilities whose name is unique within the context of another facility, the name of the parent facility of facilityParent1. The name can be qualified by a naming system. This also defines the kind of facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ContextFacility" type="prodml:FacilityIdentifierStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The name and type of a facility whose context is relevant to the represented facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Comment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A descriptive remark associated with this unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpectedProperty" type="prodml:ProductFlowExpectedUnitProperty" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Defines an expected property of the facility represented by this unit.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Port" type="prodml:ProductFlowPort" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An inlet or outlet port associated with this unit.
+					If there is an internal network then the name of this port must match the name of 
+					an external port for that network.
+					Any properties (e.g., volume, pressure, temperature) that are assigned to this port 
+					are inherently assigned to the corresponding external port on the internal network. 
+					That is, the ports are logically the same port.
+					Similar to a node, there is no pressure drop across a port.  
+					Also similar to a node, conservation of mass exists across the port and
+					the flow direction across the port can change over time if the relative pressures
+					across connected units change.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RelativeCoordinate" type="prodml:RelativeCoordinate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the relative coordinate of the unit on a display screen.
+					This is not intended for detailed diagrams. Rather it is intended to allow different
+					applications to present a user view which has a consistent layout.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FacilityAlias" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Qualifier">
+		<xs:complexContent>
+			<xs:extension base="prodml:ExpectedFlowQualifier">
+				<xs:sequence>
+					<xs:element name="Qualifier" type="prodml:FlowQualifier" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The expected kind of qualifier of the property. This element should only be specified for properties that do not represent the fluid stream (e.g., a valve status).</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="RelativeCoordinate">
+		<xs:sequence>
+			<xs:element name="X" type="eml:LengthPerLengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the relative from-left-to-right location on a display screen. The display origin (0,0) is the upper left-hand corner of the display as viewed by the user.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Y" type="eml:LengthPerLengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the relative from-top-to-bottom location on a display screen. The display origin (0,0) is the upper left-hand corner of the display as viewed by the user.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Z" type="eml:LengthPerLengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the relative from-front-to-back location in a 3D system. The unrotated display origin (0,0) is the upper left-hand corner of the display as viewed by the user. The "3D picture" may be rotated on the 2D display.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

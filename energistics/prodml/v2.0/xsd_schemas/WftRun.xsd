@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>Wireline formation tester run Schema. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:include schemaLocation="FluidSampleAcquisitionJob.xsd"/>
+	<xs:include schemaLocation="FluidSample.xsd"/>
+	<xs:simpleType name="WftEventKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of events that occur while operating a wireline formation tester (WFT) in a wellbore. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="tool retract">
+				<xs:annotation>
+					<xs:documentation>When the tool is being lowered into or raised out the of the hole the tool is in a retracted position. After a measurement is taken, the tool is retracted. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tool set">
+				<xs:annotation>
+					<xs:documentation>When the tool reaches the location (depth) in the wellbore where a measurement is to be taken, the tool must be hydraulically set to take the measurement. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WftFlowingIntervalKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of connection between the WFT tool and the formation via a section of wellbore. Because WFTs can have probes or pairs of packers, which have different geometries (respectively a point connection or a section of wellbore like a welltest), it is necessary to state which kind if flowing for this station. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="packed interval">
+				<xs:annotation>
+					<xs:documentation>packed interval</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="probe">
+				<xs:annotation>
+					<xs:documentation>probe</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WftStationKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of station. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="conventional">
+				<xs:annotation>
+					<xs:documentation>The flow is occurring and being measured.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="observation">
+				<xs:annotation>
+					<xs:documentation>There is no flow;  you are observing the effect of pressure at this station of flow that is occurring at a different station.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WftTestDataRole">
+		<xs:annotation>
+			<xs:documentation>Specifies the role of test data being described. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="flow history">
+				<xs:annotation>
+					<xs:documentation>flow history</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="pressure stream">
+				<xs:annotation>
+					<xs:documentation>pressure stream</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WftTestKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of WFT tests at a given time, at a given station.  </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="buildup">
+				<xs:annotation>
+					<xs:documentation>buildup</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="drawdown">
+				<xs:annotation>
+					<xs:documentation>drawdown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WftTestResultKind">
+		<xs:annotation>
+			<xs:documentation>Specifies the kinds of test results. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="buildup result">
+				<xs:annotation>
+					<xs:documentation>buildup result</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="drawdown result">
+				<xs:annotation>
+					<xs:documentation>drawdown result</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="WftCurveSection">
+		<xs:annotation>
+			<xs:documentation>Points to an interval on a curve in a log (or wellLog).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ChannelReference" type="eml:DataObjectReference" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to a specific channel that contains the curve.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mnemonic" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The curve mnemonic name.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time of the start of the relevant interval. If not specified then the beginning of the curve is assumed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time of the end of the relevant interval. If not specified then the end of the curve is assumed.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WftEvent">
+		<xs:annotation>
+			<xs:documentation>Captures information about an event that occurred.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:WftEventKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of event. See enum WftEventKind.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTim" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Date and time of the start of the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Duration" type="eml:TimeMeasure" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The time duration of the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A comment about the event.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WftInOutParameter">
+		<xs:annotation>
+			<xs:documentation>Defines a parameter which may have been used for input or output depending on the parent node.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of the parameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Value" type="prodml:MeasureOrQuantity" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The value of the parameter. If the value represents a measure, then the UOM attribute and the corresponding measureClass must be specified.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MeasureClass" type="eml:MeasureClass" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of the measure. For example, "length". If the value requires a unit of measure, this must be specified.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WftResultReference">
+		<xs:annotation>
+			<xs:documentation>Defines a set of pointers which collectively identify a particular outputParameter beginning at a point in the hierarchy. The combination of pointers needed depends on the starting point.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StationReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the station node containing the specified nodes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Test" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the test node containing the specified nodes.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ResultReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the desired result containing the outputParameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OutputParameterReference" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the desired outputParameter.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleAcquisition" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="WftRun" type="prodml:WftRun" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="WftRun">
+		<xs:annotation>
+			<xs:documentation>Information about a WFT run. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="ObjectGrowing" type="xs:boolean" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The growing state of the object. This value is only relevant within the context of a server. This is an API server parameter related to a WITSML "growing" object (e.g., trajectory, logs, mud logs). </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TieInLogReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>References a log containing a WFT tie-in (e.g. gamma ray) log vs. depth data.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ServiceCompany" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Name of contractor who provided the service.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date and time when the data collection started.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date and time when the data collection completed.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MinIndex" type="prodml:MeasuredDepthCoord" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum station depth within this WFT run. This is an API "structural-range" query parameter for growing objects. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MaxIndex" type="prodml:MeasuredDepthCoord" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum station depth within this WFT. This is an API "structural-range" query parameter for growing objects. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellboreReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Result" type="prodml:WftTestResult" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Station" type="prodml:WftStation" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WftSampleAcquisition">
+		<xs:annotation>
+			<xs:documentation>Information about a single formation tester sample acquisition.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SampleContainer" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A reference to a Fluid Sample Container object (optional) which can be used as part of the PVT functionality of PRODML to track this sample and its container through the lab analysis process.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A name assigned to the sample acquired.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of sample acquisition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Sampling start time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Sampling end time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FieldComment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Comments created by the field engineers collecting the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InterpretationComment" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Comments created by the engineers analyzing the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleCarrierSlotName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An name for the slot in the sample carrier where the sample was acquired.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ToolSectionName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An name for the formation tester tool section that acquired the sample.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleContainerName" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>An name for the sample bottle that was used for this acquisition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleContainerConfiguration" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A description of the kind of sample container used, for example, whether the container is pressurized with nitrogen or not.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CushionPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure that was used to charge the sample container.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GrossFluidKind" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The expected kind of the sample, typically oil, water or gas.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Test" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A reference to a test (uid) under the current station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="TestData" type="prodml:WftTestData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A reference to the associated data acquired during this acquisition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Result" type="prodml:WftTestResult" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A result of formation tester analysis that applies to this acquisition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WftStation">
+		<xs:annotation>
+			<xs:documentation>Information about a single station in a wireline formation tester run.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="StationKind" type="prodml:WftStationKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of the station (such as, conventional, observation).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time when the data collection started for this station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time when the data collection completed for this station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlowingIntervalKind" type="prodml:WftFlowingIntervalKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The type of flowing interval. See enum WftFlowingIntervalKind.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MdTop" type="prodml:MeasuredDepthCoord" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>	- If flowingIntervalKind = packed interval, then the top depth of the station. 
+	- If flowingIntervalKind = probe, then the depth of the probe. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MdBottom" type="prodml:MeasuredDepthCoord" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>	- If flowingIntervalKind = packed interval, then the bottom depth of the station.
+	- If flowingIntervalKind = probe, then the depth of the probe.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DiaProbe" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The diameter of the probe used; only valid if flowingIntervalKind is equal to "probe".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A description of the station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="LogReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A reference a log containing WFT time-series data at this station (may be superset of all the test log references at this station).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Station" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>References a station containing the flowing interval in cases where this station is an observation station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Result" type="prodml:WftTestResult" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A result of formation tester analysis that applies to this station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SampleAcquisition" type="prodml:WftSampleAcquisition" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A formation tester sample that is collected as part of this station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Event" type="prodml:WftEvent" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A formation tester event that occurs during this station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Test" type="prodml:WftTest" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A formation tester test period that is recorded as part of this station.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WftTest">
+		<xs:annotation>
+			<xs:documentation>Information about a single formation tester test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="TestKind" type="prodml:WftTestKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Describes whether the test is associated with a pressure buildup or a drawdown. See enum WftTestKind.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimStart" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time when the data collection started for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DTimEnd" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date and time when the data collection ended for this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Result" type="prodml:WftTestResult" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A result of formation tester analysis that applies to this test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WftTestData">
+		<xs:annotation>
+			<xs:documentation>A reference to a set of formation tester data that was recorded.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Role" type="prodml:WftTestDataRole" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The role of the test data. The role applies either to a curve or to a point parameter. See enum WftTestRoleData. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CurveSection" type="prodml:WftCurveSection" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A reference to a specific interval of a specific curve in a specific log.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Parameter" type="prodml:WftInOutParameter" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Test parameters used here are either control parameters used to govern 
+					the test or are single value parameters measured by the test (and not by subsequent analysis).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WftTestResult">
+		<xs:annotation>
+			<xs:documentation>A single result derived from analysis of formation tester data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:WftTestResultKind" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of result represents a combination of test kind and analysis method applied. See enum WftTestKindResult. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Method" type="eml:String64" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The name of a proprietary, method which generally represents a specialization of a result kind.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MdTop" type="prodml:MeasuredDepthCoord" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The top of the interval to which this result applies.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MdBottom" type="prodml:MeasuredDepthCoord" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The bottom of the interval to which this result applies.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestData" type="prodml:WftTestData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A reference to the formation tester data used to derive this result.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InputResultReference" type="prodml:WftResultReference" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A reference to an outputParameter of another result which was used as an input to this result.
+					For a test result, the other result will be in the same test (i.e., ../result).
+					For a station result, the other result will be in the same station (i.e., ../result) or 
+					will be a test result in the same station (../test/result) or 
+					will be an sampleAcquisition in the same station (i.e., ../sampleAcquisition/result).
+					For a wftRun result, the other result will be in the same wftRun (i.e., ../result) or
+					will be a result in a station (i.e., ../station/result) or
+					will be a result in a station's test (i.e., ../station/test/result) or 
+					will be a result in a station's sampleAcquisition (i.e., ../station/sampleAcquisition/result).
+					The "../result" notation means: starting in the parent node, traverse down to the 
+					appropriate child result using the provided pointers.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InputParameter" type="prodml:WftInOutParameter" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An input parameter to the analysis method.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OutputParameter" type="prodml:WftInOutParameter" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An output (result) parameter from the analysis of the test.
+					The aggregate of parameters might represent something like the simulated response 
+					of the test, to compare with actual.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

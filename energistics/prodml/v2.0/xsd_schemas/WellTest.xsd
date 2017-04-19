@@ -1,0 +1,1084 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" elementFormDefault="qualified" version="2.0">
+	<!--														-->
+	<!-- Energistics License Agreement
+			This file is distributed under the Energistics Product License Agreement at
+			http://www.energistics.org/product-license-agreement
+			Use of this file constitutes agreement with the Energistics Product License Agreement.
+			Copyright (c) 2017 Energistics. All rights reserved.
+			Energistics, WITSML, PRODML and RESQML are trademarks or registered trademarks of Energistics.
+			-->
+	<!--														-->
+	<xs:annotation>
+		<xs:documentation>A  standalone object for exchanging well tests of certain types. It is a companion object to the Product Volume object. It has a set of identifying elements and common elements, and then one of three types of well test:
+	- Production test
+	- Injection test
+	- Fluid level test
+The production and injection tests support inclusion of volumes produced, or flow rates during the test. The term well test refers here just to steady state conditions testing.
+This data object does not support  pressure transient well testing., except in the wireline formation testing context in the WftRun data object. </xs:documentation>
+	</xs:annotation>
+	<!--														-->
+	<xs:import namespace="http://www.energistics.org/energyml/data/commonv2" schemaLocation="../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd"/>
+	<!--														-->
+	<xs:include schemaLocation="ProdmlCommon.xsd"/>
+	<xs:simpleType name="InjectionFluid">
+		<xs:annotation>
+			<xs:documentation>Specifies the types of fluids which are injected into a well.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="air">
+				<xs:annotation>
+					<xs:documentation>air</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="brine">
+				<xs:annotation>
+					<xs:documentation>brine</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="co2">
+				<xs:annotation>
+					<xs:documentation>co2</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="condensate">
+				<xs:annotation>
+					<xs:documentation>condensate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="dry">
+				<xs:annotation>
+					<xs:documentation>dry</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="fresh water">
+				<xs:annotation>
+					<xs:documentation>fresh water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas">
+				<xs:annotation>
+					<xs:documentation>gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="gas-water">
+				<xs:annotation>
+					<xs:documentation>gas-water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="non HC gas">
+				<xs:annotation>
+					<xs:documentation>non HC gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil">
+				<xs:annotation>
+					<xs:documentation>oil</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil-gas">
+				<xs:annotation>
+					<xs:documentation>oil-gas</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="oil-water">
+				<xs:annotation>
+					<xs:documentation>oil-water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other">
+				<xs:annotation>
+					<xs:documentation>other</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="steam">
+				<xs:annotation>
+					<xs:documentation>steam</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="water">
+				<xs:annotation>
+					<xs:documentation>water</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TestReason">
+		<xs:annotation>
+			<xs:documentation>Specifies the reasons for running a well test. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="initial">
+				<xs:annotation>
+					<xs:documentation>initial</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="other">
+				<xs:annotation>
+					<xs:documentation>other</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="periodic">
+				<xs:annotation>
+					<xs:documentation>periodic</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="revision">
+				<xs:annotation>
+					<xs:documentation>revision</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ValidationOperation">
+		<xs:annotation>
+			<xs:documentation>Specifies the well test validation operations.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="acquisition validation">
+				<xs:annotation>
+					<xs:documentation>acquisition validation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="allocation validation">
+				<xs:annotation>
+					<xs:documentation>allocation validation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="external quality assurance">
+				<xs:annotation>
+					<xs:documentation>external quality assurance</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="site validation">
+				<xs:annotation>
+					<xs:documentation>site validation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="validation result">
+				<xs:annotation>
+					<xs:documentation>validation result</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="well model validation">
+				<xs:annotation>
+					<xs:documentation>well model validation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ValidationResult">
+		<xs:annotation>
+			<xs:documentation>Specifies well test validation results. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="failed">
+				<xs:annotation>
+					<xs:documentation>failed</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="passed">
+				<xs:annotation>
+					<xs:documentation>passed</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="passed with changes">
+				<xs:annotation>
+					<xs:documentation>passed with changes</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="unknown">
+				<xs:annotation>
+					<xs:documentation>unknown</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ValidationState">
+		<xs:annotation>
+			<xs:documentation>Specifies overall states of  well test validation operations. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="eml:TypeEnum">
+			<xs:enumeration value="unvalidated">
+				<xs:annotation>
+					<xs:documentation>unvalidated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="validated">
+				<xs:annotation>
+					<xs:documentation>validated</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="validating">
+				<xs:annotation>
+					<xs:documentation>validating</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="AbstractDatum" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract base type of datum. </xs:documentation>
+		</xs:annotation>
+		<xs:choice/>
+	</xs:complexType>
+	<xs:complexType name="AbstractLocation" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract base type of location.</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0" maxOccurs="1"/>
+	</xs:complexType>
+	<xs:complexType name="AbstractWellTest" abstract="true">
+		<xs:annotation>
+			<xs:documentation>The abstract base type of well test. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DatumCRS">
+		<xs:annotation>
+			<xs:documentation>DatumCRS. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDatum">
+				<xs:sequence>
+					<xs:element name="DatumCRS" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A reference to the coordinateReferenceSystem object representing the vertical reference datum (i.e., this wellDatum). This should only be specified if the above 'code' represents some variation of sea level.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DatumName">
+		<xs:annotation>
+			<xs:documentation>DatumName.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractDatum">
+				<xs:sequence>
+					<xs:element name="DatumName" type="prodml:WellKnownNameStruct" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Location">
+		<xs:annotation>
+			<xs:documentation>Location Component Schema. This is a location that is expressed in terms of 2D coordinates. In order that the location be understood, the coordinate reference system (CRS) must be known. The survey location is given by a pair of tagged values. The pairs may be: (1) latitude/longitude, (2) easting/northing, (3) westing/southing, (4) projectedX/projectedY, or (5) localX/localY. The appropriate pair must be chosen for the data.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ExtensionNameValue" type="eml:ExtensionNameValue" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Extensions to the schema based on a name-value construct.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellCRS" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A pointer to the wellCRS that defines the CRS for the coordinates. While optional, it is strongly recommended that this be specified.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Original" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Flag indicating (if "true" or "1") that this pair of values was the original data given for the location. If the pair of values was calculated from an original pair of values, this flag should be "false" (or "0"), or not present.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Description" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A comment, generally given to help the reader interpret the coordinates if the CRS and the chosen pair do not make them clear.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AbstractLocation" type="prodml:AbstractLocation" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellContext">
+		<xs:annotation>
+			<xs:documentation>Within the context of a WITSML Server, this data should duplicate the equivalent information in the well object.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Field" type="prodml:NameStruct" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Name of the field in which the well is located.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellAlias" type="prodml:NameStruct" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An alias name associated with the well. If the well name is associated with a naming system then it should be included in this list.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidWell" type="prodml:WellFluid" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>POSC well fluid. The type of fluid being produced from or injected into a well facility.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DirectionWell" type="prodml:WellDirection" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>POSC well direction. The direction of flow of the fluids in a well facility (generally, injected or produced, or some combination).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellDatum" type="prodml:WellDatum" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellDatum">
+		<xs:annotation>
+			<xs:documentation>Defines the vertical datums associated with elevation, vertical depth and measured depth coordinates within the context of a well.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Name" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The human understandable contextual name of the reference datum.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Code" type="eml:WellboreDatumReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The code value that represents the type of reference datum. This may represent a point on a device (e.g., kelly bushing) or it may represent a vertical reference datum (e.g., mean sea level).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Kind" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Since various activities may use different points as measurement datums, it is useful to characterize the point based on its usage. A well reference datum may have more than one such characterization. For example, it may be the datum used by the driller and logger for measuring their depths. Example usage values would be 'permanent','driller', 'logger' 'WRP' (well reference point) and 'SRP' (site reference point).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MeasuredDepth" type="prodml:MeasuredDepthCoord" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The measured depth coordinate of this reference datum as measured from another datum. The measured depth datum should either be the same as the elevation datum or it should be relatable to the elevation datum through other datums. Positive moving toward the bottomhole from the measured depth datum. This should be given when a local reference is "downhole", such as a kickoff point or ocean bottom template, and the borehole may not be vertical. If a Depth is given then an Elevation should also be given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A contextual description of the well reference datum.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Wellbore" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="AbstractDatum" type="prodml:AbstractDatum" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="HorizontalLocation" type="prodml:Location" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Elevation" type="prodml:WellElevationCoord" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="DefaultMeasuredDepth" use="required" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>True indicates that this is the default reference datum for measured depth coordinates. False or not given indicates that this is not the default reference datum. Measured depth coordinates that do not specify a datum reference should be assumed to be measured relative to this default reference datum. Only one reference datum may be designated as the default measured depth datum for each well. Values are "true" (or "1") and "false" ( or "0").</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DefaultVerticalDepth" use="required" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>True indicates that this is the default reference datum for vertical depth coordinates. False or not given indicates that this is not the default reference datum. Vertical depth coordinates that do not specify a datum reference should be assumed to be measured relative to the default reference datum. Only one reference datum may be designated as the default vertical depth datum for each well. Values are "true" (or "1") and "false" ( or "0").</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DefaultElevation" use="required" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>True indicates that this is the default reference datum for elevation coordinates. False or not given indicates that this is not the default reference datum. Elevation coordinates that do not specify a datum reference should be assumed to be measured relative to the default reference datum. Only one reference datum may be designated as the default elevation datum for each well. Values are "true" (or "1") and "false" ( or "0").</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WellKnownNameStruct">
+		<xs:annotation>
+			<xs:documentation>The name of something within a mandatory naming system with an optional code.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence/>
+		<xs:attribute name="authority" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>The naming system within the name is unique.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="code" use="optional" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique (short) code associated with the name.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="WellTest" type="prodml:WellTest" substitutionGroup="eml:AbstractDataObject"/>
+	<xs:complexType name="WellTest">
+		<xs:annotation>
+			<xs:documentation>Data about the well test. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="eml:AbstractObject">
+				<xs:sequence>
+					<xs:element name="DTimMin" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum time index contained within the object. The minimum and maximum indexes are server query parameters and will be populated with valid values in a "get" result. That is, all wellTest for a well in the specified period defined by the min/max. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimMax" type="prodml:EndpointQualifiedDateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum time index contained within the object. The minimum and maximum indexes are server query parameters and will be populated with valid values in a "get" result. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="DTimCurrent" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The definition of the "current time" index for this object. The current time index is a server query parameter which requests the selection of a single node from a recurring set (e.g., the data related to one point in a time series). That is, the "most recent" (at or before the specified time) wellTest for a well. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="StandardTempPres" type="eml:TemperaturePressure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Defines the standard temperature and pressure to which all standard volumes in this report have been corrected. This applies to all elements whose name is suffixed by StdTempPres.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date-time of the well test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PreviousTestDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date-time of the previous well test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="LastValidTest" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The date-time of the last valid well test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestReason" type="prodml:TestReason" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The reason for the well test: initial, periodic, revision. See enum TestReason. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestType" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The type of well production test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductFlowPortReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>A port on a product flow unit that is represented by this test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductFlowUnitReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The product flow unit represented by the port. This is defined in the Product Flow Model. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductFlowModelReference" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The Product Flow Model that represents the above product flow unit.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ValidationState" type="prodml:ValidationState" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The overall state of the test with respect to validation operations.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="WellTestData" type="prodml:AbstractWellTest" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="ValidationOperation" type="prodml:WellTestValidationOperation" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WellTestBottomholeData">
+		<xs:annotation>
+			<xs:documentation>Well test data gathered at the bottomhole.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="BottomholePres" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure at the bottomhole of the well.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomholeTemp" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature at the bottomhole of the well.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomholePOverZ" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The P/Z value at the bottomhole. This is P/Z, pressure over gas compressibility factor (z), at the bottomhole of the well. Note that the UOM is units of pressure,  because Z is dimensionless.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BottomholeMD" type="prodml:MeasuredDepthCoord" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The measured depth of the bottomhole.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellboreReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the wellbore (sidetract) represented by the measured depth. This must be given when the well has multiple wellbores and the measured depth value is deeper than the first kickoff point. It is recommended that it always be given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellTestCumulative">
+		<xs:annotation>
+			<xs:documentation>The cumulative amounts of the fluids at the time of the well test. The fluids are oil, gas, and water.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CumulativeOil" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative amount of oil.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeGas" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative amount of gas.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CumulativeWater" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The cumulative amount of water.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellTestElectricSubmersiblePumpData">
+		<xs:annotation>
+			<xs:documentation>Information about an electric submersible pump (ESP). </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ElectricCurrent" type="eml:ElectricCurrentMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The average electric current of the ESP during the test. The presumption is that only one pump per well is operational during each test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Frequency" type="eml:FrequencyMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The average frequency of the ESP during the test. The presumption is that only one pump per well is operational during each test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellTestFluidLevelTest">
+		<xs:annotation>
+			<xs:documentation>Information about fluid levels achieved/observed during a test. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractWellTest">
+				<xs:sequence>
+					<xs:element name="FluidLevel" type="eml:LengthMeasure" minOccurs="1" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fluid level achieved in the well. The value is given as length units from the top of the well.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BaseUsableWater" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The lowest usable water depth as measured from the surface. See TxRRC H-15.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestedBy" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The business associate that conducted the test. This is generally a person.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WellTestFluidRate">
+		<xs:annotation>
+			<xs:documentation>Information about fluid rate during a well test. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="FluidRate" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid flow rate.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidRateStdTempPres" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The fluid flow rate that has been corrected to standard temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasClass" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Class for natural gas. This is not valid for oil or water.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellTestInjectionTestData">
+		<xs:annotation>
+			<xs:documentation>Information related to fluid injection during a well test. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractWellTest">
+				<xs:sequence>
+					<xs:element name="InjectedFluid" type="prodml:InjectionFluid" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The fluid that is being injected.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestDuration" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The time length (with UOM) of the well test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ChokeOrificeSize" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The size of the opening in the flow choke at the wellhead.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MinimumAnnularPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The minimum pressure measured at the annulus.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="MaximumAnnularPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum pressure measured at the annulus.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellheadFlowingPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The flowing pressure measured at the wellhead during the test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellheadMaximumPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The maximum pressure measured at the wellhead during the well test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestInterval" type="prodml:WellTestInterval" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The interval tested. This element includes a top and base 
+					depth, and the formation tested.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellTestCumulative" type="prodml:WellTestCumulative" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The cumulative volumes of fluids at the time of the 
+					well test. The fluids are oil, gas, and water.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WellTestInterval">
+		<xs:annotation>
+			<xs:documentation>Information about the interval in the wellbore where the well test was conducted. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MdTop" type="prodml:MeasuredDepthCoord" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The measured depth to the top of the interval.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MdBase" type="prodml:MeasuredDepthCoord" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The measured depth to the bottom of the interval.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellboreReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the wellbore (sidetract) represented by the measured depth. This must be given when the well has multiple wellbores and the measured depth value is deeper than the first kickoff point. It is recommended that it always be given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TestedFormation" type="eml:String64" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The formation that was tested.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ValvePosition" type="eml:LengthPerLengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The relative opening of the downhole control valve for the tested zone. This is for surface controllable valves.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WellTestPointData">
+		<xs:annotation>
+			<xs:documentation>Well test data gathered at a point in the wellbore.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Pres" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure at the point.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Temp" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature at the point.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="POverZ" type="eml:PressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The P/Z value at the point. This is P/Z, pressure over gas compressibility factor (z). Note that the UOM is units of pressure., because Z is dimensionless.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Md" type="prodml:MeasuredDepthCoord" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The measured depth of the point being tested. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WellboreReference" type="eml:DataObjectReference" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Defines the wellbore (sidetract) represented by the measured depth. This must be given when the well has multiple wellbores and the measured depth value is deeper than the first kickoff point. It is recommended that it always be given.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Bottomhole" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A value of true (1 or "true") indicates that the point is at the bottomhole. A value of false (0 or "false") or not given indicates otherwise.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Static" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A value of true (1 or "true") indicates a static (non-flowing) pressure. A value of false (0 or "false") or not given indicates otherwise. The pressure may be measured (e.g., shut-in well) or calculated.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WellTestProductionTestData">
+		<xs:annotation>
+			<xs:documentation>Information about a production well test. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="prodml:AbstractWellTest">
+				<xs:sequence>
+					<xs:element name="TestDuration" type="eml:TimeMeasure" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The length of time (with UOM) of the well test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="OperatingMethod" type="eml:String64" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The method being used to operate the well. Examples are 'flowing', 'pumping', 'gas lifted'.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="BottomholeData" type="prodml:WellTestBottomholeData" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>DEPRECATED - Use pointData instead.
+					This element records measurements made at the bottomhole.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="PointData" type="prodml:WellTestPointData" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>This element records temperature and pressure at points in the wellbore.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="EspData" type="prodml:WellTestElectricSubmersiblePumpData" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Frequency and electric current measured during the 
+					well test for electric submersible pump (ESP) wells.
+					The presumption is that only one pump per well is operational during each test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellTestCumulative" type="prodml:WellTestCumulative" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The cumulative volumes of fluids at the time of the well test. The fluids are oil, gas, and water.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="TestInterval" type="prodml:WellTestInterval" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>The interval tested. This element includes a top and base depth, 
+					and the formation(s) tested. It also includes control data for the tested interval.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ProductionTestResults" type="prodml:WellTestProductionTestResults" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>The production results of the test.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="WellheadData" type="prodml:WellTestWellheadData" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>This element records measurements made and settings made at the wellhead.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="SeparatorData" type="prodml:WellTestSeparatorData" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>This element records the measurements (pressure and temperature) at the separator.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WellTestProductionTestResults">
+		<xs:annotation>
+			<xs:documentation>Oil, gas, and water volumes and rates measured during the well test. The volumes allow either actual volumes or standard (corrected) volumes. The densities are also recorded with the volumes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="GasOilRatio" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ratio of the volume of gas and the volume of oil that was produced.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterCut" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The ratio of water produced compared to the volume of total liquids produced.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Density" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the fluid mixture.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FluidVelocity" type="eml:AngularVelocityMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The velocity of the overall fluid mixture.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CondensateYield" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This is the condensate yield, which describes the amount of condensate per unit of natural gas produced</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BasicSedimentAndWater" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This is the measured of impurities present in crude oil as it comes from the well. BSandW content is commonly used as a measure for treating performance of hydrocarbon liquids</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilPotential" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This is the potential of the well to produce crude oil. This represents the flow rate that could be achieved under maximum drawdown.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasPotential" type="eml:VolumePerTimeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>This is the potential of the well to produce natural gas. This represents the flow rate that could be achieved under maximum drawdown.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SandVolume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volume of sand that was produced.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AllocatedSplit" type="xs:boolean" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>True ("true" or "1") indicates that the split factors are allocated as opposed to measured. False ("false" or "0") or not given indicates otherwise.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilSplitFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The split factor for oil relative to the overall volume of the test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasSplitFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The split factor for gas relative to the overall volume of the test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterSplitFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The split factor for water relative to the overall volume of the test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CondensateSplitFactor" type="eml:VolumePerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The split factor for condensate relative to the overall volume of the test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductivityIndex" type="eml:VolumePerTimePerPressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Productivity index (PI) is an expression which defines the pressure drop in the reservoir to produce a unit of oil per day. That is, the energy to produce a unit of oil. The value was defined at ambient temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductivityIndexStdTempPres" type="eml:VolumePerTimePerPressureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Productivity index (PI) is an expression which defines the pressure drop in the reservoir to produce a unit of oil per day. That is, the energy to produce a unit of oil. The value has been converted to the declared conditions of standard temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterVolume" type="prodml:WellTestTestVolume" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Water volumes measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CondensateVolume" type="prodml:WellTestTestVolume" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>condensate volumes measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilVolume" type="prodml:WellTestTestVolume" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Oil volumes measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasVolume" type="prodml:WellTestTestVolume" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Gas volumes measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OilRate" type="prodml:WellTestFluidRate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Oil rates measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WaterRate" type="prodml:WellTestFluidRate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Water rates measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasRate" type="prodml:WellTestFluidRate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Gas rates measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CondensateRate" type="prodml:WellTestFluidRate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Condensate rates measured during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellTestSeparatorData">
+		<xs:annotation>
+			<xs:documentation>Well test data gathered at the separator.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SeparatorPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure measured at the separator during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SeparatorTemperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature measured at the separator during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellTestTestVolume">
+		<xs:annotation>
+			<xs:documentation>The following sequence of four elements can be used for reporting of most production fluids.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="VolumeStdTempPres" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volume is the fluid, corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Volume" type="eml:VolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The volume, uncorrected. This volume is generally reported at reservoir conditions.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DensityStdTempPres" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the fluid, corrected to standard conditions of temperature and pressure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Density" type="eml:MassPerVolumeMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The density of the fluid, uncorrected.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasClass" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Class for natural gas. This is not valid for oil or water.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WellTestValidationOperation">
+		<xs:annotation>
+			<xs:documentation>The validation operation of a well test. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Kind" type="prodml:ValidationOperation" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The kind of validation operation. See enum ValidationOperation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Result" type="prodml:ValidationResult" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The result of the validation operation. See enum ValidationResult. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Date" type="xs:date" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The date of the validation operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Tool" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The tool used for the validation operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Method" type="eml:String64" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The method used for the validation operation..</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Remark" type="eml:String2000" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>A comment about the operation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="uid" use="required" type="eml:String64">
+			<xs:annotation>
+				<xs:documentation>A unique identifier for this data element. It is not globally unique (not a uuid) and only need be unique within the context of the parent top-level object.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="WellTestWellheadData">
+		<xs:annotation>
+			<xs:documentation>Basic measurements at the wellhead, during the well test.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Temperature" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature measured at the wellhead during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlowingPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The flowing pressure measured at the wellhead during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ShutInPressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The shut-in pressure measured at the wellhead during the well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FlowLinePressure" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure measured at the flow line connected to the wellhead during this well test.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ChokeOrificeSize" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The size of the choke opening at the wellhead.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasLiftPres" type="eml:AbstractPressureValue" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The pressure of the lift gas at the wellhead.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasLiftTemp" type="eml:ThermodynamicTemperatureMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The temperature of the lift gas at the wellhead.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasLiftchokeOrificeSize" type="eml:LengthMeasure" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The size of the gas lift choke opening.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasLiftVolume" type="prodml:WellTestTestVolume" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Lift gas volumes injected during the well test at the wellhead.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="GasLiftRate" type="prodml:WellTestFluidRate" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Lift gas rates injected during the well test at the wellhead.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
