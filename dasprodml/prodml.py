@@ -24,6 +24,24 @@ class PMLproxy(object):
         self.das_instrument_box = None
         self.fiber_optical_path = None
         self.raw_chunk_width = 1024
+        # Read metadata if exists.
+        if os.path.exists(self.epc_path):
+            self.read_metadata(self.epc_path)
+
+    def read_metadata(self):
+        """Read metadata.
+        """
+        with zipfile.ZipFile(self.epc_path) as z:
+            for filename in z.namelist():
+                if not os.path.isdir(filename):
+                    extracted_filename = z.extract(filename)
+                    if 'Acquisition' in filename:
+                        self.acquisition = da.parse(extracted_filename, silence=True)
+                    elif 'DasInstrumentBox' in filename:
+                        self.das_instrument_box = da.parse(extracted_filename, silence=True)
+                    elif 'FiberOpticalPath' in filename:
+                        self.fiber_optical_path = fp.parse(extracted_filename, silence=True)
+                    os.remove(extracted_filename)
 
     def write_metadata(self):
         """Flush metadata into the .epc file.
@@ -242,3 +260,28 @@ class PMLproxy(object):
         hdf_file[dataset_path][0] = timestamp
         hdf_file.flush()
         hdf_file.close()
+
+    def read_raw_traces(self, start_index, block_size):
+        """Read block of traces of raw data and the corresponding timestamps.
+        Return value is (dasdata, timestamps).
+        """
+        hdf_file = h5py.File(self.hdf_filepath, 'a')
+        # Write data.
+        dataset_path = self.acquisition.get_Raw()[0].get_RawData().get_RawDataArray().get_Values().get_ExternalFileProxy()[0].get_PathInExternalFile()
+        dasdata = hdf_file[dataset_path][start_index:start_index+block_size, :]
+        dataset_path = self.acquisition.get_Raw()[0].get_RawDataTime().get_TimeArray().get_Values().get_ExternalFileProxy()[0].get_PathInExternalFile()
+        timestamps = hdf_file[dataset_path][start_index:start_index+block_size]
+        hdf_file.flush()
+        hdf_file.close()
+        return (dasdata, timestamps)
+
+    def read_raw_trigger_time(self):
+        """Read trigger time.
+        """
+        hdf_file = h5py.File(self.hdf_filepath, 'a')
+        # Write data.
+        dataset_path = self.acquisition.get_Raw()[0].get_RawDataTriggerTime().get_TimeArray().get_Values().get_ExternalFileProxy()[0].get_PathInExternalFile()
+        timestamp = hdf_file[dataset_path][0]
+        hdf_file.flush()
+        hdf_file.close()
+        return timestamp
