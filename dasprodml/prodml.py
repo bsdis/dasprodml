@@ -2,6 +2,7 @@ import datetime
 import io
 import logging
 import os
+import tempfile
 import uuid
 
 import h5py
@@ -59,6 +60,10 @@ class PMLproxy(object):
         self.epc_folder = os.path.dirname(path)
         self.package = None
         self.raw_chunk_width = 1024
+        self.external_hdf_files = {}
+        self.das_acquisition = None
+        self.das_instrument_box = None
+        self.fiber_optical_path = None
         # Open file if exists, otherwise create a new one.
         if os.path.exists(self.epc_path):
             self.open()
@@ -69,6 +74,27 @@ class PMLproxy(object):
         """Open existing file.
         """
         self.package = opc.OpcPackage.open(self.epc_path)
+        for part in self.package.parts:
+            if part._content_type == EPC_CT.DAS_ACQUISITION:
+                tfile = tempfile.NamedTemporaryFile('wb')
+                tfile.write(part._blob)
+                self.das_acquisition = da.parse(tfile.name, silence=True)
+                tfile.close()
+                for rel in part.rels:
+                    if rel._reltype == EPC_RT.ML_TO_EXTERNAL_PART_PROXY:
+                        for eepr_rel in rel.target_part.rels:
+                            if eepr_rel._reltype == EPC_RT.EXTERNAL_RESOURCE:
+                                self.external_hdf_files['test'] = eepr_rel.target_ref # TODO use real uuid when xsd is fixed
+            elif part._content_type == EPC_CT.DAS_INSTRUMENT_BOX:
+                tfile = tempfile.NamedTemporaryFile('wb')
+                tfile.write(part._blob)
+                #self.das_instrument_box = da.parse(tfile.name, silence=True) # TODO lxml.etree_.parse() fails on that file, but there is no BOM, need to debug
+                tfile.close()
+            elif part._content_type == EPC_CT.FIBER_OPTICAL_PATH:
+                tfile = tempfile.NamedTemporaryFile('wb')
+                tfile.write(part._blob)
+                self.fiber_optical_path = fp.parse(tfile.name, silence=True)
+                tfile.close()
 
     def create(self, creator='Test', version='1.0'):
         """Create a new file.
@@ -326,27 +352,23 @@ class PMLproxy(object):
         hdf_file.flush()
         hdf_file.close()
 
-    def read_raw_traces(self, start_index, block_size):
+    def read_raw_traces(self, dasdata_external_file_proxy, timestamps_external_file_proxy, start_index, block_size):
         """Read block of traces of raw data and the corresponding timestamps.
         Return value is (dasdata, timestamps).
         """
-        hdf_file = h5py.File(self.hdf_filepath, 'a')
-        # Write data.
-        dataset_path = self.acquisition.get_Raw()[0].get_RawData().get_RawDataArray().get_Values().get_ExternalFileProxy()[0].get_PathInExternalFile()
+        hdf_file = h5py.File(os.path.join(self.epc_folder, self.external_hdf_files['test']), 'a') #TODO get uuid from file proxy when xsd schema is updated
+        dataset_path = dasdata_external_file_proxy.get_PathInExternalFile()
         dasdata = hdf_file[dataset_path][start_index:start_index+block_size, :]
-        dataset_path = self.acquisition.get_Raw()[0].get_RawDataTime().get_TimeArray().get_Values().get_ExternalFileProxy()[0].get_PathInExternalFile()
+        dataset_path = timestamps_external_file_proxy.get_PathInExternalFile()
         timestamps = hdf_file[dataset_path][start_index:start_index+block_size]
-        hdf_file.flush()
         hdf_file.close()
         return (dasdata, timestamps)
 
-    def read_raw_trigger_time(self):
+    def read_raw_trigger_time(self, external_file_proxy):
         """Read trigger time.
         """
-        hdf_file = h5py.File(self.hdf_filepath, 'a')
-        # Write data.
-        dataset_path = self.acquisition.get_Raw()[0].get_RawDataTriggerTime().get_TimeArray().get_Values().get_ExternalFileProxy()[0].get_PathInExternalFile()
+        hdf_file = h5py.File(os.path.join(self.epc_folder, self.external_hdf_files['test']), 'a') #TODO get uuid from file proxy when xsd schema is updated
+        dataset_path = external_file_proxy.get_PathInExternalFile()
         timestamp = hdf_file[dataset_path][0]
-        hdf_file.flush()
         hdf_file.close()
         return timestamp

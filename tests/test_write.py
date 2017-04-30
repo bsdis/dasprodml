@@ -357,21 +357,21 @@ def create_das_acquisition():
     return das
 
 def create_das_instrument_box():
-    dib = da.DasInstrumentBox(
+    dib = da.DasInstrumentBox.factory(
         SerialNumber='12645A',
         Parameter=[
-            da.IndexedObject(
+            da.IndexedObject.factory(
                 index=1,
                 name='parameter1',
                 uom='s',
                 description='time'
             )
         ],
-        Instrument=da.Instrument(Name='Instrument Box'),
+        Instrument=da.Instrument.factory(Name='Instrument Box'),
         FirmwareVersion='Firmware version 1'
     )
     dib.set_Citation(
-        da.Citation(
+        da.Citation.factory(
             Title='Instrument Box',
             Originator='Fred Mertz, Field Tech',
             Creation=datetime.datetime.strptime('2015-07-20T01:00:00.000000', '%Y-%m-%dT%H:%M:%S.%f'),
@@ -380,10 +380,10 @@ def create_das_instrument_box():
     return dib
 
 def create_fiber_optical_path():
-    fop = fp.FiberOpticalPath(
-        Inventory=fp.FiberOpticalPathInventory(
+    fop = fp.FiberOpticalPath.factory(
+        Inventory=fp.FiberOpticalPathInventory.factory(
             Connection=[
-                fp.FiberConnection(
+                fp.FiberConnection.factory(
                     uid='20',
                     Name='Surface Connector',
                     Type='connector',
@@ -391,83 +391,83 @@ def create_fiber_optical_path():
                 )
             ],
             Segment=[
-                fp.FiberOpticalPathSegment(
+                fp.FiberOpticalPathSegment.factory(
                     uid='10',
                     Name='Surface Fiber',
                     Type='fiber',
-                    FiberLength=fp.LengthMeasure(
+                    FiberLength=fp.LengthMeasure.factory(
                         uom='m',
                         valueOf_=25
                     ),
-                    OverStuffing=fp.LengthMeasure(
+                    OverStuffing=fp.LengthMeasure.factory(
                         uom='m',
                         valueOf_=0
                     ),
                     CableType='single-fiber-cable'
                 ),
-                fp.FiberOpticalPathSegment(
+                fp.FiberOpticalPathSegment.factory(
                     uid='10',
                     Name='Downhole Fiber',
                     Type='fiber',
-                    FiberLength=fp.LengthMeasure(
+                    FiberLength=fp.LengthMeasure.factory(
                         uom='m',
                         valueOf_=492.430
                     ),
-                    OverStuffing=fp.LengthMeasure(
+                    OverStuffing=fp.LengthMeasure.factory(
                         uom='m',
                         valueOf_=9.182
                     ),
-                    FiberConveyance=fp.FiberConveyance(
-                        Cable=fp.PermanentCable(
+                    FiberConveyance=fp.FiberConveyance.factory(
+                        Cable=fp.PermanentCable.factory(
                             PermanentCableInstallationType='clamped to tubular',
                             Comment='Over stuffing is equally distributed along the installed downhole cable'
                         )
                     )
                 )
             ],
-            Terminator=fp.FiberTerminator(
+            Terminator=fp.FiberTerminator.factory(
                 uid='40',
                 Name='Main Terminator',
                 TerminationType='termination at cable'
             )
         ),
         OpticalPathNetwork=[
-            fp.FiberOpticalPathNetwork(
+            fp.FiberOpticalPathNetwork.factory(
                 uid='OPN1',
                 ContextFacility=[
-                    fp.FacilityIdentifierStruct(
+                    fp.FacilityIdentifierStruct.factory(
                         valueOf_='text'
                     )
                 ], #TODO problem with between-tag content
                 Network=[
-                    fp.ProductFlowNetwork(
+                    fp.ProductFlowNetwork.factory(
                         uid='N1',
                         Name='Current Setup Well-01',
                         Unit=[
-                            fp.ProductFlowUnit(
+                            fp.ProductFlowUnit.factory(
                                 uid='OPNU10',
-                                Facility=fp.FacilityIdentifierStruct(
+                                Facility=fp.FacilityIdentifierStruct.factory(
                                     uidRef=10,
                                     valueOf_='Surface Fiber Segment'
                                 ), #TODO problem
                                 Port=[
-                                    fp.ProductFlowPort(
+                                    fp.ProductFlowPort.factory(
                                         uid='1',
                                         Direction='inlet',
                                         Name='Connection to LightBox',
                                         ConnectedNode=[
-                                            fp.ConnectedNode(
+                                            fp.ConnectedNode.factory(
                                                 uid='CN',
                                                 Node='Instrument Box'
                                             )
                                         ]
                                     ),
-                                    fp.ProductFlowPort(
+                                    fp.ProductFlowPort.factory(
                                         uid='2',
                                         Direction='outlet',
                                         Name='Connection to Surface Connector',
                                         ConnectedNode=[
-                                            fp.ConnectedNode(
+                                            fp.ConnectedNode.factory(
                                                 uid='CSC1',
                                                 Node='Surface Connector 1'
                                             )
@@ -475,30 +475,30 @@ def create_fiber_optical_path():
                                     )
                                 ]
                             ),
-                            fp.ProductFlowUnit(
+                            fp.ProductFlowUnit.factory(
                                 uid='OPNU20',
-                                Facility=fp.FacilityIdentifierStruct(
+                                Facility=fp.FacilityIdentifierStruct.factory(
                                     uidRef=20,
                                     valueOf_='Surface Connector'
                                 ), #TODO problem
                                 Port=[
-                                    fp.ProductFlowPort(
+                                    fp.ProductFlowPort.factory(
                                         uid='3',
                                         Direction='inlet',
                                         Name='Connection from Surface Connector to Surface Fiber',
                                         ConnectedNode=[
-                                            fp.ConnectedNode(
+                                            fp.ConnectedNode.factory(
                                                 uid='CSC1',
                                                 Node='Surface Connector 1'
                                             )
                                         ]
                                     ),
-                                    fp.ProductFlowPort(
+                                    fp.ProductFlowPort.factory(
                                         uid='4',
                                         Direction='outlet',
                                         Name='Connection from Surface Connector to Downhole Fiber',
                                         ConnectedNode=[
-                                            fp.ConnectedNode(
+                                            fp.ConnectedNode.factory(
                                                 uid='CDF1',
                                                 Node='Surface Connector 2'
                                             )
@@ -506,30 +506,30 @@ def create_fiber_optical_path():
                                     )
                                 ]
                             ),
-                            fp.ProductFlowUnit(
+                            fp.ProductFlowUnit.factory(
                                 uid='OPNU30',
-                                Facility=fp.FacilityIdentifierStruct(
+                                Facility=fp.FacilityIdentifierStruct.factory(
                                     uidRef=30,
                                     valueOf_='Downhole Fiber'
                                 ), #TODO problem
                                 Port=[
-                                    fp.ProductFlowPort(
+                                    fp.ProductFlowPort.factory(
                                         uid='5',
                                         Direction='inlet',
                                         Name='Connection from Surface Connector to Downhole Fiber',
                                         ConnectedNode=[
-                                            fp.ConnectedNode(
+                                            fp.ConnectedNode.factory(
                                                 uid='CDF1',
                                                 Node='Surface Connector 2'
                                             )
                                         ]
                                     ),
-                                    fp.ProductFlowPort(
+                                    fp.ProductFlowPort.factory(
                                         uid='6',
                                         Direction='outlet',
                                         Name='Connection from Downhole Fiber to Terminator',
                                         ConnectedNode=[
-                                            fp.ConnectedNode(
+                                            fp.ConnectedNode.factory(
                                                 uid='CT1',
                                                 Node='Downhole Connection 1'
                                             )
@@ -537,17 +537,17 @@ def create_fiber_optical_path():
                                     )
                                 ]
                             ),
-                            fp.ProductFlowUnit(
+                            fp.ProductFlowUnit.factory(
                                 uid='OPNU40',
-                                Facility=fp.FacilityIdentifierStruct(
+                                Facility=fp.FacilityIdentifierStruct.factory(
                                     valueOf_='Terminator'
                                 ), #TODO problem
                                 Port=[
-                                    fp.ProductFlowPort(
+                                    fp.ProductFlowPort.factory(
                                         uid='7',
                                         Direction='inlet',
                                         Name='Connection from Downhole Fiber to Terminator',
-                                        ConnectedNode=[fp.ConnectedNode(
+                                        ConnectedNode=[fp.ConnectedNode.factory(
                                             uid='CT1',
                                             Node='Downhole Connection 1'
                                         )
@@ -561,58 +561,58 @@ def create_fiber_optical_path():
             )
         ],
         FacilityMapping=[
-            fp.FiberFacilityMapping(
+            fp.FiberFacilityMapping.factory(
                 uid='FM1',
                 TimeStart=datetime.datetime.strptime(
                     '2005-07-20T01:00:00', '%Y-%m-%dT%H:%M:%S'),
                 FiberFacilityMappingPart=[
-                    fp.FiberFacilityMappingPart(
+                    fp.FiberFacilityMappingPart.factory(
                         uid='FMP1',
-                        OpticalPathDistanceStart=fp.LengthMeasure(
+                        OpticalPathDistanceStart=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=0.0
                         ),
-                        OpticalPathDistanceEnd=fp.LengthMeasure(
+                        OpticalPathDistanceEnd=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=25.0
                         ),
-                        FacilityLengthStart=fp.LengthMeasure(
+                        FacilityLengthStart=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=0.0
                         ),
-                        FacilityLengthEnd=fp.LengthMeasure(
+                        FacilityLengthEnd=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=25.0
                         ),
                         Comment="No 'timeEnd' specified since this mapping is still valid. No overstuffing in surface cable",
-                        FiberFacility=fp.FiberFacilityGeneric(
+                        FiberFacility=fp.FiberFacilityGeneric.factory(
                             FacilityName='Surface Cable 1',
                             FacilityKind='Surface Cable'
                         )
                     ),
-                    fp.FiberFacilityMappingPart(
+                    fp.FiberFacilityMappingPart.factory(
                         uid='FMP2',
-                        OpticalPathDistanceStart=fp.LengthMeasure(
+                        OpticalPathDistanceStart=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=25.0
                         ),
-                        OpticalPathDistanceEnd=fp.LengthMeasure(
+                        OpticalPathDistanceEnd=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=517.43
                         ),
-                        FacilityLengthStart=fp.LengthMeasure(
+                        FacilityLengthStart=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=0.0
                         ),
-                        FacilityLengthEnd=fp.LengthMeasure(
+                        FacilityLengthEnd=fp.LengthMeasure.factory(
                             uom='m',
                             valueOf_=483.25
                         ),
                         Comment="No 'timeEnd' specified since this mapping is still valid. The over stuffing of 9.182 m equally distributed along the installed downhole cable",
-                        FiberFacility=fp.FiberFacilityWell(
+                        FiberFacility=fp.FiberFacilityWell.factory(
                             Name='Well-01 Fiber',
                             WellDatum='kelly bushing',
-                            WellboreReference=fp.DataObjectReference(
+                            WellboreReference=fp.DataObjectReference.factory(
                                 ContentType='wellbore',
                                 Title='Main wellbore of well Well-01',
                                 Uuid='4ab0fae6-dc0e-405a-b812-203a154c1243'
@@ -623,9 +623,9 @@ def create_fiber_optical_path():
             )
         ],
         Defect=[
-            fp.FiberPathDefect(
+            fp.FiberPathDefect.factory(
                 defectID='OPTDEFECT1',
-                OpticalPathDistanceStart=fp.LengthMeasure(
+                OpticalPathDistanceStart=fp.LengthMeasure.factory(
                     uom='ft',
                     valueOf_=352.00
                 ),
@@ -638,31 +638,31 @@ def create_fiber_optical_path():
             )
         ],
         Otdr=[
-            fp.FiberOTDR(
+            fp.FiberOTDR.factory(
                 uid='OTDR1',
                 Name='Initial OTDR',
                 DTimRun=datetime.datetime.strptime('2005-02-14T09:00:00', '%Y-%m-%dT%H:%M:%S'),
                 DataInOTDRFile='myOTDR.dat',
-                OpticalPathDistanceStart=fp.LengthMeasure(
+                OpticalPathDistanceStart=fp.LengthMeasure.factory(
                     uom='m',
                     valueOf_=0.0
                 ),
-                OpticalPathDistanceEnd=fp.LengthMeasure(
+                OpticalPathDistanceEnd=fp.LengthMeasure.factory(
                     uom='m',
                     valueOf_=517.43
                 ),
                 Direction='forward',
-                Wavelength=fp.LengthMeasure(
+                Wavelength=fp.LengthMeasure.factory(
                     uom='nm',
                     valueOf_=1550
                 )
             )
         ],
-        InstallingVendor=fp.BusinessAssociate(
+        InstallingVendor=fp.BusinessAssociate.factory(
             Name='Vendor Name',
             Contact=['Mr A Vendor']
         ),
-        FacilityIdentifier=fp.FacilityIdentifier(
+        FacilityIdentifier=fp.FacilityIdentifier.factory(
             uid='',
             Name=fp.NameStruct(
                 valueOf_='Well-01'
@@ -671,7 +671,7 @@ def create_fiber_optical_path():
     ) # TODO nothing is shown inside FacilityIdentifier (generateDS? xsd seems fine)
 
     fop.set_Citation(
-        fp.Citation(
+        fp.Citation.factory(
             Title='OptPath1',
             Originator='Source',
             Creation=datetime.datetime.strptime('2005-07-20T01:00:00', '%Y-%m-%dT%H:%M:%S'),

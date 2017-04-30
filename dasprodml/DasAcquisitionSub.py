@@ -4661,9 +4661,10 @@ supermod.DasInstrumentBox.subclass = DasInstrumentBoxSub
 # end class DasInstrumentBoxSub
 
 
-class DasExternalDatasetPartSub(supermod.DasExternalDatasetPart):
+class DasExternalDatasetPartSub(EmlMixin, supermod.DasExternalDatasetPart):
     def __init__(self, Count=None, PathInExternalFile=None, StartIndex=None, EpcExternalPartReference=None, PartStartTime=None, PartEndTime=None):
         super(DasExternalDatasetPartSub, self).__init__(Count, PathInExternalFile, StartIndex, EpcExternalPartReference, PartStartTime, PartEndTime, )
+        self.extensiontype_='prodml:DasExternalDatasetPart'
 supermod.DasExternalDatasetPart.subclass = DasExternalDatasetPartSub
 # end class DasExternalDatasetPartSub
 
@@ -4780,7 +4781,7 @@ supermod.IntegerLatticeArray.subclass = IntegerLatticeArraySub
 # end class IntegerLatticeArraySub
 
 
-class IntegerExternalArraySub(supermod.IntegerExternalArray):
+class IntegerExternalArraySub(EmlMixin, supermod.IntegerExternalArray):
     def __init__(self, NullValue=None, Values=None):
         super(IntegerExternalArraySub, self).__init__(NullValue, Values, )
 supermod.IntegerExternalArray.subclass = IntegerExternalArraySub
@@ -4832,6 +4833,7 @@ supermod.FloatExternalArray.subclass = FloatExternalArraySub
 class DoubleExternalArraySub(supermod.DoubleExternalArray):
     def __init__(self, Values=None):
         super(DoubleExternalArraySub, self).__init__(Values, )
+        self.extensiontype_='eml:DoubleExternalArray'
 supermod.DoubleExternalArray.subclass = DoubleExternalArraySub
 # end class DoubleExternalArraySub
 

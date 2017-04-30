@@ -18,6 +18,19 @@
 # Current working directory (os.getcwd()):
 #   dasprodml
 #
+### The XsiType class
+
+class XsiType(object):
+    """Outputs type attribute.
+    """
+    def exportAttributes(self, outfile, level, already_processed, namespace_, name_):
+        if self.extensiontype_ is not None and 'xsi:type' not in already_processed:
+            already_processed.add('xsi:type')
+            outfile.write(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
+            outfile.write(' xsi:type="%s"' % self.extensiontype_)
+        super().exportAttributes(outfile, level, already_processed, namespace_, name_)
+###
+
 
 import sys
 from lxml import etree as etree_
@@ -78,9 +91,10 @@ supermod.FiberConveyance.subclass = FiberConveyanceSub
 # end class FiberConveyanceSub
 
 
-class FiberFacilityGenericSub(supermod.FiberFacilityGeneric):
+class FiberFacilityGenericSub(XsiType, supermod.FiberFacilityGeneric):
     def __init__(self, FacilityName=None, FacilityKind=None):
         super(FiberFacilityGenericSub, self).__init__(FacilityName, FacilityKind, )
+        self.extensiontype_='prodml:FiberFacilityGeneric'
 supermod.FiberFacilityGeneric.subclass = FiberFacilityGenericSub
 # end class FiberFacilityGenericSub
 
@@ -106,9 +120,10 @@ supermod.FiberFacilityPipeline.subclass = FiberFacilityPipelineSub
 # end class FiberFacilityPipelineSub
 
 
-class FiberFacilityWellSub(supermod.FiberFacilityWell):
+class FiberFacilityWellSub(XsiType, supermod.FiberFacilityWell):
     def __init__(self, Name=None, WellDatum=None, WellboreReference=None):
         super(FiberFacilityWellSub, self).__init__(Name, WellDatum, WellboreReference, )
+        self.extensiontype_='prodml:FiberFacilityWell'
 supermod.FiberFacilityWell.subclass = FiberFacilityWellSub
 # end class FiberFacilityWellSub
 
@@ -176,9 +191,10 @@ supermod.InterventionConveyance.subclass = InterventionConveyanceSub
 # end class InterventionConveyanceSub
 
 
-class PermanentCableSub(supermod.PermanentCable):
+class PermanentCableSub(XsiType, supermod.PermanentCable):
     def __init__(self, PermanentCableInstallationType=None, Comment=None):
         super(PermanentCableSub, self).__init__(PermanentCableInstallationType, Comment, )
+        self.extensiontype_='prodml:PermanentCable'
 supermod.PermanentCable.subclass = PermanentCableSub
 # end class PermanentCableSub
 
@@ -323,9 +339,10 @@ supermod.EndpointQualifiedDateTime.subclass = EndpointQualifiedDateTimeSub
 # end class EndpointQualifiedDateTimeSub
 
 
-class FacilityIdentifierSub(supermod.FacilityIdentifier):
+class FacilityIdentifierSub(XsiType, supermod.FacilityIdentifier):
     def __init__(self, uid=None, Name=None, Installation=None, Kind=None, ContextFacility=None, BusinessUnit=None, Operator=None, GeographicContext=None, valueOf_=None, mixedclass_=None, content_=None):
         super(FacilityIdentifierSub, self).__init__(uid, Name, Installation, Kind, ContextFacility, BusinessUnit, Operator, GeographicContext, valueOf_, mixedclass_, content_, )
+        self.extensiontype_='prodml:FacilityIdentifier'
 supermod.FacilityIdentifier.subclass = FacilityIdentifierSub
 # end class FacilityIdentifierSub
 
@@ -3974,7 +3991,7 @@ class TimeIndexParameterKeySub(supermod.TimeIndexParameterKey):
     def __init__(self, TimeIndex=None):
         super(TimeIndexParameterKeySub, self).__init__(TimeIndex, )
 supermod.TimeIndexParameterKey.subclass = TimeIndexParameterKeySub
-# end class TimeIndexParameterKeySub
+# nd class TimeIndexParameterKeySub
 
 
 class GeologicTimeSub(supermod.GeologicTime):
