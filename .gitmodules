@@ -1,0 +1,3 @@
+[submodule "python-opc"]
+	path = python-opc
+	url = git@github.com:nasedil/python-opc.git
