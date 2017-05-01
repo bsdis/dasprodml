@@ -5,6 +5,4 @@
 
 A reader and a writer for the prodml standard.
 
-## Setting up for development
-
-After cloning the repository, run the `build-xsd-classes.sh` script to create python modules that read/write prodml xml files.
+Currently in alpha stage of development.
