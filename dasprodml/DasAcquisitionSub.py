@@ -3973,10 +3973,8 @@ supermod.DataObjectReference.subclass = DataObjectReferenceSub
 
 
 class EpcExternalPartReferenceSub(EmlMixin, supermod.EpcExternalPartReference):
-    def __init__(self, _uuid, _filename='data.h5', Filename=None, MimeType=None):
-        super(EpcExternalPartReferenceSub, self).__init__(Filename, MimeType, )
-        self._uuid = _uuid
-        self._filename = _filename
+    def __init__(self, Filename=None, Uuid=None, MimeType=None):
+        super(EpcExternalPartReferenceSub, self).__init__(Filename, Uuid, MimeType, )
 
 supermod.EpcExternalPartReference.subclass = EpcExternalPartReferenceSub
 # end class EpcExternalPartReferenceSub

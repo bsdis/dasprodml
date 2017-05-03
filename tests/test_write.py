@@ -19,13 +19,19 @@ def test_write_initial():
     prodml_object.add_das_acquisition(create_das_acquisition())
     prodml_object.add_das_instrument_box(create_das_instrument_box())
     prodml_object.add_fiber_optical_path(create_fiber_optical_path())
-    width = 50
+    width = 50 # output blocksize
     prodml_object.save()
     for i in range(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[0].Count//width):
         dasdata = np.ones((width, prodml_object.das_acquisition.Raw[0].NumberOfLoci), dtype=np.float32)
         timestamps = np.ones((width, ), dtype=np.int64)
         prodml_object.write_raw_traces(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[0],
                                        prodml_object.das_acquisition.Raw[0].RawDataTime.TimeArray.Values.ExternalFileProxy[0],
+                                       i*width, dasdata, timestamps)
+    for i in range(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[1].Count//width):
+        dasdata = np.zeros((width, prodml_object.das_acquisition.Raw[0].NumberOfLoci), dtype=np.float32)
+        timestamps = np.zeros((width, ), dtype=np.int64)
+        prodml_object.write_raw_traces(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[1],
+                                       prodml_object.das_acquisition.Raw[0].RawDataTime.TimeArray.Values.ExternalFileProxy[1],
                                        i*width, dasdata, timestamps)
     prodml_object.write_raw_trigger_time(prodml_object.das_acquisition.Raw[0].RawDataTriggerTime.TimeArray.Values.ExternalFileProxy[0], 2)
 
@@ -99,11 +105,8 @@ def create_das_acquisition():
     das.set_TriggeredMeasurement(True)
     rawCustom = da.DasCustom.factory()
     rawCustom.original_tagname_ = 'Custom'
-    raw_hdf_uuid = str(uuid.uuid4())
-    epcPartReferenceRaw = da.EpcExternalPartReference.factory(_uuid=raw_hdf_uuid, _filename='raw.h5')
-    #epcPartReferenceRaw.set_ContentType('InstrumentBox') # TODO nowhere info about this
-    #epcPartReferenceRaw.set_Title('Instrument Box') # TODO nowhere info about this
-    #epcPartReferenceRaw.set_Uuid(str(uuid.uuid4())) # TODO nowhere info about this
+    epcPartReferenceRaw1 = da.EpcExternalPartReference.factory(Uuid=str(uuid.uuid4()))
+    epcPartReferenceRaw2 = da.EpcExternalPartReference.factory(Uuid=str(uuid.uuid4()))
     raw = da.DasRaw.factory(uuid=str(uuid.uuid4()),
                     RawDataUnit='V',
                     OutputDataRate=da.FrequencyMeasure.factory(uom='Hz',
@@ -118,7 +121,13 @@ def create_das_acquisition():
                                     da.DasExternalDatasetPart.factory(Count=5000,
                                                               PathInExternalFile='/Acquisition/Raw/RawData',
                                                               StartIndex=0,
-                                                              EpcExternalPartReference=epcPartReferenceRaw,
+                                                              EpcExternalPartReference=epcPartReferenceRaw1,
+                                                              PartStartTime='2015-07-20T01:23:45.678000+01:00',
+                                                              PartEndTime='2015-07-20T01:24:05.658000+01:00'),
+                                    da.DasExternalDatasetPart.factory(Count=4000,
+                                                              PathInExternalFile='/Acquisition/Raw/RawData',
+                                                              StartIndex=5000,
+                                                              EpcExternalPartReference=epcPartReferenceRaw2,
                                                               PartStartTime='2015-07-20T01:23:45.678000+01:00',
                                                               PartEndTime='2015-07-20T01:24:05.658000+01:00')]))),
                     RawDataTime=da.DasTimeArray.factory(
@@ -129,10 +138,17 @@ def create_das_acquisition():
                             Values=da.ExternalDataset.factory(
                                 ExternalFileProxy=[
                                     da.DasExternalDatasetPart.factory(
-                                        Count=1000,
+                                        Count=5000,
                                         PathInExternalFile='/Acquisition/Raw/RawDataTime',
                                         StartIndex=0,
-                                        EpcExternalPartReference=epcPartReferenceRaw,
+                                        EpcExternalPartReference=epcPartReferenceRaw1,
+                                        PartStartTime='2015-07-20T01:23:45.678000+01:00',
+                                        PartEndTime='2015-07-20T01:24:05.658000+01:00'),
+                                    da.DasExternalDatasetPart.factory(
+                                        Count=4000,
+                                        PathInExternalFile='/Acquisition/Raw/RawDataTime',
+                                        StartIndex=5000,
+                                        EpcExternalPartReference=epcPartReferenceRaw2,
                                         PartStartTime='2015-07-20T01:23:45.678000+01:00',
                                         PartEndTime='2015-07-20T01:24:05.658000+01:00')]))),
                     RawDataTriggerTime=da.DasTimeArray.factory(
@@ -145,7 +161,7 @@ def create_das_acquisition():
                                     Count=1,
                                     PathInExternalFile='Acquisition/Raw/RawDataTriggerTime',
                                     StartIndex=0,
-                                    EpcExternalPartReference=epcPartReferenceRaw,
+                                    EpcExternalPartReference=epcPartReferenceRaw1,
                                     PartStartTime='2015-07-20T01:23:45.678000+01:00',
                                     PartEndTime='2015-07-20T01:23:45.567000+01:00'
                                 )

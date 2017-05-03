@@ -45,7 +45,7 @@ Used mainly in alias context.</xs:documentation>
 			</xs:element>
 			<xs:element name="Uri" type="xs:anyURI" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>This is the URI of a referenced object. 
+					<xs:documentation>This is the URI of a referenced object.
 
 Do not use this to store the path and file names of an external object - that is done through the External Dataset machinery.
 
@@ -70,6 +70,7 @@ Each EpcExternalPartReference represents a single operating system file</xs:docu
 			<xs:extension base="eml:AbstractObject">
 				<xs:sequence>
 					<xs:element name="Filename" type="eml:String2000" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="Uuid" type="eml:String2000" minOccurs="1" maxOccurs="1"/>
 					<xs:element name="MimeType" type="eml:String2000" minOccurs="0" maxOccurs="1">
 						<xs:annotation>
 							<xs:documentation>IAMF registered, if one exists, or a free text field. Needs documentation on seismic especially.
