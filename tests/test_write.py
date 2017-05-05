@@ -38,6 +38,7 @@ def test_write_initial():
 
 def create_das_acquisition():
     das = da.DasAcquisition.factory()
+    das.schemaVersion = '2'
     das.set_Aliases([da.ObjectAlias.factory(authority='abc',
                                     Identifier='My alias')])
     das.set_Citation(da.Citation.factory(Title='DAS Acquisition',
@@ -48,6 +49,7 @@ def create_das_acquisition():
     das.set_ExtensionNameValue([da.ExtensionNameValue.factory(Name='customInt',
                                                       Value=da.StringMeasure.factory(valueOf_=2))])
     das.set_AcquisitionId(str(uuid.uuid4()))
+    das.uuid = das.AcquisitionId
     das.set_AcquisitionDescription('Energistics DAS PRODML Acquisition Sample')
     opticalPath = da.FiberOpticalPath.factory()
     #opticalPath.set_ContentType('Optical Path') # TODO nowhere info about this
@@ -392,6 +394,8 @@ def create_das_instrument_box():
             Creation=datetime.datetime.strptime('2015-07-20T01:00:00.000000', '%Y-%m-%dT%H:%M:%S.%f'),
             Format='Vendor:ApplicationName')
     )
+    dib.schemaVersion = '2'
+    dib.uuid = str(uuid.uuid4())
     return dib
 
 def create_fiber_optical_path():
@@ -694,6 +698,8 @@ def create_fiber_optical_path():
             Description='FiberOpticalPath DAS worked example'
         )
     )
+    fop.schemaVersion = '2'
+    fop.uuid = str(uuid.uuid4())
     return fop
 
 

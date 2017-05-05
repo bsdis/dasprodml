@@ -148,49 +148,48 @@ class PMLproxy(object):
             output = io.StringIO()
             output.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
             self.das_acquisition.export(output, 0,
-                                    namespacedef_ = 'xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2" uuid="'+self.das_acquisition.get_AcquisitionId()+'"')
+                                    namespacedef_ = 'xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
             das_acquisition_xml = output.getvalue()
+            print(vars(self.das_acquisition))
             output.close()
             if self.das_acquisition_part:
                 self.das_acquisition_part._blob = das_acquisition_xml
             else:
-                self.das_acquisition_part = opc.package.Part(partname=PackURI('/DasAcquisition_'+self.das_acquisition.get_AcquisitionId()+'.xml'), content_type=EPC_CT.DAS_ACQUISITION, blob=das_acquisition_xml)
+                self.das_acquisition_part = opc.package.Part(partname=PackURI('/DasAcquisition_'+self.das_acquisition.uuid+'.xml'), content_type=EPC_CT.DAS_ACQUISITION, blob=das_acquisition_xml)
             self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.das_acquisition_part, rId='idAquisition')
         # Das instrument box.
         if self.das_instrument_box:
-            das_instrument_box_uuid = str(uuid.uuid4())
             output = io.StringIO()
             output.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
             self.das_instrument_box.export(output, 0,
-                                    namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="'+das_instrument_box_uuid+'" schemaVersion="2.0" xsi:schemaLocation="http://www.energistics.org/energyml/data/prodmlv2 ../../../../xsd_schemas/DasInstrumentBox.xsd"')
+                                    namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.energistics.org/energyml/data/prodmlv2 ../../../../xsd_schemas/DasInstrumentBox.xsd"')
             das_instrument_box_xml = output.getvalue()
             output.close()
             if self.das_instrument_box_part:
                 self.das_instrument_box_part._blob = das_instrument_box_xml
             else:
-                self.das_instrument_box_part = opc.package.Part(partname=PackURI('/DasInstrumentBox_'+das_instrument_box_uuid+'.xml'), content_type=EPC_CT.DAS_INSTRUMENT_BOX, blob=das_instrument_box_xml)
+                self.das_instrument_box_part = opc.package.Part(partname=PackURI('/DasInstrumentBox_'+self.das_instrument_box.uuid+'.xml'), content_type=EPC_CT.DAS_INSTRUMENT_BOX, blob=das_instrument_box_xml)
             if self.das_acquisition:
-                self.das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.das_instrument_box_part, rId='_'+das_instrument_box_uuid)
-                self.das_instrument_box_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=self.das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
+                self.das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.das_instrument_box_part, rId='_'+self.das_instrument_box.uuid)
+                self.das_instrument_box_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=self.das_acquisition_part, rId='_'+self.das_acquisition.uuid)
             else:
                 self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=das_instrument_box_part, rId='idDasInstrumentBox')
         # Fiber optical path.
         if self.fiber_optical_path:
-            fiber_optical_path_uuid = str(uuid.uuid4())
             output = io.StringIO()
             output.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
             self.fiber_optical_path.export(output, 0,
-                                    namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="'+fiber_optical_path_uuid+'" schemaVersion="2.0" xsi:schemaLocation="http://www.energistics.org/energyml/data/prodmlv2 ../../../../xsd_schemas/FiberOpticalPath.xsd"')
+                                    namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.energistics.org/energyml/data/prodmlv2 ../../../../xsd_schemas/FiberOpticalPath.xsd"')
 
             fiber_optical_path_xml = output.getvalue()
             output.close()
             if self.fiber_optical_path_part:
                 self.fiber_optical_path_part._blob = fiber_optical_path_xml
             else:
-                self.fiber_optical_path_part = opc.package.Part(partname=PackURI('/FiberOpticalPath_'+fiber_optical_path_uuid+'.xml'), content_type=EPC_CT.FIBER_OPTICAL_PATH, blob=fiber_optical_path_xml)
+                self.fiber_optical_path_part = opc.package.Part(partname=PackURI('/FiberOpticalPath_'+self.fiber_optical_path.uuid+'.xml'), content_type=EPC_CT.FIBER_OPTICAL_PATH, blob=fiber_optical_path_xml)
             if self.das_acquisition:
-                self.das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.fiber_optical_path_part, rId='_'+fiber_optical_path_uuid)
-                self.fiber_optical_path_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=self.das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
+                self.das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.fiber_optical_path_part, rId='_'+self.fiber_optical_path.uuid)
+                self.fiber_optical_path_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=self.das_acquisition_part, rId='_'+self.das_acquisition.uuid)
             else:
                 self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=fiber_optical_path_part, rId='idFiberOpticalPath')
         # External files.
@@ -224,6 +223,8 @@ class PMLproxy(object):
             if eepr_uuid in self.eeprs:
                 continue
             eepr = da.EpcExternalPartReference.factory()
+            eepr.schemaVersion = '2'
+            eepr.uuid = eepr_uuid
             eepr.set_Citation(da.Citation.factory(Title='Hdf Proxy',
                                           Originator='Energistics',
                                           Creation=datetime.datetime.utcnow(),
@@ -231,13 +232,13 @@ class PMLproxy(object):
             output = io.StringIO()
             output.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
             eepr.export(output, 0,
-                                    namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" uuid="'+eepr_uuid+'" xsi:schemaLocation="http://www.energistics.org/energyml/data/commonv2 ../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd" xsi:type="eml:EpcExternalPartReference"')
+                                    namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.energistics.org/energyml/data/commonv2 ../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd" xsi:type="eml:EpcExternalPartReference"')
 
             eepr_xml = output.getvalue()
             output.close()
             eepr_part = opc.package.Part(partname=PackURI('/EpcExternalPartReference_'+eepr_uuid+'.xml'), content_type=EPC_CT.EPC_EXTERNAL_PART_REFERENCE, blob=eepr_xml)
             self.das_acquisition_part._add_relationship(reltype=EPC_RT.ML_TO_EXTERNAL_PART_PROXY, target=eepr_part, rId='_'+eepr_uuid)
-            eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_PART_PROXY_TO_ML, target=self.das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
+            eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_PART_PROXY_TO_ML, target=self.das_acquisition_part, rId='_'+self.das_acquisition.uuid)
             eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_RESOURCE, target=self.external_hdf_files[eepr_uuid], rId='Hdf5File', external=True)
             self.eeprs[eepr_uuid] = eepr
 
