@@ -103,8 +103,7 @@ def create_das_acquisition():
     das.set_StartLocusIndex(0)
     das.set_MeasurementStartTime(datetime.datetime.strptime('2015-07-20T01:23:45.123456+0100', '%Y-%m-%dT%H:%M:%S.%f%z'))
     das.set_TriggeredMeasurement(True)
-    rawCustom = da.DasCustom.factory()
-    rawCustom.original_tagname_ = 'Custom'
+    rawCustom = da.DasCustom.factory(values={'some_key': 'someValue', 'another_key': 'another value'}, namespace='test:', namespacedef='xmlns:test="http://example.com/test"')
     epcPartReferenceRaw1 = da.DataObjectReference.factory(Uuid=str(uuid.uuid4()), Title='hdf file', ContentType='application/x-prodml+xml;version=2.0;type=EpcExternalPartReference')
     epcPartReferenceRaw2 = da.DataObjectReference.factory(Uuid=str(uuid.uuid4()), Title='hdf file', ContentType='application/x-prodml+xml;version=2.0;type=EpcExternalPartReference')
     raw = da.DasRaw.factory(uuid=str(uuid.uuid4()),

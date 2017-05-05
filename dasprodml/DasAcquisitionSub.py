@@ -21,6 +21,8 @@
 
 ### The EmlMixin class
 
+import datetime
+
 class EmlMixin(object):
     """Changes xml namespace to 'eml:'.
     """
@@ -81,8 +83,35 @@ supermod.DasCalibrationPoint.subclass = DasCalibrationPointSub
 
 
 class DasCustomSub(supermod.DasCustom):
-    def __init__(self):
+    def __init__(self, values=None, namespace='test:', namespacedef='xmlns:test="http://example.com/test"'):
         super(DasCustomSub, self).__init__()
+        self.values = values
+        self.namespace = namespace
+        self.namespacedef = namespacedef
+        self.original_tagname_ = 'Custom'
+    def hasContent_(self):
+        if self.values:
+            return True
+        else:
+            return False
+    def export(self, outfile, level, namespace_='prodml:', name_='DasCustom', namespacedef_='xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2"', pretty_print=True):
+        namespacedef_ = self.namespacedef
+        super(DasCustomSub, self).export(outfile, level, namespace_, name_, namespacedef_, pretty_print, )
+    def exportChildren(self, outfile, level, namespace_='test:', name_='Custom', fromsubclass_=False, pretty_print=True):
+        super(DasCustomSub, self).exportChildren(outfile, level, namespace_, name_, fromsubclass_, pretty_print, )
+        namespace_ = self.namespace
+        if pretty_print:
+            eol_ = '\n'
+        else:
+            eol_ = ''
+        for (k, v) in self.values.items():
+            if isinstance(v, datetime.datetime):
+                value = v.isoformat()
+            else:
+                value = str(v)
+            k = k.replace(':', '_colon_')
+            supermod.showIndent(outfile, level, pretty_print)
+            outfile.write('<%s%s>%s</%s%s>%s' % (namespace_, self.gds_encode(self.gds_format_string(supermod.quote_xml(k))), self.gds_encode(self.gds_format_string(supermod.quote_xml(value))), namespace_, self.gds_encode(self.gds_format_string(supermod.quote_xml(k))), eol_))
 supermod.DasCustom.subclass = DasCustomSub
 # end class DasCustomSub
 
