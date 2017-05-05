@@ -45,7 +45,7 @@ Used mainly in alias context.</xs:documentation>
 			</xs:element>
 			<xs:element name="Uri" type="xs:anyURI" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>This is the URI of a referenced object. 
+					<xs:documentation>This is the URI of a referenced object.
 
 Do not use this to store the path and file names of an external object - that is done through the External Dataset machinery.
 

@@ -19,7 +19,7 @@ def test_write_initial():
     prodml_object.add_das_acquisition(create_das_acquisition())
     prodml_object.add_das_instrument_box(create_das_instrument_box())
     prodml_object.add_fiber_optical_path(create_fiber_optical_path())
-    width = 50
+    width = 50 # output blocksize
     prodml_object.save()
     for i in range(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[0].Count//width):
         dasdata = np.ones((width, prodml_object.das_acquisition.Raw[0].NumberOfLoci), dtype=np.float32)
@@ -27,11 +27,18 @@ def test_write_initial():
         prodml_object.write_raw_traces(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[0],
                                        prodml_object.das_acquisition.Raw[0].RawDataTime.TimeArray.Values.ExternalFileProxy[0],
                                        i*width, dasdata, timestamps)
+    for i in range(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[1].Count//width):
+        dasdata = np.zeros((width, prodml_object.das_acquisition.Raw[0].NumberOfLoci), dtype=np.float32)
+        timestamps = np.zeros((width, ), dtype=np.int64)
+        prodml_object.write_raw_traces(prodml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[1],
+                                       prodml_object.das_acquisition.Raw[0].RawDataTime.TimeArray.Values.ExternalFileProxy[1],
+                                       i*width, dasdata, timestamps)
     prodml_object.write_raw_trigger_time(prodml_object.das_acquisition.Raw[0].RawDataTriggerTime.TimeArray.Values.ExternalFileProxy[0], 2)
 
 
 def create_das_acquisition():
     das = da.DasAcquisition.factory()
+    das.schemaVersion = '2'
     das.set_Aliases([da.ObjectAlias.factory(authority='abc',
                                     Identifier='My alias')])
     das.set_Citation(da.Citation.factory(Title='DAS Acquisition',
@@ -42,6 +49,7 @@ def create_das_acquisition():
     das.set_ExtensionNameValue([da.ExtensionNameValue.factory(Name='customInt',
                                                       Value=da.StringMeasure.factory(valueOf_=2))])
     das.set_AcquisitionId(str(uuid.uuid4()))
+    das.uuid = das.AcquisitionId
     das.set_AcquisitionDescription('Energistics DAS PRODML Acquisition Sample')
     opticalPath = da.FiberOpticalPath.factory()
     #opticalPath.set_ContentType('Optical Path') # TODO nowhere info about this
@@ -97,13 +105,9 @@ def create_das_acquisition():
     das.set_StartLocusIndex(0)
     das.set_MeasurementStartTime(datetime.datetime.strptime('2015-07-20T01:23:45.123456+0100', '%Y-%m-%dT%H:%M:%S.%f%z'))
     das.set_TriggeredMeasurement(True)
-    rawCustom = da.DasCustom.factory()
-    rawCustom.original_tagname_ = 'Custom'
-    raw_hdf_uuid = str(uuid.uuid4())
-    epcPartReferenceRaw = da.EpcExternalPartReference.factory(_uuid=raw_hdf_uuid, _filename='raw.h5')
-    #epcPartReferenceRaw.set_ContentType('InstrumentBox') # TODO nowhere info about this
-    #epcPartReferenceRaw.set_Title('Instrument Box') # TODO nowhere info about this
-    #epcPartReferenceRaw.set_Uuid(str(uuid.uuid4())) # TODO nowhere info about this
+    rawCustom = da.DasCustom.factory(values={'some_key': 'someValue', 'another_key': 'another value'}, namespace='test:', namespacedef='xmlns:test="http://example.com/test"')
+    epcPartReferenceRaw1 = da.DataObjectReference.factory(Uuid=str(uuid.uuid4()), Title='hdf file', ContentType='application/x-prodml+xml;version=2.0;type=EpcExternalPartReference')
+    epcPartReferenceRaw2 = da.DataObjectReference.factory(Uuid=str(uuid.uuid4()), Title='hdf file', ContentType='application/x-prodml+xml;version=2.0;type=EpcExternalPartReference')
     raw = da.DasRaw.factory(uuid=str(uuid.uuid4()),
                     RawDataUnit='V',
                     OutputDataRate=da.FrequencyMeasure.factory(uom='Hz',
@@ -118,7 +122,13 @@ def create_das_acquisition():
                                     da.DasExternalDatasetPart.factory(Count=5000,
                                                               PathInExternalFile='/Acquisition/Raw/RawData',
                                                               StartIndex=0,
-                                                              EpcExternalPartReference=epcPartReferenceRaw,
+                                                              EpcExternalPartReference=epcPartReferenceRaw1,
+                                                              PartStartTime='2015-07-20T01:23:45.678000+01:00',
+                                                              PartEndTime='2015-07-20T01:24:05.658000+01:00'),
+                                    da.DasExternalDatasetPart.factory(Count=4000,
+                                                              PathInExternalFile='/Acquisition/Raw/RawData',
+                                                              StartIndex=5000,
+                                                              EpcExternalPartReference=epcPartReferenceRaw2,
                                                               PartStartTime='2015-07-20T01:23:45.678000+01:00',
                                                               PartEndTime='2015-07-20T01:24:05.658000+01:00')]))),
                     RawDataTime=da.DasTimeArray.factory(
@@ -129,10 +139,17 @@ def create_das_acquisition():
                             Values=da.ExternalDataset.factory(
                                 ExternalFileProxy=[
                                     da.DasExternalDatasetPart.factory(
-                                        Count=1000,
+                                        Count=5000,
                                         PathInExternalFile='/Acquisition/Raw/RawDataTime',
                                         StartIndex=0,
-                                        EpcExternalPartReference=epcPartReferenceRaw,
+                                        EpcExternalPartReference=epcPartReferenceRaw1,
+                                        PartStartTime='2015-07-20T01:23:45.678000+01:00',
+                                        PartEndTime='2015-07-20T01:24:05.658000+01:00'),
+                                    da.DasExternalDatasetPart.factory(
+                                        Count=4000,
+                                        PathInExternalFile='/Acquisition/Raw/RawDataTime',
+                                        StartIndex=5000,
+                                        EpcExternalPartReference=epcPartReferenceRaw2,
                                         PartStartTime='2015-07-20T01:23:45.678000+01:00',
                                         PartEndTime='2015-07-20T01:24:05.658000+01:00')]))),
                     RawDataTriggerTime=da.DasTimeArray.factory(
@@ -145,7 +162,7 @@ def create_das_acquisition():
                                     Count=1,
                                     PathInExternalFile='Acquisition/Raw/RawDataTriggerTime',
                                     StartIndex=0,
-                                    EpcExternalPartReference=epcPartReferenceRaw,
+                                    EpcExternalPartReference=epcPartReferenceRaw1,
                                     PartStartTime='2015-07-20T01:23:45.678000+01:00',
                                     PartEndTime='2015-07-20T01:23:45.567000+01:00'
                                 )
@@ -377,6 +394,8 @@ def create_das_instrument_box():
             Creation=datetime.datetime.strptime('2015-07-20T01:00:00.000000', '%Y-%m-%dT%H:%M:%S.%f'),
             Format='Vendor:ApplicationName')
     )
+    dib.schemaVersion = '2'
+    dib.uuid = str(uuid.uuid4())
     return dib
 
 def create_fiber_optical_path():
@@ -679,6 +698,8 @@ def create_fiber_optical_path():
             Description='FiberOpticalPath DAS worked example'
         )
     )
+    fop.schemaVersion = '2'
+    fop.uuid = str(uuid.uuid4())
     return fop
 
 

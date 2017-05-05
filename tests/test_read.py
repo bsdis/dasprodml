@@ -16,5 +16,10 @@ def test_read_metadata():
                                                      0, pml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[0].Count)
     np.testing.assert_array_equal(dasdata, np.ones(dasdata.shape, dtype=dasdata.dtype))
     np.testing.assert_array_equal(timestamps, np.ones(timestamps.shape, dtype=dasdata.dtype))
+    dasdata, timestamps = pml_object.read_raw_traces(pml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[1],
+                                                     pml_object.das_acquisition.Raw[0].RawDataTime.TimeArray.Values.ExternalFileProxy[1],
+                                                     0, pml_object.das_acquisition.Raw[0].RawData.RawDataArray.Values.ExternalFileProxy[1].Count)
+    np.testing.assert_array_equal(dasdata, np.zeros(dasdata.shape, dtype=dasdata.dtype))
+    np.testing.assert_array_equal(timestamps, np.zeros(timestamps.shape, dtype=dasdata.dtype))
     trigger_time = pml_object.read_raw_trigger_time(pml_object.das_acquisition.Raw[0].RawDataTriggerTime.TimeArray.Values.ExternalFileProxy[0])
     assert trigger_time == 2
