@@ -3965,7 +3965,7 @@ supermod.SC_CRS_PropertyType.subclass = SC_CRS_PropertyTypeSub
 # end class SC_CRS_PropertyTypeSub
 
 
-class DataObjectReferenceSub(supermod.DataObjectReference):
+class DataObjectReferenceSub(EmlMixin, supermod.DataObjectReference):
     def __init__(self, ContentType=None, Title=None, Uuid=None, UuidAuthority=None, Uri=None, VersionString=None):
         super(DataObjectReferenceSub, self).__init__(ContentType, Title, Uuid, UuidAuthority, Uri, VersionString, )
 supermod.DataObjectReference.subclass = DataObjectReferenceSub
@@ -3973,9 +3973,8 @@ supermod.DataObjectReference.subclass = DataObjectReferenceSub
 
 
 class EpcExternalPartReferenceSub(EmlMixin, supermod.EpcExternalPartReference):
-    def __init__(self, Filename=None, Uuid=None, MimeType=None):
-        super(EpcExternalPartReferenceSub, self).__init__(Filename, Uuid, MimeType, )
-
+    def __init__(self, Filename=None, MimeType=None):
+        super(EpcExternalPartReferenceSub, self).__init__(Filename, MimeType, )
 supermod.EpcExternalPartReference.subclass = EpcExternalPartReferenceSub
 # end class EpcExternalPartReferenceSub
 

@@ -49,7 +49,7 @@ def load_eepr(blob):
     """Loads EpcExternalPartReference from xml.
     """
     blob_input = io.BytesIO(blob)
-    eepr = da.parse(blob_input)
+    eepr = da.parse(blob_input, silence=True)
     blob_input.close()
     return eepr
 
@@ -59,7 +59,7 @@ class PMLproxy(object):
 
     '''
 
-    def __init__(self, path):
+    def __init__(self, path, raw_chunk_width=1024, raw_data_type=np.float32):
         """Initialize from an .epc file.
         """
         self.epc_path = path
@@ -67,11 +67,16 @@ class PMLproxy(object):
             logging.warning(EPC_EXTENSION_WARNING)
         self.epc_folder = os.path.dirname(path)
         self.package = None
-        self.raw_chunk_width = 1024
+        self.raw_chunk_width = raw_chunk_width
+        self.raw_data_type = raw_data_type # TODO find better way to send dtype
         self.external_hdf_files = {}
         self.das_acquisition = None
         self.das_instrument_box = None
         self.fiber_optical_path = None
+        self.das_acquisition_part = None
+        self.das_instrument_box_part = None
+        self.fiber_optical_path_part = None
+        self.eeprs = {}
         # Open file if exists, otherwise create a new one.
         if os.path.exists(self.epc_path):
             self.open()
@@ -83,26 +88,32 @@ class PMLproxy(object):
         """
         self.package = opc.OpcPackage.open(self.epc_path)
         for part in self.package.parts:
-            if part._content_type == EPC_CT.DAS_ACQUISITION:
+            if part._content_type == CT.OPC_CORE_PROPERTIES:
+                self.core_properties = part
+            elif part._content_type == EPC_CT.DAS_ACQUISITION:
                 tfile = tempfile.NamedTemporaryFile('wb')
                 tfile.write(part._blob)
                 self.das_acquisition = da.parse(tfile.name, silence=True)
+                self.das_acquisition_part = part
                 tfile.close()
                 for rel in part.rels:
                     if rel._reltype == EPC_RT.ML_TO_EXTERNAL_PART_PROXY:
                         for eepr_rel in rel.target_part.rels:
                             eepr = load_eepr(rel.target_part.blob)
                             if eepr_rel._reltype == EPC_RT.EXTERNAL_RESOURCE:
-                                self.external_hdf_files[eepr.Uuid] = eepr_rel.target_ref
+                                self.external_hdf_files[eepr.uuid] = eepr_rel.target_ref
+                                self.eeprs[eepr.uuid] = eepr
             elif part._content_type == EPC_CT.DAS_INSTRUMENT_BOX:
                 tfile = tempfile.NamedTemporaryFile('wb')
                 tfile.write(part._blob)
                 #self.das_instrument_box = da.parse(tfile.name, silence=True) # TODO lxml.etree_.parse() fails on that file, but there is no BOM, need to debug
+                #self.das_instrument_box_part = part
                 tfile.close()
             elif part._content_type == EPC_CT.FIBER_OPTICAL_PATH:
                 tfile = tempfile.NamedTemporaryFile('wb')
                 tfile.write(part._blob)
                 self.fiber_optical_path = fp.parse(tfile.name, silence=True)
+                self.fiber_optical_path_part = part
                 tfile.close()
 
     def create(self, creator='Test', version='1.0'):
@@ -124,13 +135,14 @@ class PMLproxy(object):
         """Save the file.
         """
         # Core properties.
-        core_properties_xml = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
-                             '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
-                             '  <dc:creator>' + str(self.creator) + '</dc:creator>\n'
-                             '  <version>'+ str(self.version) + '</version>\n'
-                             '  <dcterms:created xsi:type="dcterms:W3CDTF">' + datetime.datetime.now().isoformat() + '</dcterms:created>\n'
-                             '</cp:coreProperties>')
-        self.core_properties._blob = core_properties_xml
+        if self.core_properties._blob is None:
+            core_properties_xml = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+                                 '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
+                                 '  <dc:creator>' + str(self.creator) + '</dc:creator>\n'
+                                 '  <version>'+ str(self.version) + '</version>\n'
+                                 '  <dcterms:created xsi:type="dcterms:W3CDTF">' + datetime.datetime.now().isoformat() + '</dcterms:created>\n'
+                                 '</cp:coreProperties>')
+            self.core_properties._blob = core_properties_xml
         # Das aquisition.
         if self.das_acquisition:
             output = io.StringIO()
@@ -139,8 +151,11 @@ class PMLproxy(object):
                                     namespacedef_ = 'xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2" uuid="'+self.das_acquisition.get_AcquisitionId()+'"')
             das_acquisition_xml = output.getvalue()
             output.close()
-            das_acquisition_part = opc.package.Part(partname=PackURI('/DasAcquisition_'+self.das_acquisition.get_AcquisitionId()+'.xml'), content_type=EPC_CT.DAS_ACQUISITION, blob=das_acquisition_xml)
-            self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=das_acquisition_part, rId='idAquisition')
+            if self.das_acquisition_part:
+                self.das_acquisition_part._blob = das_acquisition_xml
+            else:
+                self.das_acquisition_part = opc.package.Part(partname=PackURI('/DasAcquisition_'+self.das_acquisition.get_AcquisitionId()+'.xml'), content_type=EPC_CT.DAS_ACQUISITION, blob=das_acquisition_xml)
+            self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.das_acquisition_part, rId='idAquisition')
         # Das instrument box.
         if self.das_instrument_box:
             das_instrument_box_uuid = str(uuid.uuid4())
@@ -148,13 +163,15 @@ class PMLproxy(object):
             output.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
             self.das_instrument_box.export(output, 0,
                                     namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="'+das_instrument_box_uuid+'" schemaVersion="2.0" xsi:schemaLocation="http://www.energistics.org/energyml/data/prodmlv2 ../../../../xsd_schemas/DasInstrumentBox.xsd"')
-
             das_instrument_box_xml = output.getvalue()
             output.close()
-            das_instrument_box_part = opc.package.Part(partname=PackURI('/DasInstrumentBox_'+das_instrument_box_uuid+'.xml'), content_type=EPC_CT.DAS_INSTRUMENT_BOX, blob=das_instrument_box_xml)
+            if self.das_instrument_box_part:
+                self.das_instrument_box_part._blob = das_instrument_box_xml
+            else:
+                self.das_instrument_box_part = opc.package.Part(partname=PackURI('/DasInstrumentBox_'+das_instrument_box_uuid+'.xml'), content_type=EPC_CT.DAS_INSTRUMENT_BOX, blob=das_instrument_box_xml)
             if self.das_acquisition:
-                das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=das_instrument_box_part, rId='_'+das_instrument_box_uuid)
-                das_instrument_box_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
+                self.das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.das_instrument_box_part, rId='_'+das_instrument_box_uuid)
+                self.das_instrument_box_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=self.das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
             else:
                 self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=das_instrument_box_part, rId='idDasInstrumentBox')
         # Fiber optical path.
@@ -167,22 +184,23 @@ class PMLproxy(object):
 
             fiber_optical_path_xml = output.getvalue()
             output.close()
-            fiber_optical_path_part = opc.package.Part(partname=PackURI('/FiberOpticalPath_'+fiber_optical_path_uuid+'.xml'), content_type=EPC_CT.FIBER_OPTICAL_PATH, blob=fiber_optical_path_xml)
+            if self.fiber_optical_path_part:
+                self.fiber_optical_path_part._blob = fiber_optical_path_xml
+            else:
+                self.fiber_optical_path_part = opc.package.Part(partname=PackURI('/FiberOpticalPath_'+fiber_optical_path_uuid+'.xml'), content_type=EPC_CT.FIBER_OPTICAL_PATH, blob=fiber_optical_path_xml)
             if self.das_acquisition:
-                das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=fiber_optical_path_part, rId='_'+fiber_optical_path_uuid)
-                fiber_optical_path_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
+                self.das_acquisition_part._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=self.fiber_optical_path_part, rId='_'+fiber_optical_path_uuid)
+                self.fiber_optical_path_part._add_relationship(reltype=EPC_RT.SOURCE_OBJECT, target=self.das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
             else:
                 self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=fiber_optical_path_part, rId='idFiberOpticalPath')
         # External files.
         self.external_hdf_files = {}
-        self.eeprs = {}
         for Raw in self.das_acquisition.Raw:
             if (Raw.RawData is not None and
                 Raw.RawData.RawDataArray is not None and
                 Raw.RawData.RawDataArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawData.RawDataArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    self.eeprs[eepr.Uuid] = eepr
                     self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
                     self.write_hdf_metadata(eepr.Uuid, Raw)
                     self.write_hdf_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw, DasExternalDatasetPart)
@@ -191,7 +209,6 @@ class PMLproxy(object):
                 Raw.RawDataTime.TimeArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawDataTime.TimeArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    self.eeprs[eepr.Uuid] = eepr
                     self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
                     self.write_hdf_metadata(eepr.Uuid, Raw)
                     self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTime, DasExternalDatasetPart)
@@ -200,29 +217,29 @@ class PMLproxy(object):
                 Raw.RawDataTriggerTime.TimeArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawDataTriggerTime.TimeArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    self.eeprs[eepr.Uuid] = eepr
                     self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
                     self.write_hdf_metadata(eepr.Uuid, Raw)
                     self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTriggerTime, DasExternalDatasetPart)
-
-        for eepr_uuid in self.eeprs:
-            old_citation = self.eeprs[eepr_uuid].Citation
-            self.eeprs[eepr_uuid].set_Citation(da.Citation.factory(Title='Hdf Proxy',
+        for eepr_uuid in self.external_hdf_files:
+            if eepr_uuid in self.eeprs:
+                continue
+            eepr = da.EpcExternalPartReference.factory()
+            eepr.set_Citation(da.Citation.factory(Title='Hdf Proxy',
                                           Originator='Energistics',
                                           Creation=datetime.datetime.utcnow(),
                                           Format='Energistics'))
             output = io.StringIO()
             output.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n')
-            self.eeprs[eepr_uuid].export(output, 0,
+            eepr.export(output, 0,
                                     namespacedef_ = 'xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="2.0" uuid="'+eepr_uuid+'" xsi:schemaLocation="http://www.energistics.org/energyml/data/commonv2 ../../../common/v2.1/xsd_schemas/EmlAllObjects.xsd" xsi:type="eml:EpcExternalPartReference"')
 
             eepr_xml = output.getvalue()
             output.close()
             eepr_part = opc.package.Part(partname=PackURI('/EpcExternalPartReference_'+eepr_uuid+'.xml'), content_type=EPC_CT.EPC_EXTERNAL_PART_REFERENCE, blob=eepr_xml)
-            das_acquisition_part._add_relationship(reltype=EPC_RT.ML_TO_EXTERNAL_PART_PROXY, target=eepr_part, rId='_'+eepr_uuid)
-            eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_PART_PROXY_TO_ML, target=das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
+            self.das_acquisition_part._add_relationship(reltype=EPC_RT.ML_TO_EXTERNAL_PART_PROXY, target=eepr_part, rId='_'+eepr_uuid)
+            eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_PART_PROXY_TO_ML, target=self.das_acquisition_part, rId='_'+self.das_acquisition.get_AcquisitionId())
             eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_RESOURCE, target=self.external_hdf_files[eepr_uuid], rId='Hdf5File', external=True)
-            self.eeprs[eepr_uuid].Citation = old_citation
+            self.eeprs[eepr_uuid] = eepr
 
         # Save the package.
         self.package.save(self.epc_path)
@@ -254,17 +271,26 @@ class PMLproxy(object):
             hdf_file['Acquisition'].attrs['AcquisitionDescription'] = self.das_acquisition.get_AcquisitionDescription()
             hdf_file['Acquisition'].attrs['AcquisitionId'] = self.das_acquisition.get_AcquisitionId()
             hdf_file['Acquisition'].attrs['FacilityId'] = [n.encode("ascii", "ignore") for n in self.das_acquisition.get_FacilityId()]
-            hdf_file['Acquisition'].attrs['GaugeLength'] = self.das_acquisition.get_GaugeLength().get_valueOf_()
-            hdf_file['Acquisition'].attrs['MaximumFrequency'] = self.das_acquisition.get_MaximumFrequency().get_valueOf_()
-            hdf_file['Acquisition'].attrs['MeasurementStartTime'] = self.das_acquisition.get_MeasurementStartTime().isoformat()
-            hdf_file['Acquisition'].attrs['MinimumFrequency'] = self.das_acquisition.get_MinimumFrequency().get_valueOf_()
+            if self.das_acquisition.get_GaugeLength():
+                hdf_file['Acquisition'].attrs['GaugeLength'] = self.das_acquisition.get_GaugeLength().get_valueOf_()
+            if self.das_acquisition.get_MaximumFrequency():
+                hdf_file['Acquisition'].attrs['MaximumFrequency'] = self.das_acquisition.get_MaximumFrequency().get_valueOf_()
+            if self.das_acquisition.get_MeasurementStartTime():
+                hdf_file['Acquisition'].attrs['MeasurementStartTime'] = self.das_acquisition.get_MeasurementStartTime().isoformat()
+            if self.das_acquisition.get_MinimumFrequency():
+                hdf_file['Acquisition'].attrs['MinimumFrequency'] = self.das_acquisition.get_MinimumFrequency().get_valueOf_()
             hdf_file['Acquisition'].attrs['NumberOfLoci'] = self.das_acquisition.get_NumberOfLoci()
             hdf_file['Acquisition'].attrs['PulseRate'] = self.das_acquisition.get_PulseRate().get_valueOf_()
-            hdf_file['Acquisition'].attrs['PulseWidth'] = self.das_acquisition.get_PulseWidth().get_valueOf_()
-            hdf_file['Acquisition'].attrs['SpatialSamplingInterval'] = self.das_acquisition.get_SpatialSamplingInterval().get_valueOf_()
-            hdf_file['Acquisition'].attrs['StartLocusIndex'] = self.das_acquisition.get_StartLocusIndex()
-            hdf_file['Acquisition'].attrs['TriggeredMeasurement'] = self.das_acquisition.get_TriggeredMeasurement()
-            hdf_file['Acquisition'].attrs['VendorCode'] = self.das_acquisition.get_VendorCode().get_Name()
+            if self.das_acquisition.get_PulseWidth():
+                hdf_file['Acquisition'].attrs['PulseWidth'] = self.das_acquisition.get_PulseWidth().get_valueOf_()
+            if self.das_acquisition.get_SpatialSamplingInterval():
+                hdf_file['Acquisition'].attrs['SpatialSamplingInterval'] = self.das_acquisition.get_SpatialSamplingInterval().get_valueOf_()
+            if self.das_acquisition.get_StartLocusIndex():
+                hdf_file['Acquisition'].attrs['StartLocusIndex'] = self.das_acquisition.get_StartLocusIndex()
+            if self.das_acquisition.get_TriggeredMeasurement():
+                hdf_file['Acquisition'].attrs['TriggeredMeasurement'] = self.das_acquisition.get_TriggeredMeasurement()
+            if self.das_acquisition.get_VendorCode():
+                hdf_file['Acquisition'].attrs['VendorCode'] = self.das_acquisition.get_VendorCode().get_Name()
         index = 1
         calibration_dtype = np.dtype([('CalibrationLocusIndex', np.uint64),
                                       ('CalibrationOpticalPathDistance', np.float64),
@@ -290,9 +316,12 @@ class PMLproxy(object):
         hdf_file.require_group('Acquisition/Custom')
         if 'Acquisition/Raw' not in hdf_file:
             hdf_file.create_group('Acquisition/Raw')
-            hdf_file['Acquisition/Raw'].attrs['OutputDataRate'] = Raw.get_OutputDataRate().get_valueOf_()
-            hdf_file['Acquisition/Raw'].attrs['RawDataUnit'] = Raw.get_RawDataUnit()
-            hdf_file['Acquisition/Raw'].attrs['StartLocusIndex'] = Raw.get_StartLocusIndex()
+            if Raw.get_OutputDataRate():
+                hdf_file['Acquisition/Raw'].attrs['OutputDataRate'] = Raw.get_OutputDataRate().get_valueOf_()
+            if Raw.get_RawDataUnit():
+                hdf_file['Acquisition/Raw'].attrs['RawDataUnit'] = Raw.get_RawDataUnit()
+            if Raw.get_StartLocusIndex():
+                hdf_file['Acquisition/Raw'].attrs['StartLocusIndex'] = Raw.get_StartLocusIndex()
             hdf_file['Acquisition/Raw'].attrs['uuid'] = Raw.get_uuid()
         hdf_file.flush()
         hdf_file.close()
@@ -303,10 +332,11 @@ class PMLproxy(object):
         # RawData dataset.
         hdf_file = h5py.File(os.path.join(self.epc_folder, filename), 'a')
         dataset_path = dataset.get_PathInExternalFile()
-        hdf_file.create_dataset(dataset_path,
-                                shape=(dataset.get_Count(), Raw.get_NumberOfLoci()),
-                                chunks=(self.raw_chunk_width, Raw.get_NumberOfLoci()),
-                                dtype=np.float32)
+        if dataset_path not in hdf_file:
+            hdf_file.create_dataset(dataset_path,
+                                    shape=(dataset.get_Count(), Raw.get_NumberOfLoci()),
+                                    chunks=(self.raw_chunk_width, Raw.get_NumberOfLoci()),
+                                    dtype=self.raw_data_type)
         hdf_file[dataset_path].attrs['Count'] = dataset.get_Count()
         hdf_file[dataset_path].attrs['Dimensions'] = [n.encode("ascii", "ignore") for n in Raw.get_RawData().get_Dimensions()]
         hdf_file[dataset_path].attrs['PartEndTime'] = dataset.get_PartEndTime()
@@ -320,9 +350,10 @@ class PMLproxy(object):
         """
         hdf_file = h5py.File(os.path.join(self.epc_folder, filename), 'a')
         dataset_path = dataset.get_PathInExternalFile()
-        hdf_file.create_dataset(dataset_path,
-                                shape=(dataset.get_Count(),),
-                                dtype=np.int64)
+        if dataset_path not in hdf_file:
+            hdf_file.create_dataset(dataset_path,
+                                    shape=(dataset.get_Count(),),
+                                    dtype=np.int64)
         hdf_file[dataset_path].attrs['Count'] = dataset.get_Count()
         hdf_file[dataset_path].attrs['PartEndTime'] = dataset.get_PartEndTime()
         hdf_file[dataset_path].attrs['PartStartTime'] = dataset.get_PartStartTime()
