@@ -23,13 +23,13 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy pandas pytest requests h5py
   - wget https://github.com/nasedil/python-opc/archive/master.zip -O python-opc.zip;
-  - unzip python-opc.zip -d $HOME/python-opc
+  - unzip python-opc.zip -d $HOME
   - source activate test-environment
   - pip install lxml
   - pip install generateDS
   - pip install coverage==3.7.1
   - pip install pytest-cov coveralls
-  - cd $HOME/python-opc && python setup.py develop && cd -
+  - cd $HOME/python-opc-master && python setup.py develop && cd -
   - python setup.py install
 
 script:
