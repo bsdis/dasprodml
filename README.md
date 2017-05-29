@@ -17,7 +17,7 @@ Domainclasses are described in xsd files which are transformed to python3 object
 ## Installation
 First, clone the repository:
 ```
-git clone --recursive git@github.com:bsdis/dasprodml.git
+git clone git@github.com:bsdis/dasprodml.git
 ```
 And clone the python-opt dependecy:
 ```
