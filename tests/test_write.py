@@ -9,6 +9,8 @@ import pytest
 
 import dasprodml.DasAcquisition as da
 import dasprodml.FiberOpticalPath as fp
+import dasprodml.DasAcquisitionSub
+import dasprodml.FiberOpticalPathSub
 
 from dasprodml import PMLproxy
 

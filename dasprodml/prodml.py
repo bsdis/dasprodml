@@ -2,7 +2,6 @@ import datetime
 import io
 import logging
 import os
-import tempfile
 import uuid
 
 import h5py
@@ -91,11 +90,8 @@ class PMLproxy(object):
             if part._content_type == CT.OPC_CORE_PROPERTIES:
                 self.core_properties = part
             elif part._content_type == EPC_CT.DAS_ACQUISITION:
-                tfile = tempfile.NamedTemporaryFile('wb')
-                tfile.write(part._blob)
-                self.das_acquisition = da.parse(tfile.name, silence=True)
+                self.das_acquisition = da.parse(io.BytesIO(part._blob), silence=True)
                 self.das_acquisition_part = part
-                tfile.close()
                 for rel in part.rels:
                     if rel._reltype == EPC_RT.ML_TO_EXTERNAL_PART_PROXY:
                         for eepr_rel in rel.target_part.rels:
@@ -104,17 +100,11 @@ class PMLproxy(object):
                                 self.external_hdf_files[eepr.uuid] = eepr_rel.target_ref
                                 self.eeprs[eepr.uuid] = eepr
             elif part._content_type == EPC_CT.DAS_INSTRUMENT_BOX:
-                tfile = tempfile.NamedTemporaryFile('wb')
-                tfile.write(part._blob)
-                #self.das_instrument_box = da.parse(tfile.name, silence=True) # TODO lxml.etree_.parse() fails on that file, but there is no BOM, need to debug
-                #self.das_instrument_box_part = part
-                tfile.close()
+                self.das_instrument_box = da.parse(io.BytesIO(part._blob), silence=True)
+                self.das_instrument_box_part = part
             elif part._content_type == EPC_CT.FIBER_OPTICAL_PATH:
-                tfile = tempfile.NamedTemporaryFile('wb')
-                tfile.write(part._blob)
-                self.fiber_optical_path = fp.parse(tfile.name, silence=True)
+                self.fiber_optical_path = fp.parse(io.BytesIO(part._blob), silence=True)
                 self.fiber_optical_path_part = part
-                tfile.close()
 
     def create(self, creator='Test', version='1.0'):
         """Create a new file.
