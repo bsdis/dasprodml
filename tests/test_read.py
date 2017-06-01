@@ -23,3 +23,7 @@ def test_read_metadata():
     np.testing.assert_array_equal(timestamps, np.zeros(timestamps.shape, dtype=dasdata.dtype))
     trigger_time = pml_object.read_raw_trigger_time(pml_object.das_acquisition.Raw[0].RawDataTriggerTime.TimeArray.Values.ExternalFileProxy[0])
     assert trigger_time == 2
+
+def test_example_file():
+    pml_object = PMLproxy(os.path.join(os.path.dirname(__file__), 'data/Case1/Case1.epc'))
+    assert pml_object.das_acquisition
