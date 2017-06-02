@@ -121,7 +121,7 @@ class PMLproxy(object):
         self.core_properties = opc.package.Part(partname=PackURI('/docProps/core.xml'), content_type=CT.OPC_CORE_PROPERTIES, blob=None)
         self.package._add_relationship(reltype=RT.CORE_PROPERTIES, target=self.core_properties, rId='idCoreProperties')
 
-    def save(self, hdf_path_prefix=''):
+    def save(self, new_hdf_filename=None, new_hdf_filename_link=None):
         """Save the file.
         """
         # Core properties.
@@ -183,15 +183,20 @@ class PMLproxy(object):
             else:
                 self.package._add_relationship(reltype=EPC_RT.DESTINATION_OBJECT, target=fiber_optical_path_part, rId='idFiberOpticalPath')
         # External files.
+        self.external_hdf_files = {}
+        self.external_hdf_file_links = {}
         for Raw in self.das_acquisition.Raw:
             if (Raw.RawData is not None and
                 Raw.RawData.RawDataArray is not None and
                 Raw.RawData.RawDataArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawData.RawDataArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    if eepr.Uuid in self.external_hdf_files:
-                        continue
-                    self.external_hdf_files[eepr.Uuid] = hdf_path_prefix + str(eepr.Uuid) + '.h5'
+                    if new_hdf_filename is not None:
+                        self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
+                        self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
+                    else:
+                        self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
+                        self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
                     self.write_hdf_metadata(eepr.Uuid, Raw)
                     self.write_hdf_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw, DasExternalDatasetPart)
             if (Raw.RawDataTime is not None and
@@ -199,9 +204,12 @@ class PMLproxy(object):
                 Raw.RawDataTime.TimeArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawDataTime.TimeArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    if eepr.Uuid in self.external_hdf_files:
-                        continue
-                    self.external_hdf_files[eepr.Uuid] = hdf_path_prefix + str(eepr.Uuid) + '.h5'
+                    if new_hdf_filename is not None:
+                        self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
+                        self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
+                    else:
+                        self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
+                        self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
                     self.write_hdf_metadata(eepr.Uuid, Raw)
                     self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTime, DasExternalDatasetPart)
             if (Raw.RawDataTriggerTime is not None and
@@ -209,9 +217,12 @@ class PMLproxy(object):
                 Raw.RawDataTriggerTime.TimeArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawDataTriggerTime.TimeArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    if eepr.Uuid in self.external_hdf_files:
-                        continue
-                    self.external_hdf_files[eepr.Uuid] = hdf_path_prefix + str(eepr.Uuid) + '.h5'
+                    if new_hdf_filename is not None:
+                        self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
+                        self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
+                    else:
+                        self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
+                        self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
                     self.write_hdf_metadata(eepr.Uuid, Raw)
                     self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTriggerTime, DasExternalDatasetPart)
         for eepr_uuid in self.external_hdf_files:
@@ -234,7 +245,7 @@ class PMLproxy(object):
             eepr_part = opc.package.Part(partname=PackURI('/EpcExternalPartReference_'+eepr_uuid+'.xml'), content_type=EPC_CT.EPC_EXTERNAL_PART_REFERENCE, blob=eepr_xml)
             self.das_acquisition_part._add_relationship(reltype=EPC_RT.ML_TO_EXTERNAL_PART_PROXY, target=eepr_part, rId='_'+eepr_uuid)
             eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_PART_PROXY_TO_ML, target=self.das_acquisition_part, rId='_'+self.das_acquisition.uuid)
-            eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_RESOURCE, target=self.external_hdf_files[eepr_uuid], rId='Hdf5File', external=True)
+            eepr_part._add_relationship(reltype=EPC_RT.EXTERNAL_RESOURCE, target=self.external_hdf_file_links[eepr_uuid], rId='Hdf5File', external=True)
             self.eeprs[eepr_uuid] = eepr
 
         # Save the package.
@@ -260,6 +271,10 @@ class PMLproxy(object):
         """
         filename = self.external_hdf_files[uuid]
         # Create das raw hdf file.
+        try:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+        except:
+            pass
         hdf_file = h5py.File(os.path.join(self.epc_folder, filename), 'a')
         hdf_file.attrs['uuid'] = uuid
         if 'Acquisition' not in hdf_file:
