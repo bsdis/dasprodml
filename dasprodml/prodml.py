@@ -86,7 +86,7 @@ class PMLproxy(object):
         """Open existing file.
         """
         self.package = opc.OpcPackage.open(self.epc_path)
-        for part in self.package.parts:
+        for part in self.package.all_parts:
             if part._content_type == CT.OPC_CORE_PROPERTIES:
                 self.core_properties = part
             elif part._content_type == EPC_CT.DAS_ACQUISITION:
