@@ -191,40 +191,43 @@ class PMLproxy(object):
                 Raw.RawData.RawDataArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawData.RawDataArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    if new_hdf_filename is not None:
-                        self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
-                        self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
-                    else:
-                        self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
-                        self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
-                    self.write_hdf_metadata(eepr.Uuid, Raw)
-                    self.write_hdf_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw, DasExternalDatasetPart)
+                    if eepr.Uuid not in self.eeprs:
+                        if new_hdf_filename is not None:
+                            self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
+                            self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
+                        else:
+                            self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
+                            self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
+                        self.write_hdf_metadata(eepr.Uuid, Raw)
+                        self.write_hdf_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw, DasExternalDatasetPart)
             if (Raw.RawDataTime is not None and
                 Raw.RawDataTime.TimeArray is not None and
                 Raw.RawDataTime.TimeArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawDataTime.TimeArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    if new_hdf_filename is not None:
-                        self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
-                        self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
-                    else:
-                        self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
-                        self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
-                    self.write_hdf_metadata(eepr.Uuid, Raw)
-                    self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTime, DasExternalDatasetPart)
+                    if eepr.Uuid not in self.eeprs:
+                        if new_hdf_filename is not None:
+                            self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
+                            self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
+                        else:
+                            self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
+                            self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
+                        self.write_hdf_metadata(eepr.Uuid, Raw)
+                        self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTime, DasExternalDatasetPart)
             if (Raw.RawDataTriggerTime is not None and
                 Raw.RawDataTriggerTime.TimeArray is not None and
                 Raw.RawDataTriggerTime.TimeArray.Values is not None):
                 for DasExternalDatasetPart in Raw.RawDataTriggerTime.TimeArray.Values.ExternalFileProxy:
                     eepr = DasExternalDatasetPart.EpcExternalPartReference
-                    if new_hdf_filename is not None:
-                        self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
-                        self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
-                    else:
-                        self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
-                        self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
-                    self.write_hdf_metadata(eepr.Uuid, Raw)
-                    self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTriggerTime, DasExternalDatasetPart)
+                    if eepr.Uuid not in self.eeprs:
+                        if new_hdf_filename is not None:
+                            self.external_hdf_files[eepr.Uuid] = new_hdf_filename + '.h5'
+                            self.external_hdf_file_links[eepr.Uuid] = new_hdf_filename_link + '.h5'
+                        else:
+                            self.external_hdf_files[eepr.Uuid] = str(eepr.Uuid) + '.h5'
+                            self.external_hdf_file_links[eepr.Uuid] = self.external_hdf_files[eepr.Uuid]
+                        self.write_hdf_metadata(eepr.Uuid, Raw)
+                        self.write_hdf_time_data_array_metadata(self.external_hdf_files[eepr.Uuid], Raw.RawDataTriggerTime, DasExternalDatasetPart)
         for eepr_uuid in self.external_hdf_files:
             if eepr_uuid in self.eeprs:
                 continue
